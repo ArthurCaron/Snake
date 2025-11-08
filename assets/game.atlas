@@ -1,0 +1,76 @@
+
+game.png
+size: 512, 128
+format: RGBA8888
+filter: MipMapLinearLinear, MipMapLinearLinear
+repeat: none
+snake/assets/Food
+  rotate: false
+  xy: 488, 116
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+snake/assets/Food
+  rotate: false
+  xy: 78, 14
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+snake/assets/Food
+  rotate: false
+  xy: 112, 48
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+snake/assets/SnakeSegment
+  rotate: false
+  xy: 112, 48
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+snake/assets/GameTitle
+  rotate: false
+  xy: 2, 58
+  size: 418, 66
+  orig: 418, 66
+  offset: 0, 0
+  index: -1
+snake/assets/GridCell
+  rotate: false
+  xy: 78, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+snake/assets/PlayBtn
+  rotate: false
+  xy: 2, 30
+  size: 74, 26
+  orig: 74, 26
+  offset: 0, 0
+  index: -1
+snake/assets/PlayBtnDown
+  rotate: false
+  xy: 2, 2
+  size: 74, 26
+  orig: 74, 26
+  offset: 0, 0
+  index: -1
+snake/assets/SnakeSegment
+  rotate: false
+  xy: 488, 106
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+snake/assets/cursor
+  rotate: false
+  xy: 422, 60
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
