@@ -2,6 +2,7 @@ package fr.mwet.snake.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import fr.mwet.snake.Main;
 
 /**
@@ -10,7 +11,12 @@ import fr.mwet.snake.Main;
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+//        packTextures();
         createApplication();
+    }
+
+    private static void packTextures() {
+        TexturePacker.process("assets", "assets", "game");
     }
 
     private static Lwjgl3Application createApplication() {
