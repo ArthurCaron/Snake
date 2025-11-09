@@ -21,23 +21,24 @@ import java.util.*
 val BACKGROUND_COLOR: Color = Color.valueOf("#1f1f1f")
 
 class AssetHandler(private val assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
+
     fun loadAssets(): Progress {
         if (assetManager.update(16)) {
             println("Done loading")
             I18N.i18nBundle = t
-            return Progress(100f)
+            return Progress(1f)
         }
 
-        return Progress(assetManager.progress * 100)
+        return Progress(assetManager.progress)
     }
 
     private val assetsRoot = "snake/assets"
     private val soundsRoot = "sounds"
 
     // Sounds
-    val switchSound by assetManager.loadAsset(AssetDescriptor("$soundsRoot/switch.mp3", Sound::class.java))
-    val moveSound by assetManager.loadAsset(AssetDescriptor("$soundsRoot/snake_move.mp3", Sound::class.java))
-    val eatSound by assetManager.loadAsset(AssetDescriptor("$soundsRoot/snake_eat.mp3", Sound::class.java))
+    val switchSound: Sound by assetManager.loadAsset(AssetDescriptor("$soundsRoot/switch.mp3", Sound::class.java))
+    val moveSound: Sound by assetManager.loadAsset(AssetDescriptor("$soundsRoot/snake_move.mp3", Sound::class.java))
+    val eatSound: Sound by assetManager.loadAsset(AssetDescriptor("$soundsRoot/snake_eat.mp3", Sound::class.java))
 
     // Music
 //    val music by assetManager.loadAsset(AssetDescriptor("$musicRoot/music.mp3", Music::class.java))
