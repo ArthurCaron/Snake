@@ -68,7 +68,7 @@ jar {
   }
 // setting the manifest makes the JAR runnable.
   manifest {
-    attributes 'Main-Class': project.mainClassName
+    attributes('Main-Class': project.mainClassName, 'SplashScreen-Image': 'SplashScreen.png')
   }
 // this last step may help on some OSes that need extra instruction to make runnable JARs.
   doLast {
