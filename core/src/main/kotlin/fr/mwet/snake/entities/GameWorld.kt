@@ -26,7 +26,7 @@ class GameWorld {
         newGame()
     }
 
-    fun newGame() {
+    private fun newGame() {
         food.reset(snake)
         snake.reset()
 //        snake.setSpeed(3f)

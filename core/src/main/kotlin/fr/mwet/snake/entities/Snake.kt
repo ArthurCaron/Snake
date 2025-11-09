@@ -188,8 +188,7 @@ class Snake(val gameWorld: GameWorld) {
         isDisintegrating = true
         Timer.schedule(object : Timer.Task() {
             override fun run() {
-//                gameWorld.lost()
-                gameWorld.newGame()
+                gameWorld.lost()
             }
         }, 1.5f)
     }
