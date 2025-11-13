@@ -29,7 +29,7 @@ class GameWorld {
     private fun newGame() {
         food.reset(snake)
         snake.reset()
-//        snake.setSpeed(3f)
+        snake.setSpeed(3f)
     }
 
     fun lost() {

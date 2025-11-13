@@ -10,7 +10,6 @@ import fr.mwet.snake.assets.AssetHandler
 import fr.mwet.snake.utils.SoundHelper
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
-import fr.mwet.snake.utils.resetColor
 import ktx.assets.invoke
 import ktx.assets.pool
 import kotlin.math.abs
@@ -19,18 +18,23 @@ import kotlin.random.Random
 const val SNAKE_DEFAULT_SPEED = 6f
 
 class Snake(val gameWorld: GameWorld) {
-//    private val gameWorld = DI.inject<GameWorld>()
+    //    private val gameWorld = DI.inject<GameWorld>()
     private val assetHandler = DI.inject<AssetHandler>()
     private val soundHelper = DI.inject<SoundHelper>()
-    private val directionMap = arrayOf(intArrayOf(0, 1), intArrayOf(1, 0), intArrayOf(0, -1), intArrayOf(-1, 0))
     private val segmentPool = pool { Segment() }
 
     private var eTime = 0f
-    private val animation = Animation(1f / 8f, assetHandler.snakeSegment, Animation.PlayMode.LOOP_PINGPONG)
+    private val originalAnimation =
+        Animation(1f / 8f, assetHandler.snakeSegmentAnimation, Animation.PlayMode.LOOP_PINGPONG)
+    private val animation =
+        Animation(1f / 2f, assetHandler.snakeHeadAnimation, Animation.PlayMode.LOOP_PINGPONG)
+    private val animationFlipped =
+        Animation(1f / 2f, assetHandler.snakeHeadFlippedAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private var color = Color.WHITE
     private lateinit var head: Segment
     private lateinit var tail: Segment
-    private var currentDirection: Int = 0
+
+    private var currentDirection: Direction = Direction.UP
     private var nextX: Int = 0
     private var nextY: Int = 0
     private var currentSpeed = SNAKE_DEFAULT_SPEED
@@ -43,7 +47,7 @@ class Snake(val gameWorld: GameWorld) {
     fun reset() {
         isDisintegrating = false
         eTime = 0f
-        currentDirection = 0
+        currentDirection = Direction.UP
         color = Color.WHITE
         currentSpeed = SNAKE_DEFAULT_SPEED
 
@@ -65,7 +69,7 @@ class Snake(val gameWorld: GameWorld) {
 
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
-        batch.setColor(color)
+//        batch.setColor(color)
 
         if (isDisintegrating) {
             var segment: Segment? = tail
@@ -73,7 +77,7 @@ class Snake(val gameWorld: GameWorld) {
                 segment.x += (segment.tx - segment.x) * delta * 2f
                 segment.y += (segment.ty - segment.y) * delta * 2f
                 batch.draw(
-                    animation.getKeyFrame(eTime),
+                    originalAnimation.getKeyFrame(eTime),
                     segment.x,
                     segment.y,
                     0.5f,
@@ -94,7 +98,36 @@ class Snake(val gameWorld: GameWorld) {
                     segment.x += (next.ox - segment.ox) * delta * currentSpeed
                     segment.y += (next.oy - segment.oy) * delta * currentSpeed
                 }
-                batch.draw(animation.getKeyFrame(eTime), segment.x, segment.y, 1f, 1f)
+                if (segment == tail) {
+//                    batch.draw(assetHandler.snakeTail, segment.x, segment.y, 1f, 1f)
+                    batch.draw(
+                        assetHandler.snakeTail,
+                        segment.x,
+                        segment.y,
+                        0.5f,
+                        0.5f,
+                        1f,
+                        1f,
+                        1f,
+                        1f,
+                        segment.getAngleFromNext()
+                    )
+                } else if (segment == head) {
+                } else {
+//                    batch.draw(animation.getKeyFrame(eTime), segment.x, segment.y, 1f, 1f)
+                    batch.draw(
+                        assetHandler.snakeBody,
+                        segment.x,
+                        segment.y,
+                        0.5f,
+                        0.5f,
+                        1f,
+                        1f,
+                        1f,
+                        1f,
+                        segment.getAngleFromNext()
+                    )
+                }
                 segment = next
             }
 
@@ -103,11 +136,38 @@ class Snake(val gameWorld: GameWorld) {
 
             if (hitBoundariesTest() || hitBodyTest()) disintegrate()
 
-            batch.draw(animation.getKeyFrame(eTime), head.x, head.y, 1f, 1f)
+//            batch.draw(animation.getKeyFrame(eTime), head.x, head.y, 1f, 1f)
+            if (currentDirection == Direction.RIGHT) {
+                batch.draw(
+                    animationFlipped.getKeyFrame(eTime),
+                    head.x,
+                    head.y,
+                    0.5f,
+                    0.5f,
+                    1f,
+                    1f,
+                    1f,
+                    1f,
+                    head.getAngleFromDirection(currentDirection)
+                )
+            } else {
+                batch.draw(
+                    animation.getKeyFrame(eTime),
+                    head.x,
+                    head.y,
+                    0.5f,
+                    0.5f,
+                    1f,
+                    1f,
+                    1f,
+                    1f,
+                    head.getAngleFromDirection(currentDirection)
+                )
+            }
             if (abs(nextX - head.x) < 0.15f && abs(nextY - head.y) < 0.15f) shiftSegments()
         }
 
-        batch.resetColor()
+//        batch.resetColor()
     }
 
     private fun shiftSegments() {
@@ -130,12 +190,12 @@ class Snake(val gameWorld: GameWorld) {
     }
 
     private fun updateNext() {
-        nextX = head.ox + directionMap[currentDirection][0]
-        nextY = head.oy + directionMap[currentDirection][1]
+        nextX = head.ox + currentDirection.directionX
+        nextY = head.oy + currentDirection.directionY
     }
 
-    fun setDirection(newDirection: Int) {
-        if (abs((currentDirection - newDirection).toDouble()) == 2.0) return
+    fun setDirection(newDirection: Direction) {
+        if (newDirection.isOpposite(currentDirection)) return
         currentDirection = newDirection
     }
 
@@ -225,5 +285,40 @@ data class Segment(
         x = 0f
         y = 0f
         next = null
+    }
+
+    fun getAngleFromDirection(direction: Direction): Float {
+        return when (direction) {
+            Direction.UP -> 270f
+            Direction.RIGHT -> 180f
+            Direction.DOWN -> 90f
+            Direction.LEFT -> 0f
+        }
+    }
+
+    fun getAngleFromNext(): Float {
+        val direction = if (next == null) Direction.UP
+        else if (ox < next!!.ox) Direction.RIGHT
+        else if (ox > next!!.ox) Direction.LEFT
+        else if (oy > next!!.oy) Direction.DOWN
+        else if (oy < next!!.oy) Direction.UP
+        else /* WTF */ Direction.UP
+
+        return getAngleFromDirection(direction)
+    }
+}
+
+enum class Direction(val directionX: Int, val directionY: Int) {
+    UP(0, 1),
+    RIGHT(1, 0),
+    DOWN(0, -1),
+    LEFT(-1, 0);
+
+    fun isOpposite(direction: Direction): Boolean {
+        if (this == DOWN && direction == UP) return true
+        if (this == UP && direction == DOWN) return true
+        if (this == RIGHT && direction == LEFT) return true
+        if (this == LEFT && direction == RIGHT) return true
+        return false
     }
 }

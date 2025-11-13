@@ -14,16 +14,17 @@ class Food {
     private val assetHandler = DI.inject<AssetHandler>()
 
     private var eTime = 0f
-    private val animation = Animation(1f / 8f, assetHandler.food, Animation.PlayMode.LOOP_PINGPONG)
+//    private val animation = Animation(1f / 8f, assetHandler.foodAnimation, Animation.PlayMode.LOOP_PINGPONG)
+    private val animation = Animation(1f / 2f, assetHandler.strawberryAnimation, Animation.PlayMode.LOOP_PINGPONG)
     var x = 0
     var y = 0
     var color: Color = FOOD_COLORS.random()
 
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
-        batch.setColor(color)
+//        batch.setColor(color)
         batch.draw(animation.getKeyFrame(eTime), x.toFloat(), y.toFloat(), 1f, 1f)
-        batch.resetColor()
+//        batch.resetColor()
     }
 
     fun reset(snake: Snake) {
