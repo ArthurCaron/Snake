@@ -20,14 +20,14 @@ snake/assets/Food
   index: 1
 snake/assets/Food
   rotate: false
-  xy: 112, 48
+  xy: 350, 48
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 2
 snake/assets/SnakeSegment
   rotate: false
-  xy: 112, 48
+  xy: 350, 48
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
@@ -60,11 +60,67 @@ snake/assets/PlayBtnDown
   orig: 74, 26
   offset: 0, 0
   index: -1
+snake/assets/SnakeBody
+  rotate: false
+  xy: 112, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+snake/assets/SnakeHead
+  rotate: false
+  xy: 146, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+snake/assets/SnakeHeadAnimation
+  rotate: false
+  xy: 146, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+snake/assets/SnakeHeadAnimation
+  rotate: false
+  xy: 180, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
 snake/assets/SnakeSegment
   rotate: false
   xy: 488, 106
   size: 8, 8
   orig: 8, 8
+  offset: 0, 0
+  index: 1
+snake/assets/SnakeTail
+  rotate: false
+  xy: 214, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+snake/assets/Strawberry
+  rotate: false
+  xy: 248, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+snake/assets/StrawberryAnimation
+  rotate: false
+  xy: 282, 24
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+snake/assets/StrawberryAnimation
+  rotate: false
+  xy: 316, 24
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: 1
 snake/assets/cursor

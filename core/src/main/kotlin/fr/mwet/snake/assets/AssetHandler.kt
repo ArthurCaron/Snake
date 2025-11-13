@@ -16,6 +16,7 @@ import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.assets.getValue
 import ktx.assets.loadAsset
+import ktx.collections.toGdxArray
 import java.util.*
 
 val BACKGROUND_COLOR: Color = Color.valueOf("#1f1f1f")
@@ -64,8 +65,18 @@ class AssetHandler(private val assetManager: AssetManager) : DisposableRegistry 
 
     // Gameplay
     val gridCell: AtlasRegion by lazy { textureAtlas.findRegion("$assetsRoot/GridCell") }
-    val food: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$assetsRoot/Food") }
-    val snakeSegment: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$assetsRoot/SnakeSegment") }
+    val foodAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$assetsRoot/Food") }
+    val snakeSegmentAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$assetsRoot/SnakeSegment") }
+
+    val strawberry: AtlasRegion by lazy { textureAtlas.findRegion("$assetsRoot/Strawberry") }
+    val strawberryAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$assetsRoot/StrawberryAnimation") }
+    val snakeHead: AtlasRegion by lazy { textureAtlas.findRegion("$assetsRoot/SnakeHead") }
+    val snakeHeadAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$assetsRoot/SnakeHeadAnimation") }
+    val snakeHeadFlippedAnimation: Array<AtlasRegion> by lazy {
+        snakeHeadAnimation.map { AtlasRegion(it).apply { flip(false, true) } }.toGdxArray()
+    }
+    val snakeBody: AtlasRegion by lazy { textureAtlas.findRegion("$assetsRoot/SnakeBody") }
+    val snakeTail: AtlasRegion by lazy { textureAtlas.findRegion("$assetsRoot/SnakeTail") }
 
     val background: Texture by lazy { initBackground() }
 
