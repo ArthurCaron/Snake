@@ -3,16 +3,16 @@ package fr.mwet.snake
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.ScreenUtils
+import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
-class Game(
-    private val gameViewport: GameViewport,
-    private val stageViewport: StageViewport,
-) : KtxGame<KtxScreen>(), DisposableRegistry by DisposableContainer() {
+object Game : KtxGame<KtxScreen>(), DisposableRegistry by DisposableContainer() {
+    private val viewports: MutableList<Viewport> = mutableListOf()
+
     override fun render() {
         ScreenUtils.clear(Color.BLACK)
         currentScreen.render(Gdx.graphics.deltaTime)
@@ -20,7 +20,12 @@ class Game(
 
     override fun resize(width: Int, height: Int) {
         super.resize(width, height)
-        gameViewport.update(width, height, true)
-        stageViewport.update(width, height, true)
+        viewports.forEach { viewport ->
+            viewport.update(width, height, true)
+        }
+    }
+
+    fun addViewport(viewport: Viewport) {
+        viewports.add(viewport)
     }
 }

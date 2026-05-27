@@ -23,80 +23,73 @@ import ktx.inject.Context
 import ktx.inject.register
 
 object DI : Context() {
-    fun initialize() =
-        register {
-            // Assets
-            val assetManager = withBindSingleton<AssetManager> { AssetManager() }
-            val assetHandler = withBindSingleton<AssetHandler> { AssetHandler(assetManager) }
-            val i18NHandler = withBindSingleton<I18NHandler> { I18NHandler(assetManager) }
-            assetHandler.listenToAssetsLoaded(i18NHandler)
-            val musicHandler = withBindSingleton<MusicHandler> { MusicHandler(assetManager) }
-            val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
-            val textureHandler = withBindSingleton<TextureHandler> { TextureHandler(assetManager) }
+    fun initialize() = register {
+        // Assets
+        val assetManager = withBindSingleton<AssetManager> { AssetManager() }
+        val assetHandler = withBindSingleton<AssetHandler> { AssetHandler(assetManager) }
+        val i18NHandler = withBindSingleton<I18NHandler> { I18NHandler(assetManager) }
+        assetHandler.listenToAssetsLoaded(i18NHandler)
+        val musicHandler = withBindSingleton<MusicHandler> { MusicHandler(assetManager) }
+        val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
+        val textureHandler = withBindSingleton<TextureHandler> { TextureHandler(assetManager) }
 
-            // Batches
-            val spriteBatch = withBindSingleton<SpriteBatch> { SpriteBatch() }
-
-            // Cameras
-            val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }
-
-            // Viewports
-            val gameViewport = withBindSingleton<GameViewport> { GameViewport(camera) }
-            val stageViewport = withBindSingleton<StageViewport> { StageViewport() }
-
-            // Stages
-            val stage = withBindSingleton<Stage> { stage(spriteBatch, stageViewport) }
-
-            // Input Handlers
-            val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
-                it.addProcessor(stage)
-                Gdx.input.inputProcessor = it
-            }
-
-            // Game
-            val game = withBindSingleton<Game> { Game(gameViewport, stageViewport) }
-
-            val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
-
-            val loadingScreen = withBindSingleton {
-                LoadingScreen(
-                    assetHandler = assetHandler,
-                    batch = spriteBatch,
-                    gameCamera = camera,
-                    game = game,
-                )
-            }
-            val mainMenuScreen = withBindSingleton {
-                MainMenuScreen(
-                    textureHandler = textureHandler,
-                    soundHandler = soundHandler,
-                    stage = stage,
-                    batch = spriteBatch,
-                    gameViewport = gameViewport,
-                    stageViewport = stageViewport,
-                    gameCamera = camera,
-                    game = game,
-                )
-            }
-            val settingsScreen = withBindSingleton { SettingsScreen() }
-            val gameScreen = withBindSingleton {
-                GameScreen(
-                    textureHandler = textureHandler,
-                    stage = stage,
-                    batch = spriteBatch,
-                    gameViewport = gameViewport,
-                    stageViewport = stageViewport,
-                    gameCamera = camera,
-                    gameWorld = gameWorld,
-                )
-            }
-
-            game.addScreen(loadingScreen)
-            game.addScreen(mainMenuScreen)
-            game.addScreen(settingsScreen)
-            game.addScreen(gameScreen)
-            game.setScreen<LoadingScreen>()
+        // Input Handlers
+        val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
+            Gdx.input.inputProcessor = it
         }
+
+        // Cameras
+        val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }
+
+        // Viewports
+        val gameViewport = withBindSingleton<GameViewport> { GameViewport(camera) }
+        Game.addViewport(gameViewport)
+        val stageViewport = withBindSingleton<StageViewport> { StageViewport() }
+        Game.addViewport(stageViewport)
+
+        // Batches
+        val spriteBatch = withBindSingleton<SpriteBatch> { SpriteBatch() }
+
+        // Stages
+        val stage = withBindSingleton<Stage> { stage(spriteBatch, stageViewport) }
+        inputMultiplexer.addProcessor(stage)
+
+        // Game World
+        val gameWorld = withBindSingleton<GameWorld> { GameWorld(inputMultiplexer) }
+
+        Game.addScreen(withBindSingleton {
+            LoadingScreen(
+                assetHandler = assetHandler,
+                batch = spriteBatch,
+                gameCamera = camera,
+            )
+        })
+        Game.addScreen(withBindSingleton {
+            MainMenuScreen(
+                textureHandler = textureHandler,
+                soundHandler = soundHandler,
+                stage = stage,
+                batch = spriteBatch,
+                gameViewport = gameViewport,
+                stageViewport = stageViewport,
+                gameCamera = camera,
+            )
+        })
+        Game.addScreen(withBindSingleton { SettingsScreen() })
+        Game.addScreen(withBindSingleton {
+            GameScreen(
+                textureHandler = textureHandler,
+                stage = stage,
+                batch = spriteBatch,
+                gameViewport = gameViewport,
+                stageViewport = stageViewport,
+                gameCamera = camera,
+                gameWorld = gameWorld,
+            )
+        })
+
+        Game.setScreen<LoadingScreen>()
+    }
 }
 
 inline fun <reified Type : Any> withBindSingleton(provider: () -> Type): Type {
