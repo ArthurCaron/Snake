@@ -1,26 +1,23 @@
 package fr.mwet.snake.entities
 
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.Game
-import fr.mwet.snake.inputs.game.GameInputProcessor
 import fr.mwet.snake.screens.MainMenuScreen
 
 
 val FOOD_COLORS = arrayOf(Color.GREEN, Color.BLUE, Color.RED, Color.ORANGE, Color.MAGENTA, Color.CYAN)
 
-class GameWorld(private val inputMultiplexer: InputMultiplexer) {
-    private val food by lazy { Food() }
-    private val snake by lazy { Snake(this) }
+class GameWorld {
+    val food by lazy { Food() }
+    val snake by lazy { Snake(this) }
 
     fun show() {
-        inputMultiplexer.addProcessor(GameInputProcessor(snake))
         newGame()
     }
 
     private fun newGame() {
-        food.reset(snake)
+        food.reset(snake) // Should give a list of possible places instead, or forbidden places
         snake.reset()
         snake.setSpeed(3f)
     }

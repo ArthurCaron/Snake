@@ -1,15 +1,15 @@
 package fr.mwet.snake.inputs.game
 
 import com.badlogic.gdx.Input.Keys.*
-import fr.mwet.snake.entities.Snake
+import fr.mwet.snake.entities.GameWorld
 import ktx.app.KtxInputAdapter
 
-class GameInputProcessor(private val snake: Snake) : KtxInputAdapter {
+class GameInputProcessor(private val gameWorld: GameWorld) : KtxInputAdapter {
     private val keycodeMapping = GameKeycodeMapping()
 
     override fun keyDown(keycode: Int): Boolean {
         keycodeMapping.get(keycode)?.let {
-            it.execute(snake)
+            it.execute(gameWorld.snake)
             return true
         }
         return false

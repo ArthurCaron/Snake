@@ -14,7 +14,7 @@ class Food {
 
     private var eTime = 0f
 
-    //    private val animation = Animation(1f / 8f, assetHandler.foodAnimation, Animation.PlayMode.LOOP_PINGPONG)
+    // private val animation = Animation(1f / 8f, textureHandler.foodAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private val animation = Animation(1f / 2f, textureHandler.strawberryAnimation, Animation.PlayMode.LOOP_PINGPONG)
     var x = 0
     var y = 0
