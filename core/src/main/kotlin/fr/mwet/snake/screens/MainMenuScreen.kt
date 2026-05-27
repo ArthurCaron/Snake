@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
-import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
@@ -28,16 +27,16 @@ import ktx.scene2d.image
 import ktx.scene2d.scene2d
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
-class MainMenuScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val game = DI.inject<Game>()
-    private val stage = DI.inject<Stage>()
-    private val batch = DI.inject<SpriteBatch>()
-    private val gameViewport = DI.inject<GameViewport>()
-    private val stageViewport = DI.inject<StageViewport>()
-    private val gameCamera = DI.inject<OrthographicCamera>()
-    private val textureHandler = DI.inject<TextureHandler>()
-    private val soundHandler = DI.inject<SoundHandler>()
-
+class MainMenuScreen(
+    private val textureHandler: TextureHandler,
+    private val soundHandler: SoundHandler,
+    private val stage: Stage,
+    private val batch: SpriteBatch,
+    private val gameViewport: GameViewport,
+    private val stageViewport: StageViewport,
+    private val gameCamera: OrthographicCamera,
+    private val game: Game,
+) : KtxScreen, DisposableRegistry by DisposableContainer() {
     private val gameTitle: Image by lazy {
         scene2d.image(textureHandler.gameTitle) {
             width = gameViewport.screenWidth * 0.95f
