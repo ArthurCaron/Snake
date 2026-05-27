@@ -25,15 +25,15 @@ import ktx.inject.Context
 import ktx.inject.register
 
 object DI : Context() {
-    fun initialize() = register {
+    fun initBeforeAssetsAreLoaded() = register {
         // Assets
         val assetManager = withBindSingleton<AssetManager> { AssetManager() }
         val assetHandler = withBindSingleton<AssetHandler> { AssetHandler(assetManager) }
         val i18NHandler = withBindSingleton<I18NHandler> { I18NHandler(assetManager) }
         assetHandler.listenToAssetsLoaded(i18NHandler)
-        val musicHandler = withBindSingleton<MusicHandler> { MusicHandler(assetManager) }
-        val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
-        val textureHandler = withBindSingleton<TextureHandler> { TextureHandler(assetManager) }
+        bindSingleton<MusicHandler> { MusicHandler(assetManager) }
+        bindSingleton<SoundHandler> { SoundHandler(assetManager) }
+        bindSingleton<TextureHandler> { TextureHandler(assetManager) }
 
         // Input Handlers
         val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
@@ -57,11 +57,6 @@ object DI : Context() {
         val stage = withBindSingleton<Stage> { stage(spriteBatch, stageViewport) }
         inputMultiplexer.addProcessor(stage)
 
-        // Game World
-        val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
-        inputMultiplexer.addProcessor(withBindSingleton<GameInputProcessor> { GameInputProcessor(gameWorld) })
-
-        // Screens
         Game.addScreen(withBindSingleton {
             LoadingScreen(
                 assetHandler = assetHandler,
@@ -69,6 +64,39 @@ object DI : Context() {
                 gameCamera = camera,
             )
         })
+
+        Game.setScreen<LoadingScreen>()
+    }
+
+    fun finishInitAfterAssetsAreLoaded() = register {
+        // Assets
+        val assetHandler = inject<AssetHandler>()
+        val i18NHandler = inject<I18NHandler>()
+        val musicHandler = inject<MusicHandler>()
+        val soundHandler = inject<SoundHandler>()
+        val textureHandler = inject<TextureHandler>()
+
+        // Input Handlers
+        val inputMultiplexer = inject<InputMultiplexer>()
+
+        // Cameras
+        val camera = inject<OrthographicCamera>()
+
+        // Viewports
+        val gameViewport = inject<GameViewport>()
+        val stageViewport = inject<StageViewport>()
+
+        // Batches
+        val spriteBatch = inject<SpriteBatch>()
+
+        // Stages
+        val stage = inject<Stage>()
+
+        // Game World
+        val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
+        inputMultiplexer.addProcessor(withBindSingleton<GameInputProcessor> { GameInputProcessor(gameWorld) })
+
+        // Screens
         Game.addScreen(withBindSingleton {
             MainMenuScreen(
                 textureHandler = textureHandler,
@@ -92,8 +120,6 @@ object DI : Context() {
                 gameWorld = gameWorld,
             )
         })
-
-        Game.setScreen<LoadingScreen>()
     }
 }
 

@@ -13,7 +13,7 @@ class Main : ApplicationListener {
 
     override fun create() {
         splashWorker?.closeSplashScreen()
-        DI.initialize()
+        DI.initBeforeAssetsAreLoaded()
         Game.create()
     }
 
