@@ -13,10 +13,10 @@ import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
-class Game : KtxGame<KtxScreen>(), DisposableRegistry by DisposableContainer() {
-    private val gameViewport by lazy { DI.inject<GameViewport>() }
-    private val stageViewport by lazy { DI.inject<StageViewport>() }
-
+class Game(
+    private val gameViewport: GameViewport,
+    private val stageViewport: StageViewport,
+) : KtxGame<KtxScreen>(), DisposableRegistry by DisposableContainer() {
     override fun create() {
         addScreen(LoadingScreen().alsoRegister())
         addScreen(MainMenuScreen().alsoRegister())

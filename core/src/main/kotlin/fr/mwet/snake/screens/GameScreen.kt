@@ -3,11 +3,11 @@ package fr.mwet.snake.screens
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import fr.mwet.snake.entities.GameWorld
 import fr.mwet.snake.DI
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
-import fr.mwet.snake.assets.AssetHandler
+import fr.mwet.snake.assets.TextureHandler
+import fr.mwet.snake.entities.GameWorld
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
@@ -23,9 +23,8 @@ class GameScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
     private val gameViewport = DI.inject<GameViewport>()
     private val stageViewport = DI.inject<StageViewport>()
     private val gameCamera = DI.inject<OrthographicCamera>()
-    private val assetHandler = DI.inject<AssetHandler>()
-
-    private val gameWorld: GameWorld by lazy { GameWorld() }
+    private val textureHandler = DI.inject<TextureHandler>()
+    private val gameWorld = DI.inject<GameWorld>()
 
     override fun show() {
         stage.clear()
@@ -35,7 +34,7 @@ class GameScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
     override fun render(delta: Float) {
         gameViewport.apply(true)
         batch.use(gameCamera) {
-            it.draw(assetHandler.background, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+            it.draw(textureHandler.background, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
             drawGridMap(it)
             gameWorld.render(it, delta)
         }
@@ -49,7 +48,7 @@ class GameScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
         batch.setColor(1f, 1f, 1f, 0.05f)
         (0..<WORLD_WIDTH.toInt()).forEach { x ->
             (0..<WORLD_HEIGHT.toInt()).forEach { y ->
-                batch.draw(assetHandler.gridCell, x.toFloat(), y.toFloat(), 1f, 1f)
+                batch.draw(textureHandler.gridCell, x.toFloat(), y.toFloat(), 1f, 1f)
             }
         }
         batch.resetColor()

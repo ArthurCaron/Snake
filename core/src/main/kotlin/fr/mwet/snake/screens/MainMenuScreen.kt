@@ -13,11 +13,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.DI
-import fr.mwet.snake.GameViewport
 import fr.mwet.snake.Game
+import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
-import fr.mwet.snake.assets.AssetHandler
-import fr.mwet.snake.utils.SoundHelper
+import fr.mwet.snake.assets.SoundHandler
+import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.app.KtxScreen
@@ -35,11 +35,11 @@ class MainMenuScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
     private val gameViewport = DI.inject<GameViewport>()
     private val stageViewport = DI.inject<StageViewport>()
     private val gameCamera = DI.inject<OrthographicCamera>()
-    private val assetHandler = DI.inject<AssetHandler>()
-    private val soundHelper = DI.inject<SoundHelper>()
+    private val textureHandler = DI.inject<TextureHandler>()
+    private val soundHandler = DI.inject<SoundHandler>()
 
     private val gameTitle: Image by lazy {
-        scene2d.image(assetHandler.gameTitle) {
+        scene2d.image(textureHandler.gameTitle) {
             width = gameViewport.screenWidth * 0.95f
             height = width * height / width
             setOrigin(Align.center)
@@ -48,8 +48,8 @@ class MainMenuScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
 
     private val playBtn: ImageButton by lazy {
         ImageButton(
-            TextureRegionDrawable(assetHandler.playBtn),
-            TextureRegionDrawable(assetHandler.playBtnDown)
+            TextureRegionDrawable(textureHandler.playBtn),
+            TextureRegionDrawable(textureHandler.playBtnDown)
         ).apply {
             val playBtnRatio = width / height
             val playBtnWidth = gameViewport.screenWidth * 0.95f * 0.5f
@@ -58,7 +58,7 @@ class MainMenuScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
             addListener(object : ClickListener() {
                 override fun clicked(event: InputEvent, x: Float, y: Float) {
                     super.clicked(event, x, y)
-                    soundHelper.playSwitch()
+                    soundHandler.playSwitch()
                     game.setScreen<GameScreen>()
                 }
             })
@@ -106,7 +106,7 @@ class MainMenuScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
     override fun render(delta: Float) {
         gameViewport.apply(true)
         batch.use(gameCamera) {
-            it.draw(assetHandler.background, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+            it.draw(textureHandler.background, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
         }
 
         // Draw stage actors
