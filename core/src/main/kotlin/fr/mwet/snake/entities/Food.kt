@@ -4,18 +4,18 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.DI
-import fr.mwet.snake.assets.AssetHandler
+import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
-import fr.mwet.snake.utils.resetColor
 import kotlin.random.Random
 
 class Food {
-    private val assetHandler = DI.inject<AssetHandler>()
+    private val textureHandler = DI.inject<TextureHandler>()
 
     private var eTime = 0f
-//    private val animation = Animation(1f / 8f, assetHandler.foodAnimation, Animation.PlayMode.LOOP_PINGPONG)
-    private val animation = Animation(1f / 2f, assetHandler.strawberryAnimation, Animation.PlayMode.LOOP_PINGPONG)
+
+    //    private val animation = Animation(1f / 8f, assetHandler.foodAnimation, Animation.PlayMode.LOOP_PINGPONG)
+    private val animation = Animation(1f / 2f, textureHandler.strawberryAnimation, Animation.PlayMode.LOOP_PINGPONG)
     var x = 0
     var y = 0
     var color: Color = FOOD_COLORS.random()

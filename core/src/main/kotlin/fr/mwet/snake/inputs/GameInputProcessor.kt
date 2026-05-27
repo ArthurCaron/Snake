@@ -1,10 +1,10 @@
 package fr.mwet.snake.inputs
 
 import com.badlogic.gdx.Input.Keys.*
-import fr.mwet.snake.entities.Snake
 import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.entities.Direction
+import fr.mwet.snake.entities.Snake
 import fr.mwet.snake.screens.MainMenuScreen
 import ktx.app.KtxInputAdapter
 

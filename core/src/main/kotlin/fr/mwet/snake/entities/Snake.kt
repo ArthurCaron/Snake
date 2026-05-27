@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.Timer
 import fr.mwet.snake.DI
-import fr.mwet.snake.assets.AssetHandler
-import fr.mwet.snake.utils.SoundHelper
+import fr.mwet.snake.assets.SoundHandler
+import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.assets.invoke
@@ -18,18 +18,17 @@ import kotlin.random.Random
 const val SNAKE_DEFAULT_SPEED = 6f
 
 class Snake(val gameWorld: GameWorld) {
-    //    private val gameWorld = DI.inject<GameWorld>()
-    private val assetHandler = DI.inject<AssetHandler>()
-    private val soundHelper = DI.inject<SoundHelper>()
+    private val textureHandler = DI.inject<TextureHandler>()
+    private val soundHandler = DI.inject<SoundHandler>()
     private val segmentPool = pool { Segment() }
 
     private var eTime = 0f
     private val originalAnimation =
-        Animation(1f / 8f, assetHandler.snakeSegmentAnimation, Animation.PlayMode.LOOP_PINGPONG)
+        Animation(1f / 8f, textureHandler.snakeSegmentAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private val animation =
-        Animation(1f / 2f, assetHandler.snakeHeadAnimation, Animation.PlayMode.LOOP_PINGPONG)
+        Animation(1f / 2f, textureHandler.snakeHeadAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private val animationFlipped =
-        Animation(1f / 2f, assetHandler.snakeHeadFlippedAnimation, Animation.PlayMode.LOOP_PINGPONG)
+        Animation(1f / 2f, textureHandler.snakeHeadFlippedAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private var color = Color.WHITE
     private lateinit var head: Segment
     private lateinit var tail: Segment
@@ -101,7 +100,7 @@ class Snake(val gameWorld: GameWorld) {
                 if (segment == tail) {
 //                    batch.draw(assetHandler.snakeTail, segment.x, segment.y, 1f, 1f)
                     batch.draw(
-                        assetHandler.snakeTail,
+                        textureHandler.snakeTail,
                         segment.x,
                         segment.y,
                         0.5f,
@@ -116,7 +115,7 @@ class Snake(val gameWorld: GameWorld) {
                 } else {
 //                    batch.draw(animation.getKeyFrame(eTime), segment.x, segment.y, 1f, 1f)
                     batch.draw(
-                        assetHandler.snakeBody,
+                        textureHandler.snakeBody,
                         segment.x,
                         segment.y,
                         0.5f,
@@ -171,7 +170,7 @@ class Snake(val gameWorld: GameWorld) {
     }
 
     private fun shiftSegments() {
-        soundHelper.playMove()
+        soundHandler.playMove()
 
         var segment = tail
         while (segment != head) {
@@ -208,7 +207,7 @@ class Snake(val gameWorld: GameWorld) {
             updateNext()
             addSegment(nextX, nextY)
             color = food.color
-            soundHelper.playEat()
+            soundHandler.playEat()
             return true
         }
         return false

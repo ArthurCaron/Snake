@@ -8,11 +8,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import fr.mwet.snake.entities.GameWorld
 import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
-import fr.mwet.snake.assets.AssetHandler
-import fr.mwet.snake.utils.SoundHelper
+import fr.mwet.snake.assets.*
+import fr.mwet.snake.entities.GameWorld
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.stage
@@ -23,9 +22,29 @@ object DI : Context() {
     fun initialize() =
         register {
             val assetManager = withBindSingleton<AssetManager> { AssetManager() }
-            bindSingleton<AssetHandler> { AssetHandler(assetManager) }
-            val game = withBindSingleton<Game> { Game() }
+            val assetHandler = withBindSingleton<AssetHandler> { AssetHandler(assetManager) }
+            val i18NHandler = withBindSingleton<I18NHandler> { I18NHandler(assetManager) }
+            assetHandler.listenToAssetsLoaded(i18NHandler)
+            val musicHandler = withBindSingleton<MusicHandler> { MusicHandler(assetManager) }
+            val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
+            val textureHandler = withBindSingleton<TextureHandler> { TextureHandler(assetManager) }
 
+            val spriteBatch = withBindSingleton<SpriteBatch> { SpriteBatch() }
+
+            val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }
+
+            val gameViewport = withBindSingleton<GameViewport> { GameViewport(camera) }
+
+            val stageViewport = withBindSingleton<StageViewport> { StageViewport() }
+
+            val stage = withBindSingleton<Stage> { stage(spriteBatch, stageViewport) }
+
+            val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
+                it.addProcessor(stage)
+                Gdx.input.inputProcessor = it
+            }
+
+            val game = withBindSingleton<Game> { Game(gameViewport, stageViewport) }
             // For when I change my mind again
 //            val loadingScreen = withBindSingleton { LoadingScreen() }
 //            val mainMenuScreen = withBindSingleton { MainMenuScreen() }
@@ -38,17 +57,7 @@ object DI : Context() {
 //            game.addScreen(gameScreen)
 //            game.setScreen<LoadingScreen>()
 
-            val spriteBatch = withBindSingleton<SpriteBatch> { SpriteBatch() }
-            val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }
-            bindSingleton<GameViewport> { GameViewport(camera) }
-            val stageViewport = withBindSingleton<StageViewport> { StageViewport() }
-            val stage = withBindSingleton<Stage> { stage(spriteBatch, stageViewport) }
-            withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
-                it.addProcessor(stage)
-                Gdx.input.inputProcessor = it
-            }
-            bindSingleton<SoundHelper> { SoundHelper() }
-            bindSingleton<GameWorld> { GameWorld() }
+            val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
         }
 }
 
