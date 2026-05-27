@@ -35,7 +35,6 @@ class MainMenuScreen(
     private val gameViewport: GameViewport,
     private val stageViewport: StageViewport,
     private val gameCamera: OrthographicCamera,
-    private val game: Game,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
     private val gameTitle: Image by lazy {
         scene2d.image(textureHandler.gameTitle) {
@@ -58,7 +57,7 @@ class MainMenuScreen(
                 override fun clicked(event: InputEvent, x: Float, y: Float) {
                     super.clicked(event, x, y)
                     soundHandler.playSwitch()
-                    game.setScreen<GameScreen>()
+                    Game.setScreen<GameScreen>()
                 }
             })
         }

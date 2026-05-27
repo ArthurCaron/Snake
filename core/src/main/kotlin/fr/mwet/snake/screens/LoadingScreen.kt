@@ -25,7 +25,6 @@ class LoadingScreen(
     private val assetHandler: AssetHandler,
     private val batch: SpriteBatch,
     private val gameCamera: OrthographicCamera,
-    private val game: Game,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
     private lateinit var progressBar: ProgressBar
     private lateinit var loadingText: LoadingText
@@ -64,7 +63,7 @@ class LoadingScreen(
     override fun render(delta: Float) {
         val progress = assetHandler.loadAssets()
         if (progress == Progress(1f)) {
-            game.setScreen<MainMenuScreen>()
+            Game.setScreen<MainMenuScreen>()
         } else {
             batch.use(gameCamera) {
                 // Draw the loading bar
