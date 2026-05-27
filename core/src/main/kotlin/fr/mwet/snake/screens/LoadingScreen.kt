@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
+import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.assets.AssetHandler
 import fr.mwet.snake.assets.Progress
@@ -62,6 +63,7 @@ class LoadingScreen(
     override fun render(delta: Float) {
         val progress = assetHandler.loadAssets()
         if (progress == Progress(1f)) {
+            DI.finishInitAfterAssetsAreLoaded()
             Game.setScreen<MainMenuScreen>()
         } else {
             batch.use(gameCamera) {

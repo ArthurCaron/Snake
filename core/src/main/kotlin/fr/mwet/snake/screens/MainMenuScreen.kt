@@ -36,7 +36,7 @@ class MainMenuScreen(
     private val stageViewport: StageViewport,
     private val gameCamera: OrthographicCamera,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val gameTitle: Image by lazy {
+    private val gameTitle: Image = run {
         scene2d.image(textureHandler.gameTitle) {
             width = gameViewport.screenWidth * 0.95f
             height = width * height / width
@@ -44,7 +44,7 @@ class MainMenuScreen(
         }
     }
 
-    private val playBtn: ImageButton by lazy {
+    private val playBtn: ImageButton = run {
         ImageButton(
             TextureRegionDrawable(textureHandler.playBtn),
             TextureRegionDrawable(textureHandler.playBtnDown)

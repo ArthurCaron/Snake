@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.Game
 import fr.mwet.snake.screens.MainMenuScreen
 
-
 val FOOD_COLORS = arrayOf(Color.GREEN, Color.BLUE, Color.RED, Color.ORANGE, Color.MAGENTA, Color.CYAN)
 
 class GameWorld {
-    val food by lazy { Food() }
-    val snake by lazy { Snake(this) }
+    val food = Food()
+    val snake = Snake(this)
 
     fun show() {
         newGame()
