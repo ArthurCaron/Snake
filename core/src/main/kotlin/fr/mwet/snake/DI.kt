@@ -12,6 +12,7 @@ import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
 import fr.mwet.snake.entities.GameWorld
+import fr.mwet.snake.inputs.general.GeneralInputProcessor
 import fr.mwet.snake.screens.GameScreen
 import fr.mwet.snake.screens.LoadingScreen
 import fr.mwet.snake.screens.MainMenuScreen
@@ -37,6 +38,7 @@ object DI : Context() {
         val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
             Gdx.input.inputProcessor = it
         }
+        inputMultiplexer.addProcessor(withBindSingleton<GeneralInputProcessor> { GeneralInputProcessor() })
 
         // Cameras
         val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }

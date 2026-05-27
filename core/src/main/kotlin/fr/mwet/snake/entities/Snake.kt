@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Timer
 import fr.mwet.snake.DI
 import fr.mwet.snake.assets.SoundHandler
 import fr.mwet.snake.assets.TextureHandler
+import fr.mwet.snake.inputs.game.TargetActor
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.assets.invoke
@@ -17,7 +18,7 @@ import kotlin.random.Random
 
 const val SNAKE_DEFAULT_SPEED = 6f
 
-class Snake(val gameWorld: GameWorld) {
+class Snake(val gameWorld: GameWorld) : TargetActor {
     private val textureHandler = DI.inject<TextureHandler>()
     private val soundHandler = DI.inject<SoundHandler>()
     private val segmentPool = pool { Segment() }
@@ -193,9 +194,9 @@ class Snake(val gameWorld: GameWorld) {
         nextY = head.oy + currentDirection.directionY
     }
 
-    fun setDirection(newDirection: Direction) {
-        if (newDirection.isOpposite(currentDirection)) return
-        currentDirection = newDirection
+    override fun setDirection(direction: Direction) {
+        if (direction.isOpposite(currentDirection)) return
+        currentDirection = direction
     }
 
     fun setSpeed(speed: Float) {
@@ -304,20 +305,5 @@ data class Segment(
         else /* WTF */ Direction.UP
 
         return getAngleFromDirection(direction)
-    }
-}
-
-enum class Direction(val directionX: Int, val directionY: Int) {
-    UP(0, 1),
-    RIGHT(1, 0),
-    DOWN(0, -1),
-    LEFT(-1, 0);
-
-    fun isOpposite(direction: Direction): Boolean {
-        if (this == DOWN && direction == UP) return true
-        if (this == UP && direction == DOWN) return true
-        if (this == RIGHT && direction == LEFT) return true
-        if (this == LEFT && direction == RIGHT) return true
-        return false
     }
 }

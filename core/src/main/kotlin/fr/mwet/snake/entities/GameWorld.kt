@@ -4,7 +4,7 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.Game
-import fr.mwet.snake.inputs.GameInputProcessor
+import fr.mwet.snake.inputs.game.GameInputProcessor
 import fr.mwet.snake.screens.MainMenuScreen
 
 

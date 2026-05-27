@@ -11,7 +11,7 @@ import ktx.assets.DisposableRegistry
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 object Game : KtxGame<KtxScreen>(), DisposableRegistry by DisposableContainer() {
-    private val viewports: MutableList<Viewport> = mutableListOf()
+    private val viewports = mutableListOf<Viewport>()
 
     override fun render() {
         ScreenUtils.clear(Color.BLACK)
