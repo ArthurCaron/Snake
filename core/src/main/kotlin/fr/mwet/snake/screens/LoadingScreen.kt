@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.assets.AssetHandler
 import fr.mwet.snake.assets.Progress
@@ -22,12 +21,12 @@ import ktx.graphics.use
 
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
-class LoadingScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val assetHandler = DI.inject<AssetHandler>()
-    private val game = DI.inject<Game>()
-    private val batch = DI.inject<SpriteBatch>()
-    private val gameCamera = DI.inject<OrthographicCamera>()
-
+class LoadingScreen(
+    private val assetHandler: AssetHandler,
+    private val batch: SpriteBatch,
+    private val gameCamera: OrthographicCamera,
+    private val game: Game,
+) : KtxScreen, DisposableRegistry by DisposableContainer() {
     private lateinit var progressBar: ProgressBar
     private lateinit var loadingText: LoadingText
     private lateinit var loadSegment: Texture

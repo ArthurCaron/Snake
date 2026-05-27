@@ -12,6 +12,10 @@ import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
 import fr.mwet.snake.entities.GameWorld
+import fr.mwet.snake.screens.GameScreen
+import fr.mwet.snake.screens.LoadingScreen
+import fr.mwet.snake.screens.MainMenuScreen
+import fr.mwet.snake.screens.SettingsScreen
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.stage
@@ -21,6 +25,7 @@ import ktx.inject.register
 object DI : Context() {
     fun initialize() =
         register {
+            // Assets
             val assetManager = withBindSingleton<AssetManager> { AssetManager() }
             val assetHandler = withBindSingleton<AssetHandler> { AssetHandler(assetManager) }
             val i18NHandler = withBindSingleton<I18NHandler> { I18NHandler(assetManager) }
@@ -29,35 +34,68 @@ object DI : Context() {
             val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
             val textureHandler = withBindSingleton<TextureHandler> { TextureHandler(assetManager) }
 
+            // Batches
             val spriteBatch = withBindSingleton<SpriteBatch> { SpriteBatch() }
 
+            // Cameras
             val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }
 
+            // Viewports
             val gameViewport = withBindSingleton<GameViewport> { GameViewport(camera) }
-
             val stageViewport = withBindSingleton<StageViewport> { StageViewport() }
 
+            // Stages
             val stage = withBindSingleton<Stage> { stage(spriteBatch, stageViewport) }
 
+            // Input Handlers
             val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
                 it.addProcessor(stage)
                 Gdx.input.inputProcessor = it
             }
 
+            // Game
             val game = withBindSingleton<Game> { Game(gameViewport, stageViewport) }
-            // For when I change my mind again
-//            val loadingScreen = withBindSingleton { LoadingScreen() }
-//            val mainMenuScreen = withBindSingleton { MainMenuScreen() }
-//            val settingsScreen = withBindSingleton { SettingsScreen() }
-//            val gameScreen = withBindSingleton { GameScreen() }
-//
-//            game.addScreen(loadingScreen)
-//            game.addScreen(mainMenuScreen)
-//            game.addScreen(settingsScreen)
-//            game.addScreen(gameScreen)
-//            game.setScreen<LoadingScreen>()
 
             val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
+
+            val loadingScreen = withBindSingleton {
+                LoadingScreen(
+                    assetHandler = assetHandler,
+                    batch = spriteBatch,
+                    gameCamera = camera,
+                    game = game,
+                )
+            }
+            val mainMenuScreen = withBindSingleton {
+                MainMenuScreen(
+                    textureHandler = textureHandler,
+                    soundHandler = soundHandler,
+                    stage = stage,
+                    batch = spriteBatch,
+                    gameViewport = gameViewport,
+                    stageViewport = stageViewport,
+                    gameCamera = camera,
+                    game = game,
+                )
+            }
+            val settingsScreen = withBindSingleton { SettingsScreen() }
+            val gameScreen = withBindSingleton {
+                GameScreen(
+                    textureHandler = textureHandler,
+                    stage = stage,
+                    batch = spriteBatch,
+                    gameViewport = gameViewport,
+                    stageViewport = stageViewport,
+                    gameCamera = camera,
+                    gameWorld = gameWorld,
+                )
+            }
+
+            game.addScreen(loadingScreen)
+            game.addScreen(mainMenuScreen)
+            game.addScreen(settingsScreen)
+            game.addScreen(gameScreen)
+            game.setScreen<LoadingScreen>()
         }
 }
 

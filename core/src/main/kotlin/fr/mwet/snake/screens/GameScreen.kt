@@ -3,7 +3,6 @@ package fr.mwet.snake.screens
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import fr.mwet.snake.DI
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.TextureHandler
@@ -17,15 +16,15 @@ import ktx.assets.DisposableRegistry
 import ktx.graphics.use
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
-class GameScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val stage = DI.inject<Stage>()
-    private val batch = DI.inject<SpriteBatch>()
-    private val gameViewport = DI.inject<GameViewport>()
-    private val stageViewport = DI.inject<StageViewport>()
-    private val gameCamera = DI.inject<OrthographicCamera>()
-    private val textureHandler = DI.inject<TextureHandler>()
-    private val gameWorld = DI.inject<GameWorld>()
-
+class GameScreen(
+    private val textureHandler: TextureHandler,
+    private val stage: Stage,
+    private val batch: SpriteBatch,
+    private val gameViewport: GameViewport,
+    private val stageViewport: StageViewport,
+    private val gameCamera: OrthographicCamera,
+    private val gameWorld: GameWorld,
+) : KtxScreen, DisposableRegistry by DisposableContainer() {
     override fun show() {
         stage.clear()
         gameWorld.show()
