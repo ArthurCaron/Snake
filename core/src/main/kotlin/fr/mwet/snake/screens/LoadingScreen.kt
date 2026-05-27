@@ -26,35 +26,34 @@ class LoadingScreen(
     private val batch: SpriteBatch,
     private val gameCamera: OrthographicCamera,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
-    private lateinit var progressBar: ProgressBar
-    private lateinit var loadingText: LoadingText
-    private lateinit var loadSegment: Texture
-    private lateinit var loadText: Texture
-
-    override fun show() {
+    private val loadSegment = run {
         // Create loading segment part, use Pixmap to generate the texture
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-        pixmap.setColor(Color.WHITE)
-        pixmap.fill()
-        loadSegment = Texture(pixmap)
-        pixmap.dispose()
+        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888).apply {
+            setColor(Color.WHITE)
+            fill()
+        }
+        Texture(pixmap).alsoRegister().also { pixmap.dispose() }
+    }
 
+    private val progressBar = run {
         // Precalculated loading bar positions
         val barWidth = 6f
         val barHeight = 0.5f
-        progressBar = ProgressBar(
+        ProgressBar(
             position = Vector2((WORLD_WIDTH - barWidth) * 0.5f, (WORLD_HEIGHT - barHeight) * 0.5f),
             fullSize = Vector2(barWidth, barHeight),
         )
+    }
 
-        // Load a bitmap text "Loading Assets"
-        loadText = Texture(Gdx.files.internal("LoadingAssets.png"))
-        loadText.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+    private val loadText = Texture(Gdx.files.internal("LoadingAssets.png")).alsoRegister().apply {
+        setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+    }
 
+    private val loadingText = run {
         // Calculate text positions to put in on screen in render loop
         val textWidth = 3f
         val textHeight = textWidth * 16 / 200f
-        loadingText = LoadingText(
+        LoadingText(
             position = Vector2((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f),
             size = Vector2(textWidth, textHeight),
         )
