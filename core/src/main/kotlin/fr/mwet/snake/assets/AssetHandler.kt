@@ -5,7 +5,7 @@ import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 
 class AssetHandler(private val assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
-    private val listeners: MutableList<AssetsLoadedListener> = mutableListOf()
+    private val listeners = mutableListOf<AssetsLoadedListener>()
 
     fun listenToAssetsLoaded(listener: AssetsLoadedListener) {
         listeners.add(listener)
