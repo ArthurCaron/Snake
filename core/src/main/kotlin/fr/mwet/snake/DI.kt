@@ -12,6 +12,7 @@ import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
 import fr.mwet.snake.entities.GameWorld
+import fr.mwet.snake.inputs.game.GameInputProcessor
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
 import fr.mwet.snake.screens.GameScreen
 import fr.mwet.snake.screens.LoadingScreen
@@ -57,8 +58,10 @@ object DI : Context() {
         inputMultiplexer.addProcessor(stage)
 
         // Game World
-        val gameWorld = withBindSingleton<GameWorld> { GameWorld(inputMultiplexer) }
+        val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
+        inputMultiplexer.addProcessor(withBindSingleton<GameInputProcessor> { GameInputProcessor(gameWorld) })
 
+        // Screens
         Game.addScreen(withBindSingleton {
             LoadingScreen(
                 assetHandler = assetHandler,
