@@ -4,12 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation
-import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.Game
@@ -19,6 +16,9 @@ import fr.mwet.snake.assets.SoundHandler
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
+import ktx.actors.onClick
+import ktx.actors.onEnter
+import ktx.actors.onExit
 import ktx.app.KtxScreen
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
@@ -36,61 +36,83 @@ class MainMenuScreen(
     private val stageViewport: StageViewport,
     private val gameCamera: OrthographicCamera,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val gameTitle: Image = run {
-        scene2d.image(textureHandler.gameTitle) {
-            width = gameViewport.screenWidth * 0.95f
-            height = width * height / width
-            setOrigin(Align.center)
-        }
+    private var clickedPlayBtn = false
+    val playBtnDrawable = TextureRegionDrawable(textureHandler.playBtn)
+    val playBtnDownDrawable = TextureRegionDrawable(textureHandler.playBtnDown)
+
+    private val gameTitle: Image = scene2d.image(textureHandler.gameTitle) {
+        val defaultRatio = height / width
+        width = gameViewport.screenWidth * 0.70f
+        height = width * defaultRatio
+        setOrigin(Align.center)
     }
 
-    private val playBtn: ImageButton = run {
-        ImageButton(
-            TextureRegionDrawable(textureHandler.playBtn),
-            TextureRegionDrawable(textureHandler.playBtnDown)
-        ).apply {
-            val playBtnRatio = width / height
-            val playBtnWidth = gameViewport.screenWidth * 0.95f * 0.5f
-            val playBtnHeight = playBtnWidth / playBtnRatio
-            imageCell.width(playBtnWidth).height(playBtnHeight)
-            addListener(object : ClickListener() {
-                override fun clicked(event: InputEvent, x: Float, y: Float) {
-                    super.clicked(event, x, y)
-                    soundHandler.playSwitch()
-                    Game.setScreen<GameScreen>()
-                }
-            })
+    private val playBtn: Image = scene2d.image(playBtnDrawable) {
+        val defaultRatio = height / width
+        width = gameViewport.screenWidth * 0.95f * 0.5f
+        height = width * defaultRatio
+        setOrigin(Align.center)
+    }.apply {
+        onClick {
+            clickedPlayBtn = true
+            soundHandler.playSwitch()
+            playBtn.drawable = playBtnDownDrawable
+            playBtn.addAction(Actions.delay(0.3f, Actions.run {
+                clickedPlayBtn = false
+                playBtn.drawable = playBtnDrawable
+                Game.setScreen<GameScreen>()
+            }))
+        }
+        onEnter {
+            playBtn.addAction(Actions.scaleTo(1.25f, 1.25f, 0.3f, Interpolation.elasticOut))
+        }
+        onExit {
+            if (!clickedPlayBtn) {
+                playBtn.addAction(Actions.scaleTo(1f, 1f, 0.5f, Interpolation.elasticOut))
+            }
         }
     }
 
     override fun show() {
+        animateGameTitle()
+        animatePlayButton()
+    }
+
+    override fun resize(width: Int, height: Int) {
         stage.clear()
 
-        // Game title
         stage.addActor(gameTitle)
-        val graphicsWidth: Float = Gdx.graphics.width.toFloat()
-        val graphicsHeight: Float = Gdx.graphics.height.toFloat()
+        positionGameTitle()
 
+        stage.addActor(playBtn)
+        positionPlayButton()
+    }
+
+    private fun positionGameTitle() {
         gameTitle.setPosition(
-            (graphicsWidth - gameTitle.width) * 0.5f,
-            (graphicsHeight - gameTitle.height) * 0.5f + gameTitle.width * 0.25f
+            (Gdx.graphics.width - gameTitle.width) * 0.5f,
+            (Gdx.graphics.height - gameTitle.height) * 0.75f
         )
-        gameTitle.setScale(0.001f)
+    }
 
-        // GameTitle transition
+    private fun positionPlayButton() {
+        playBtn.setPosition(
+            (Gdx.graphics.width - playBtn.width) * 0.5f,
+            (Gdx.graphics.height - playBtn.height) * 0.25f
+        )
+    }
+
+    private fun animateGameTitle() {
+        gameTitle.setScale(0.001f)
         gameTitle.addAction(
             Actions.delay(0.5f, Actions.scaleTo(1f, 1f, 1.25f, Interpolation.elasticOut))
         )
+    }
 
-        // Show Play button with floating animation
-        stage.addActor(playBtn)
-        playBtn.setPosition(
-            (graphicsWidth - playBtn.width) * 0.5f,
-            (graphicsHeight - gameTitle.height) * 0.5f - playBtn.height
-        )
-        val moveY = gameTitle.height * 0.1f
+    private fun animatePlayButton() {
         playBtn.setColor(1f, 1f, 1f, 0f)
         playBtn.addAction(Actions.delay(0.75f, Actions.fadeIn(0.35f)))
+        val moveY = gameTitle.height * 0.1f
         playBtn.addAction(
             Actions.forever(
                 Actions.sequence(
