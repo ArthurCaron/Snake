@@ -1,6 +1,7 @@
 package fr.mwet.snake
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input.Keys.*
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -12,8 +13,13 @@ import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
 import fr.mwet.snake.entities.GameWorld
-import fr.mwet.snake.inputs.game.GameInputProcessor
+import fr.mwet.snake.inputs.game.*
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
+import fr.mwet.snake.inputs.general.GoBackToMainMenu
+import fr.mwet.snake.save.Jsonifier
+import fr.mwet.snake.save.fileFormats.*
+import fr.mwet.snake.save.fromJson
+import fr.mwet.snake.save.toJson
 import fr.mwet.snake.screens.GameScreen
 import fr.mwet.snake.screens.LoadingScreen
 import fr.mwet.snake.screens.MainMenuScreen
@@ -26,6 +32,34 @@ import ktx.inject.register
 
 object DI : Context() {
     fun initBeforeAssetsAreLoaded() = register {
+        // Save system
+        val jsonifier = withBindSingleton<Jsonifier> { Jsonifier() }
+        val highscoresFile = Highscores(
+            highscores = listOf(
+                Highscore(name = "Test", score = 1000),
+                Highscore(name = "Test2", score = 2000)
+            )
+        ).toJson()
+
+        val keymappingsFile = Keymappings(
+            game = listOf(
+                GameKeymapping(GoUp(), UP),
+                GameKeymapping(GoUp(), W),
+                GameKeymapping(GoRight(), RIGHT),
+                GameKeymapping(GoRight(), D),
+                GameKeymapping(GoDown(), DOWN),
+                GameKeymapping(GoDown(), S),
+                GameKeymapping(GoLeft(), LEFT),
+                GameKeymapping(GoLeft(), A),
+            ), general = listOf(
+                GeneralKeymapping(GoBackToMainMenu(), ESCAPE),
+            )
+        ).toJson()
+
+        // Should get them from file
+        val highscores = highscoresFile.fromJson()
+        val keymapping = withBindSingleton<Keymappings> { keymappingsFile.fromJson() }
+
         // Assets
         val assetManager = withBindSingleton<AssetManager> { AssetManager() }
         val assetHandler = withBindSingleton<AssetHandler> { AssetHandler(assetManager) }
@@ -39,7 +73,9 @@ object DI : Context() {
         val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
             Gdx.input.inputProcessor = it
         }
-        inputMultiplexer.addProcessor(withBindSingleton<GeneralInputProcessor> { GeneralInputProcessor() })
+        inputMultiplexer.addProcessor(withBindSingleton<GeneralInputProcessor> {
+            GeneralInputProcessor(keymapping.general)
+        })
 
         // Cameras
         val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }
@@ -69,6 +105,9 @@ object DI : Context() {
     }
 
     fun finishInitAfterAssetsAreLoaded() = register {
+        // Save system
+        val keymapping = inject<Keymappings>()
+
         // Assets
         val assetHandler = inject<AssetHandler>()
         val i18NHandler = inject<I18NHandler>()
@@ -94,7 +133,9 @@ object DI : Context() {
 
         // Game World
         val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
-        inputMultiplexer.addProcessor(withBindSingleton<GameInputProcessor> { GameInputProcessor(gameWorld) })
+        inputMultiplexer.addProcessor(withBindSingleton<GameInputProcessor> {
+            GameInputProcessor(keymapping.game, gameWorld)
+        })
 
         // Screens
         Game.addScreen(withBindSingleton {

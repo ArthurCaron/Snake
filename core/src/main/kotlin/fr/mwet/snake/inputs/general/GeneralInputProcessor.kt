@@ -1,27 +1,16 @@
 package fr.mwet.snake.inputs.general
 
-import com.badlogic.gdx.Input.Keys.ESCAPE
+import fr.mwet.snake.save.fileFormats.GeneralKeymapping
 import ktx.app.KtxInputAdapter
 
-class GeneralInputProcessor : KtxInputAdapter {
-    private val keycodeMapping = GeneralKeycodeMapping()
+class GeneralInputProcessor(commandToKeycode: List<GeneralKeymapping>) : KtxInputAdapter {
+    private val keycodeMapping: Map<Int, GeneralCommand> = commandToKeycode.associate { it.key to it.action }
 
     override fun keyDown(keycode: Int): Boolean {
-        keycodeMapping.get(keycode)?.let {
+        keycodeMapping[keycode]?.let {
             it.execute()
             return true
         }
         return false
-    }
-}
-
-class GeneralKeycodeMapping {
-    private val keycodeMapping = mutableMapOf<Int, GeneralCommand>()
-
-    fun get(keycode: Int) = keycodeMapping[keycode]
-
-    // TODO: get from file
-    init {
-        keycodeMapping[ESCAPE] = GoBackToMainMenu()
     }
 }
