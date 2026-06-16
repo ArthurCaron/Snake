@@ -1,7 +1,6 @@
 package fr.mwet.snake.game
 
 import com.badlogic.gdx.utils.Pool
-import com.badlogic.gdx.utils.Timer
 import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.game.TargetActor
@@ -10,7 +9,6 @@ import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.assets.invoke
 import ktx.assets.pool
 import kotlin.math.abs
-import kotlin.random.Random
 
 const val SNAKE_DEFAULT_SPEED = 6f
 
@@ -24,14 +22,12 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
     private var nextX: Int = 0
     private var nextY: Int = 0
     private var currentSpeed = SNAKE_DEFAULT_SPEED
-    var isDisintegrating = false
 
     init {
         reset()
     }
 
     fun reset() {
-        isDisintegrating = false
         currentDirection = Direction.UP
         currentSpeed = SNAKE_DEFAULT_SPEED
 
@@ -52,8 +48,6 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
     }
 
     fun update(delta: Float) {
-        if (isDisintegrating) return
-
         var segment: Segment? = tail
         while (segment != null) {
             val next = segment.next
@@ -67,7 +61,7 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
         head.x += (nextX - head.ox) * delta * currentSpeed
         head.y += (nextY - head.oy) * delta * currentSpeed
 
-        if (hitBoundariesTest() || hitBodyTest()) disintegrate()
+        if (hitBoundariesTest() || hitBodyTest()) gameEventBus.emit(GameOver)
 
         if (abs(nextX - head.x) < 0.15f && abs(nextY - head.y) < 0.15f) shiftSegments()
     }
@@ -140,19 +134,7 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
             }
             segment = segment.next!!
         }
-        if (abs(head.x - x) < 0.15f && abs(head.y - y) < 0.15f) {
-            return true
-        }
-        return false
-    }
-
-    private fun disintegrate() {
-        isDisintegrating = true
-        Timer.schedule(object : Timer.Task() {
-            override fun run() {
-                gameEventBus.emit(GameOver)
-            }
-        }, 1.5f)
+        return abs(head.x - x) < 0.15f && abs(head.y - y) < 0.15f
     }
 
     private fun addSegment(ox: Int, oy: Int) {
@@ -169,10 +151,6 @@ data class Segment(
     var x: Float = ox.toFloat()
     var y: Float = oy.toFloat()
     var next: Segment? = null
-
-    val tx: Float = Random.nextInt(0, WORLD_WIDTH.toInt() - 1).toFloat()
-    val ty: Float = Random.nextInt(0, WORLD_WIDTH.toInt() - 1).toFloat()
-    val angle: Float = Random.nextInt(0, 360).toFloat()
 
     fun updatePosition(ox: Int, oy: Int) {
         this.ox = ox

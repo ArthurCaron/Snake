@@ -13,8 +13,6 @@ class SnakeRenderer(private val snake: Snake) {
     private val textureHandler = DI.inject<TextureHandler>()
 
     private var eTime = 0f
-    private val originalAnimation =
-        Animation(1f / 8f, textureHandler.snakeSegmentAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private val animation =
         Animation(1f / 2f, textureHandler.snakeHeadAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private val animationFlipped =
@@ -23,24 +21,21 @@ class SnakeRenderer(private val snake: Snake) {
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
 
-        if (snake.isDisintegrating) {
-            playDisintegrateEffect(delta, batch)
-        } else {
-            var segment: Segment? = snake.tail
-            while (segment != null) {
-                when (segment) {
-                    snake.tail -> drawSegment(batch, segment, textureHandler.snakeTail)
-                    snake.head -> {}
-                    else -> drawSegment(batch, segment, textureHandler.snakeBody)
+        var segment: Segment? = snake.tail
+        while (segment != null) {
+            when (segment) {
+                snake.tail -> drawSegment(batch, segment, textureHandler.snakeTail)
+                snake.head -> {
+                    if (snake.currentDirection == Direction.LEFT) {
+                        drawHead(batch, snake.head, animation)
+                    } else {
+                        drawHead(batch, snake.head, animationFlipped)
+                    }
                 }
-                segment = segment.next
-            }
 
-            if (snake.currentDirection == Direction.LEFT) {
-                drawHead(batch, snake.head, animation)
-            } else {
-                drawHead(batch, snake.head, animationFlipped)
+                else -> drawSegment(batch, segment, textureHandler.snakeBody)
             }
+            segment = segment.next
         }
     }
 
@@ -76,27 +71,6 @@ class SnakeRenderer(private val snake: Snake) {
             1f,
             segment.getAngleFromNext()
         )
-    }
-
-    private fun playDisintegrateEffect(delta: Float, batch: SpriteBatch) {
-        var segment: Segment? = snake.tail
-        while (segment != null) {
-            segment.x += (segment.tx - segment.x) * delta * 2f
-            segment.y += (segment.ty - segment.y) * delta * 2f
-            batch.draw(
-                originalAnimation.getKeyFrame(eTime),
-                segment.x,
-                segment.y,
-                0.5f,
-                0.5f,
-                1f,
-                1f,
-                1f,
-                1f,
-                segment.angle
-            )
-            segment = segment.next
-        }
     }
 
     fun Segment.getAngleFromNext(): Float {
