@@ -6,7 +6,6 @@ import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.game.TargetActor
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
-import ktx.assets.invoke
 import ktx.assets.pool
 import kotlin.math.abs
 
@@ -23,10 +22,6 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
     private var nextY: Int = 0
     private var currentSpeed = SNAKE_DEFAULT_SPEED
 
-    init {
-        reset()
-    }
-
     fun reset() {
         currentDirection = Direction.UP
         currentSpeed = SNAKE_DEFAULT_SPEED
@@ -35,13 +30,13 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
             var segment: Segment? = tail
             while (segment != null) {
                 val next = segment.next
-                segmentPool(segment)
+                segmentPool.free(segment)
                 segment = next
             }
         }
 
-        head = segmentPool().apply { updatePosition(3, 3) }
-        tail = segmentPool().apply { updatePosition(4, 3) }
+        head = segmentPool.obtain().apply { updatePosition(3, 3) }
+        tail = segmentPool.obtain().apply { updatePosition(4, 3) }
         tail.next = head
 
         updateNext()
@@ -138,7 +133,7 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
     }
 
     private fun addSegment(ox: Int, oy: Int) {
-        val segment = segmentPool().apply { updatePosition(ox, oy) }
+        val segment = segmentPool.obtain().apply { updatePosition(ox, oy) }
         head.next = segment
         head = segment
     }
