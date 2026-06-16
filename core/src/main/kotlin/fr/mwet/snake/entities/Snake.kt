@@ -1,14 +1,9 @@
 package fr.mwet.snake.entities
 
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.Animation
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.Timer
 import fr.mwet.snake.DI
 import fr.mwet.snake.assets.SoundHandler
-import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.inputs.game.TargetActor
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
@@ -20,26 +15,17 @@ import kotlin.random.Random
 const val SNAKE_DEFAULT_SPEED = 6f
 
 class Snake(val gameWorld: GameWorld) : TargetActor {
-    private val textureHandler = DI.inject<TextureHandler>()
     private val soundHandler = DI.inject<SoundHandler>()
     private val segmentPool = pool { Segment() }
 
-    private var eTime = 0f
-    private val originalAnimation =
-        Animation(1f / 8f, textureHandler.snakeSegmentAnimation, Animation.PlayMode.LOOP_PINGPONG)
-    private val animation =
-        Animation(1f / 2f, textureHandler.snakeHeadAnimation, Animation.PlayMode.LOOP_PINGPONG)
-    private val animationFlipped =
-        Animation(1f / 2f, textureHandler.snakeHeadFlippedAnimation, Animation.PlayMode.LOOP_PINGPONG)
-    private var color = Color.WHITE
-    private lateinit var head: Segment
-    private lateinit var tail: Segment
+    lateinit var head: Segment
+    lateinit var tail: Segment
 
-    private var currentDirection: Direction = Direction.UP
+    var currentDirection: Direction = Direction.UP
     private var nextX: Int = 0
     private var nextY: Int = 0
     private var currentSpeed = SNAKE_DEFAULT_SPEED
-    private var isDisintegrating = false
+    var isDisintegrating = false
 
     init {
         reset()
@@ -47,9 +33,7 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
 
     fun reset() {
         isDisintegrating = false
-        eTime = 0f
         currentDirection = Direction.UP
-        color = Color.WHITE
         currentSpeed = SNAKE_DEFAULT_SPEED
 
         if (this::head.isInitialized) {
@@ -87,96 +71,6 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
         if (hitBoundariesTest() || hitBodyTest()) disintegrate()
 
         if (abs(nextX - head.x) < 0.15f && abs(nextY - head.y) < 0.15f) shiftSegments()
-    }
-
-    fun render(batch: SpriteBatch, delta: Float) {
-        eTime += delta
-
-        if (isDisintegrating) {
-            playDisintegrateEffect(delta, batch)
-        } else {
-            var segment: Segment? = tail
-            while (segment != null) {
-                when (segment) {
-                    tail -> drawTail(batch, segment)
-                    head -> {}
-                    else -> drawBody(batch, segment)
-                }
-                segment = segment.next
-            }
-
-            if (currentDirection == Direction.LEFT) {
-                drawHead(animation, batch)
-            } else {
-                drawHead(animationFlipped, batch)
-            }
-        }
-    }
-
-    private fun drawHead(animation: Animation<TextureAtlas.AtlasRegion>, batch: SpriteBatch) {
-        batch.draw(
-            animation.getKeyFrame(eTime),
-            head.x,
-            head.y,
-            0.5f,
-            0.5f,
-            1f,
-            1f,
-            1f,
-            1f,
-            head.getAngleFromDirection(currentDirection)
-        )
-    }
-
-    private fun drawBody(batch: SpriteBatch, segment: Segment) {
-        batch.draw(
-            textureHandler.snakeBody,
-            segment.x,
-            segment.y,
-            0.5f,
-            0.5f,
-            1f,
-            1f,
-            1f,
-            1f,
-            segment.getAngleFromNext()
-        )
-    }
-
-    private fun drawTail(batch: SpriteBatch, segment: Segment) {
-        batch.draw(
-            textureHandler.snakeTail,
-            segment.x,
-            segment.y,
-            0.5f,
-            0.5f,
-            1f,
-            1f,
-            1f,
-            1f,
-            segment.getAngleFromNext()
-        )
-    }
-
-    private fun playDisintegrateEffect(delta: Float, batch: SpriteBatch) {
-        var segment: Segment? = tail
-        while (segment != null) {
-            segment.x += (segment.tx - segment.x) * delta * 2f
-            segment.y += (segment.ty - segment.y) * delta * 2f
-            batch.draw(
-                originalAnimation.getKeyFrame(eTime),
-                segment.x,
-                segment.y,
-                0.5f,
-                0.5f,
-                1f,
-                1f,
-                1f,
-                1f,
-                segment.angle
-            )
-            segment = segment.next
-        }
     }
 
     private fun shiftSegments() {
@@ -297,25 +191,5 @@ data class Segment(
         x = 0f
         y = 0f
         next = null
-    }
-
-    fun getAngleFromDirection(direction: Direction): Float {
-        return when (direction) {
-            Direction.UP -> 270f
-            Direction.RIGHT -> 180f
-            Direction.DOWN -> 90f
-            Direction.LEFT -> 0f
-        }
-    }
-
-    fun getAngleFromNext(): Float {
-        val direction = if (next == null) Direction.UP
-        else if (ox < next!!.ox) Direction.RIGHT
-        else if (ox > next!!.ox) Direction.LEFT
-        else if (oy > next!!.oy) Direction.DOWN
-        else if (oy < next!!.oy) Direction.UP
-        else /* WTF */ Direction.UP
-
-        return getAngleFromDirection(direction)
     }
 }

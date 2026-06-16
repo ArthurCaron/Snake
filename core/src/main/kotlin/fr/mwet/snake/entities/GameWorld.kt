@@ -3,12 +3,14 @@ package fr.mwet.snake.entities
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.Game
 import fr.mwet.snake.render.FoodRenderer
+import fr.mwet.snake.render.SnakeRenderer
 import fr.mwet.snake.screens.MainMenuScreen
 
 class GameWorld {
     val food = Food()
     val foodRenderer = FoodRenderer(food)
     val snake = Snake(this)
+    val snakeRenderer = SnakeRenderer(snake)
 
     fun show() {
         newGame()
@@ -17,6 +19,7 @@ class GameWorld {
     private fun newGame() {
         snake.reset()
         snake.setSpeed(3f)
+        snakeRenderer.reset()
         food.newFood(snake) // Should give a list of possible places instead, or forbidden places
         foodRenderer.reset()
     }
@@ -31,6 +34,6 @@ class GameWorld {
         }
         foodRenderer.render(batch, delta)
         snake.update(delta)
-        snake.render(batch, delta)
+        snakeRenderer.render(batch, delta)
     }
 }
