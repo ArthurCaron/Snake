@@ -1,15 +1,18 @@
 package fr.mwet.snake.entities
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import fr.mwet.snake.DI
 import fr.mwet.snake.Game
+import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.render.FoodRenderer
 import fr.mwet.snake.render.SnakeRenderer
 import fr.mwet.snake.screens.MainMenuScreen
 
 class GameWorld {
+    val gameEventBus = DI.inject<GameEventBus>()
     val food = Food()
     val foodRenderer = FoodRenderer(food)
-    val snake = Snake(this)
+    val snake = Snake(this, gameEventBus)
     val snakeRenderer = SnakeRenderer(snake)
 
     fun show() {

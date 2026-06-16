@@ -2,8 +2,9 @@ package fr.mwet.snake.entities
 
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.Timer
-import fr.mwet.snake.DI
-import fr.mwet.snake.assets.SoundHandler
+import fr.mwet.snake.events.GameEvent.FoodEaten
+import fr.mwet.snake.events.GameEvent.SnakeMoved
+import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.game.TargetActor
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
@@ -14,8 +15,7 @@ import kotlin.random.Random
 
 const val SNAKE_DEFAULT_SPEED = 6f
 
-class Snake(val gameWorld: GameWorld) : TargetActor {
-    private val soundHandler = DI.inject<SoundHandler>()
+class Snake(val gameWorld: GameWorld, val gameEventBus: GameEventBus) : TargetActor {
     private val segmentPool = pool { Segment() }
 
     lateinit var head: Segment
@@ -74,7 +74,7 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
     }
 
     private fun shiftSegments() {
-        soundHandler.playMove()
+        gameEventBus.emit(SnakeMoved)
 
         var segment = tail
         while (segment != head) {
@@ -110,7 +110,7 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
         if (abs(head.x - food.x) < 0.1f && abs(head.y - food.y) < 0.1f) {
             updateNext()
             addSegment(nextX, nextY)
-            soundHandler.playEat()
+            gameEventBus.emit(FoodEaten)
             return true
         }
         return false

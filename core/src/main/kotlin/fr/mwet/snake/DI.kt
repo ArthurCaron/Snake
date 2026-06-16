@@ -13,6 +13,8 @@ import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
 import fr.mwet.snake.entities.GameWorld
+import fr.mwet.snake.events.GameEventBus
+import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.inputs.game.*
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
 import fr.mwet.snake.inputs.general.GoBackToMainMenu
@@ -66,7 +68,8 @@ object DI : Context() {
         val i18NHandler = withBindSingleton<I18NHandler> { I18NHandler(assetManager) }
         assetHandler.listenToAssetsLoaded(i18NHandler)
         bindSingleton<MusicHandler> { MusicHandler(assetManager) }
-        bindSingleton<SoundHandler> { SoundHandler(assetManager) }
+        val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
+        val soundPlayer = withBindSingleton<SoundPlayer> { SoundPlayer(soundHandler) }
         bindSingleton<TextureHandler> { TextureHandler(assetManager) }
 
         // Input Handlers
@@ -102,6 +105,22 @@ object DI : Context() {
         })
 
         Game.setScreen<LoadingScreen>()
+
+        // Event Bus
+        bindSingleton<GameEventBus> {
+            GameEventBus(
+                listOf(
+                    soundPlayer,
+                )
+            )
+        }
+        bindSingleton<MenuEventBus> {
+            MenuEventBus(
+                listOf(
+                    soundPlayer,
+                )
+            )
+        }
     }
 
     fun finishInitAfterAssetsAreLoaded() = register {
@@ -112,7 +131,7 @@ object DI : Context() {
         val assetHandler = inject<AssetHandler>()
         val i18NHandler = inject<I18NHandler>()
         val musicHandler = inject<MusicHandler>()
-        val soundHandler = inject<SoundHandler>()
+        val soundPlayer = inject<SoundPlayer>()
         val textureHandler = inject<TextureHandler>()
 
         // Input Handlers
@@ -131,6 +150,9 @@ object DI : Context() {
         // Stages
         val stage = inject<Stage>()
 
+        // Event Bus
+        val menuEventBus = inject<MenuEventBus>()
+
         // Game World
         val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
         inputMultiplexer.addProcessor(withBindSingleton<GameInputProcessor> {
@@ -141,7 +163,7 @@ object DI : Context() {
         Game.addScreen(withBindSingleton {
             MainMenuScreen(
                 textureHandler = textureHandler,
-                soundHandler = soundHandler,
+                menuEventBus = menuEventBus,
                 stage = stage,
                 batch = spriteBatch,
                 gameViewport = gameViewport,
