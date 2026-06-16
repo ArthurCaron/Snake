@@ -12,8 +12,9 @@ import fr.mwet.snake.render.SnakeRenderer
 import fr.mwet.snake.screens.MainMenuScreen
 
 class GameWorld(gameEventBus: GameEventBus) : GameEventListener {
-    val food = Food()
+    val food: Food = Food()
     val snake = Snake(gameEventBus)
+    val cells = Cells()
     val foodRenderer = FoodRenderer(food)
     val snakeRenderer = SnakeRenderer(snake)
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(snake)
@@ -27,9 +28,10 @@ class GameWorld(gameEventBus: GameEventBus) : GameEventListener {
     private fun newGame() {
         gameOver = false
         snake.reset()
-        snake.setSpeed(3f)
+        snake.setSpeed(8f)
         snakeRenderer.reset()
-        food.newFood(snake) // Should give a list of possible places instead, or forbidden places
+        val availableCells = cells.computeAvailableCells(snake)
+        food.reset(availableCells)
         foodRenderer.reset()
         disintegratingSnakeRenderer.reset()
     }
@@ -39,7 +41,8 @@ class GameWorld(gameEventBus: GameEventBus) : GameEventListener {
 
         snake.update(delta)
         if (snake.hitFoodTest(food)) {
-            food.newFood(snake)
+            val availableCells = cells.computeAvailableCells(snake)
+            food.reset(availableCells)
         }
     }
 
