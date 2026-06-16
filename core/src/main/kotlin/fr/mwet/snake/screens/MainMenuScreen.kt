@@ -12,8 +12,9 @@ import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
-import fr.mwet.snake.assets.SoundHandler
 import fr.mwet.snake.assets.TextureHandler
+import fr.mwet.snake.events.MenuEvent
+import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.onClick
@@ -29,7 +30,7 @@ import ktx.scene2d.scene2d
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class MainMenuScreen(
     private val textureHandler: TextureHandler,
-    private val soundHandler: SoundHandler,
+    private val menuEventBus: MenuEventBus,
     private val stage: Stage,
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
@@ -55,7 +56,7 @@ class MainMenuScreen(
     }.apply {
         onClick {
             clickedPlayBtn = true
-            soundHandler.playSwitch()
+            menuEventBus.emit(MenuEvent.PlayGameClicked)
             playBtn.drawable = playBtnDownDrawable
             playBtn.addAction(Actions.delay(0.3f, Actions.run {
                 clickedPlayBtn = false
