@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Timer
+import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
@@ -42,6 +43,11 @@ class GameScreen(
         foodRenderer.reset()
         snakeRenderer.reset()
         disintegratingSnakeRenderer.reset()
+        DI.registerGameInputProcessor()
+    }
+
+    override fun hide() {
+        DI.unRegisterGameInputProcessor()
     }
 
     override fun render(delta: Float) {

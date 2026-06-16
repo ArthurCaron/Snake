@@ -19,7 +19,6 @@ import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.game.*
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
-import fr.mwet.snake.inputs.general.GoBackToMainMenu
 import fr.mwet.snake.inputs.general.StartGame
 import fr.mwet.snake.save.Jsonifier
 import fr.mwet.snake.save.fileFormats.*
@@ -51,6 +50,7 @@ object DI : Context() {
 
         val keymappingsFile = Keymappings(
             game = listOf(
+                GameKeymapping(GoBackToMainMenu(), ESCAPE),
                 GameKeymapping(GoUp(), UP),
                 GameKeymapping(GoUp(), W),
                 GameKeymapping(GoRight(), RIGHT),
@@ -60,7 +60,6 @@ object DI : Context() {
                 GameKeymapping(GoLeft(), LEFT),
                 GameKeymapping(GoLeft(), A),
             ), general = listOf(
-                GeneralKeymapping(GoBackToMainMenu(), ESCAPE),
                 GeneralKeymapping(StartGame(), ENTER)
             )
         ).toJson()
@@ -85,9 +84,9 @@ object DI : Context() {
         val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
             Gdx.input.inputProcessor = it
         }
-        inputMultiplexer.addProcessor(withBindSingleton<GeneralInputProcessor> {
+        bindSingleton<GeneralInputProcessor> {
             GeneralInputProcessor(keymapping.general)
-        })
+        }
 
         // Cameras
         val camera = withBindSingleton<OrthographicCamera> { OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT) }
@@ -150,10 +149,9 @@ object DI : Context() {
         // Game World
         val gameWorld = withBindSingleton<GameWorld> { GameWorld(gameEventBus) }
         gameEventBus.listen(gameWorld)
-        val gameInputProcessor = withBindSingleton<GameInputProcessor> {
+        bindSingleton<GameInputProcessor> {
             GameInputProcessor(keymapping.game, gameWorld)
         }
-        inputMultiplexer.addProcessor(gameInputProcessor)
 
         // Screens
         val mainMenuScreen = withBindSingleton {
@@ -186,6 +184,30 @@ object DI : Context() {
         Game.addScreen(mainMenuScreen)
         Game.addScreen(settingsScreen)
         Game.addScreen(gameScreen)
+    }
+
+    fun registerGameInputProcessor() {
+        val gameInputProcessor = inject<GameInputProcessor>()
+        val inputMultiplexer = inject<InputMultiplexer>()
+        inputMultiplexer.addProcessor(gameInputProcessor)
+    }
+
+    fun unRegisterGameInputProcessor() {
+        val gameInputProcessor = inject<GameInputProcessor>()
+        val inputMultiplexer = inject<InputMultiplexer>()
+        inputMultiplexer.removeProcessor(gameInputProcessor)
+    }
+
+    fun registerGeneralInputProcessor() {
+        val generalInputProcessor = inject<GeneralInputProcessor>()
+        val inputMultiplexer = inject<InputMultiplexer>()
+        inputMultiplexer.addProcessor(generalInputProcessor)
+    }
+
+    fun unRegisterGeneralInputProcessor() {
+        val generalInputProcessor = inject<GeneralInputProcessor>()
+        val inputMultiplexer = inject<InputMultiplexer>()
+        inputMultiplexer.removeProcessor(generalInputProcessor)
     }
 }
 
