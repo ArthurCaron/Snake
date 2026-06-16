@@ -1,13 +1,18 @@
 package fr.mwet.snake.events
 
-class MenuEventBus {
+interface MenuEventBus {
+    fun listen(listener: MenuEventListener)
+    fun emit(menuEvent: MenuEvent)
+}
+
+class MenuEventBusImpl : MenuEventBus {
     private val listeners = mutableListOf<MenuEventListener>()
 
-    fun listen(listener: MenuEventListener) {
+    override fun listen(listener: MenuEventListener) {
         listeners.add(listener)
     }
 
-    fun emit(menuEvent: MenuEvent) {
+    override fun emit(menuEvent: MenuEvent) {
         listeners.forEach { it.onEvent(menuEvent) }
     }
 }
