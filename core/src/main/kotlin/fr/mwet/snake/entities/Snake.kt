@@ -216,7 +216,6 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
         if (abs(head.x - food.x) < 0.1f && abs(head.y - food.y) < 0.1f) {
             updateNext()
             addSegment(nextX, nextY)
-            color = food.color
             soundHandler.playEat()
             return true
         }
