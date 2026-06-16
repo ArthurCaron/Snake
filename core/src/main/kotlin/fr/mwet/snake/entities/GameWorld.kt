@@ -1,14 +1,13 @@
 package fr.mwet.snake.entities
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.Game
+import fr.mwet.snake.render.FoodRenderer
 import fr.mwet.snake.screens.MainMenuScreen
-
-val FOOD_COLORS = arrayOf(Color.GREEN, Color.BLUE, Color.RED, Color.ORANGE, Color.MAGENTA, Color.CYAN)
 
 class GameWorld {
     val food = Food()
+    val foodRenderer = FoodRenderer(food)
     val snake = Snake(this)
 
     fun show() {
@@ -18,7 +17,8 @@ class GameWorld {
     private fun newGame() {
         snake.reset()
         snake.setSpeed(3f)
-        food.reset(snake) // Should give a list of possible places instead, or forbidden places
+        food.newFood(snake) // Should give a list of possible places instead, or forbidden places
+        foodRenderer.reset()
     }
 
     fun lost() {
@@ -26,10 +26,10 @@ class GameWorld {
     }
 
     fun render(batch: SpriteBatch, delta: Float) {
-        food.render(batch, delta)
         if (snake.hitFoodTest(food)) {
             food.newFood(snake)
         }
+        foodRenderer.render(batch, delta)
         snake.update(delta)
         snake.render(batch, delta)
     }
