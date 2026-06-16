@@ -2,8 +2,7 @@ package fr.mwet.snake.game
 
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.Timer
-import fr.mwet.snake.events.GameEvent.FoodEaten
-import fr.mwet.snake.events.GameEvent.SnakeMoved
+import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.game.TargetActor
 import fr.mwet.snake.utils.WORLD_HEIGHT
@@ -15,7 +14,7 @@ import kotlin.random.Random
 
 const val SNAKE_DEFAULT_SPEED = 6f
 
-class Snake(val gameWorld: GameWorld, val gameEventBus: GameEventBus) : TargetActor {
+class Snake(val gameEventBus: GameEventBus) : TargetActor {
     private val segmentPool = pool { Segment() }
 
     lateinit var head: Segment
@@ -151,7 +150,7 @@ class Snake(val gameWorld: GameWorld, val gameEventBus: GameEventBus) : TargetAc
         isDisintegrating = true
         Timer.schedule(object : Timer.Task() {
             override fun run() {
-                gameWorld.lost()
+                gameEventBus.emit(GameOver)
             }
         }, 1.5f)
     }
