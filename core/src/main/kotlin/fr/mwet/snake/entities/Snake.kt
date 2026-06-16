@@ -125,7 +125,6 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
         var index = 0
         while (segment != head) {
             if (abs(segment.x - head.x) < 0.15f && abs(segment.y - head.y) < 0.15f) {
-                println("Hit body: $index")
                 return true
             }
             segment = segment.next!!
@@ -138,13 +137,11 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
         var segment = tail
         while (segment.next != null) {
             if (abs(segment.x - x) < 0.15f && abs(segment.y - y) < 0.15f) {
-                println("Collides: $x, $y")
                 return true
             }
             segment = segment.next!!
         }
         if (abs(head.x - x) < 0.15f && abs(head.y - y) < 0.15f) {
-            println("Collides: $x, $y")
             return true
         }
         return false
