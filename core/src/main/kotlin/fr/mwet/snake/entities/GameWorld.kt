@@ -30,6 +30,7 @@ class GameWorld {
         if (snake.hitFoodTest(food)) {
             food.newFood(snake)
         }
+        snake.update(delta)
         snake.render(batch, delta)
     }
 }

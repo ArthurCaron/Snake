@@ -3,6 +3,7 @@ package fr.mwet.snake.entities
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.Timer
 import fr.mwet.snake.DI
@@ -67,107 +68,115 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
         updateNext()
     }
 
+    fun update(delta: Float) {
+        if (isDisintegrating) return
+
+        var segment: Segment? = tail
+        while (segment != null) {
+            val next = segment.next
+            if (next != null) {
+                segment.x += (next.ox - segment.ox) * delta * currentSpeed
+                segment.y += (next.oy - segment.oy) * delta * currentSpeed
+            }
+            segment = next
+        }
+
+        head.x += (nextX - head.ox) * delta * currentSpeed
+        head.y += (nextY - head.oy) * delta * currentSpeed
+
+        if (hitBoundariesTest() || hitBodyTest()) disintegrate()
+
+        if (abs(nextX - head.x) < 0.15f && abs(nextY - head.y) < 0.15f) shiftSegments()
+    }
+
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
-//        batch.setColor(color)
 
         if (isDisintegrating) {
-            var segment: Segment? = tail
-            while (segment != null) {
-                segment.x += (segment.tx - segment.x) * delta * 2f
-                segment.y += (segment.ty - segment.y) * delta * 2f
-                batch.draw(
-                    originalAnimation.getKeyFrame(eTime),
-                    segment.x,
-                    segment.y,
-                    0.5f,
-                    0.5f,
-                    1f,
-                    1f,
-                    1f,
-                    1f,
-                    segment.angle
-                )
-                segment = segment.next
-            }
+            playDisintegrateEffect(delta, batch)
         } else {
             var segment: Segment? = tail
             while (segment != null) {
-                val next = segment.next
-                if (next != null) {
-                    segment.x += (next.ox - segment.ox) * delta * currentSpeed
-                    segment.y += (next.oy - segment.oy) * delta * currentSpeed
+                when (segment) {
+                    tail -> drawTail(batch, segment)
+                    head -> {}
+                    else -> drawBody(batch, segment)
                 }
-                if (segment == tail) {
-//                    batch.draw(assetHandler.snakeTail, segment.x, segment.y, 1f, 1f)
-                    batch.draw(
-                        textureHandler.snakeTail,
-                        segment.x,
-                        segment.y,
-                        0.5f,
-                        0.5f,
-                        1f,
-                        1f,
-                        1f,
-                        1f,
-                        segment.getAngleFromNext()
-                    )
-                } else if (segment == head) {
-                } else {
-//                    batch.draw(animation.getKeyFrame(eTime), segment.x, segment.y, 1f, 1f)
-                    batch.draw(
-                        textureHandler.snakeBody,
-                        segment.x,
-                        segment.y,
-                        0.5f,
-                        0.5f,
-                        1f,
-                        1f,
-                        1f,
-                        1f,
-                        segment.getAngleFromNext()
-                    )
-                }
-                segment = next
+                segment = segment.next
             }
 
-            head.x += (nextX - head.ox) * delta * currentSpeed
-            head.y += (nextY - head.oy) * delta * currentSpeed
-
-            if (hitBoundariesTest() || hitBodyTest()) disintegrate()
-
-//            batch.draw(animation.getKeyFrame(eTime), head.x, head.y, 1f, 1f)
-            if (currentDirection == Direction.RIGHT) {
-                batch.draw(
-                    animationFlipped.getKeyFrame(eTime),
-                    head.x,
-                    head.y,
-                    0.5f,
-                    0.5f,
-                    1f,
-                    1f,
-                    1f,
-                    1f,
-                    head.getAngleFromDirection(currentDirection)
-                )
+            if (currentDirection == Direction.LEFT) {
+                drawHead(animation, batch)
             } else {
-                batch.draw(
-                    animation.getKeyFrame(eTime),
-                    head.x,
-                    head.y,
-                    0.5f,
-                    0.5f,
-                    1f,
-                    1f,
-                    1f,
-                    1f,
-                    head.getAngleFromDirection(currentDirection)
-                )
+                drawHead(animationFlipped, batch)
             }
-            if (abs(nextX - head.x) < 0.15f && abs(nextY - head.y) < 0.15f) shiftSegments()
         }
+    }
 
-//        batch.resetColor()
+    private fun drawHead(animation: Animation<TextureAtlas.AtlasRegion>, batch: SpriteBatch) {
+        batch.draw(
+            animation.getKeyFrame(eTime),
+            head.x,
+            head.y,
+            0.5f,
+            0.5f,
+            1f,
+            1f,
+            1f,
+            1f,
+            head.getAngleFromDirection(currentDirection)
+        )
+    }
+
+    private fun drawBody(batch: SpriteBatch, segment: Segment) {
+        batch.draw(
+            textureHandler.snakeBody,
+            segment.x,
+            segment.y,
+            0.5f,
+            0.5f,
+            1f,
+            1f,
+            1f,
+            1f,
+            segment.getAngleFromNext()
+        )
+    }
+
+    private fun drawTail(batch: SpriteBatch, segment: Segment) {
+        batch.draw(
+            textureHandler.snakeTail,
+            segment.x,
+            segment.y,
+            0.5f,
+            0.5f,
+            1f,
+            1f,
+            1f,
+            1f,
+            segment.getAngleFromNext()
+        )
+    }
+
+    private fun playDisintegrateEffect(delta: Float, batch: SpriteBatch) {
+        var segment: Segment? = tail
+        while (segment != null) {
+            segment.x += (segment.tx - segment.x) * delta * 2f
+            segment.y += (segment.ty - segment.y) * delta * 2f
+            batch.draw(
+                originalAnimation.getKeyFrame(eTime),
+                segment.x,
+                segment.y,
+                0.5f,
+                0.5f,
+                1f,
+                1f,
+                1f,
+                1f,
+                segment.angle
+            )
+            segment = segment.next
+        }
     }
 
     private fun shiftSegments() {
