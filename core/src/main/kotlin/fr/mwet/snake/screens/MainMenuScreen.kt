@@ -15,6 +15,7 @@ import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventBus
+import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.onClick
@@ -36,7 +37,7 @@ class MainMenuScreen(
     private val gameViewport: GameViewport,
     private val stageViewport: StageViewport,
     private val gameCamera: OrthographicCamera,
-) : KtxScreen, DisposableRegistry by DisposableContainer() {
+) : MenuEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
     private var clickedPlayBtn = false
     val playBtnDrawable = TextureRegionDrawable(textureHandler.playBtn)
     val playBtnDownDrawable = TextureRegionDrawable(textureHandler.playBtnDown)
@@ -55,14 +56,7 @@ class MainMenuScreen(
         setOrigin(Align.center)
     }.apply {
         onClick {
-            clickedPlayBtn = true
             menuEventBus.emit(MenuEvent.PlayGameClicked)
-            playBtn.drawable = playBtnDownDrawable
-            playBtn.addAction(Actions.delay(0.3f, Actions.run {
-                clickedPlayBtn = false
-                playBtn.drawable = playBtnDrawable
-                Game.setScreen<GameScreen>()
-            }))
         }
         onEnter {
             playBtn.addAction(Actions.scaleTo(1.25f, 1.25f, 0.3f, Interpolation.elasticOut))
@@ -134,5 +128,22 @@ class MainMenuScreen(
         stageViewport.apply(true)
         stage.act(delta)
         stage.draw()
+    }
+
+    override fun onEvent(event: MenuEvent) {
+        println(event)
+        when (event) {
+            MenuEvent.PlayGameClicked -> playGame()
+        }
+    }
+
+    fun playGame() {
+        clickedPlayBtn = true
+        playBtn.drawable = playBtnDownDrawable
+        playBtn.addAction(Actions.delay(0.3f, Actions.run {
+            clickedPlayBtn = false
+            playBtn.drawable = playBtnDrawable
+            Game.setScreen<GameScreen>()
+        }))
     }
 }

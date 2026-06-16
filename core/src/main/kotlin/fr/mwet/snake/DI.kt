@@ -18,6 +18,7 @@ import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.game.*
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
 import fr.mwet.snake.inputs.general.GoBackToMainMenu
+import fr.mwet.snake.inputs.general.StartGame
 import fr.mwet.snake.save.Jsonifier
 import fr.mwet.snake.save.fileFormats.*
 import fr.mwet.snake.save.fromJson
@@ -34,6 +35,10 @@ import ktx.inject.register
 
 object DI : Context() {
     fun initBeforeAssetsAreLoaded() = register {
+        // Event Bus
+        val gameEventBus = withBindSingleton<GameEventBus> { GameEventBus() }
+        val menuEventBus = withBindSingleton<MenuEventBus> { MenuEventBus() }
+
         // Save system
         val jsonifier = withBindSingleton<Jsonifier> { Jsonifier() }
         val highscoresFile = Highscores(
@@ -54,6 +59,7 @@ object DI : Context() {
                 GameKeymapping(GoLeft(), A),
             ), general = listOf(
                 GeneralKeymapping(GoBackToMainMenu(), ESCAPE),
+                GeneralKeymapping(StartGame(), ENTER)
             )
         ).toJson()
 
@@ -69,6 +75,8 @@ object DI : Context() {
         bindSingleton<MusicHandler> { MusicHandler(assetManager) }
         val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
         val soundPlayer = withBindSingleton<SoundPlayer> { SoundPlayer(soundHandler) }
+        gameEventBus.listen(soundPlayer)
+        menuEventBus.listen(soundPlayer)
         bindSingleton<TextureHandler> { TextureHandler(assetManager) }
 
         // Input Handlers
@@ -104,14 +112,6 @@ object DI : Context() {
         })
 
         Game.setScreen<LoadingScreen>()
-
-        // Event Bus
-        bindSingleton<GameEventBus> {
-            GameEventBus(mutableListOf(soundPlayer))
-        }
-        bindSingleton<MenuEventBus> {
-            MenuEventBus(mutableListOf(soundPlayer))
-        }
     }
 
     fun finishInitAfterAssetsAreLoaded() = register {
@@ -154,7 +154,7 @@ object DI : Context() {
         inputMultiplexer.addProcessor(gameInputProcessor)
 
         // Screens
-        Game.addScreen(withBindSingleton {
+        val mainMenuScreen = withBindSingleton {
             MainMenuScreen(
                 textureHandler = textureHandler,
                 menuEventBus = menuEventBus,
@@ -164,7 +164,9 @@ object DI : Context() {
                 stageViewport = stageViewport,
                 gameCamera = camera,
             )
-        })
+        }
+        menuEventBus.listen(mainMenuScreen)
+        Game.addScreen(mainMenuScreen)
         Game.addScreen(withBindSingleton { SettingsScreen() })
         Game.addScreen(withBindSingleton {
             GameScreen(
