@@ -15,16 +15,13 @@ import ktx.assets.getValue
 import ktx.assets.loadAsset
 import ktx.collections.toGdxArray
 
-private const val TEXTURES_ROOT = "assets/textures"
+private const val TEXTURES_ATLAS_ROOT = "textures/textures.atlas"
 private val BACKGROUND_COLOR = Color.valueOf("#1f1f1f")
 
 class TextureHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
     // Texture Atlas
     private val textureAtlas by assetManager.loadAsset(
-        AssetDescriptor(
-            "$TEXTURES_ROOT/textures.atlas",
-            TextureAtlas::class.java
-        )
+        AssetDescriptor(TEXTURES_ATLAS_ROOT, TextureAtlas::class.java)
     )
 
     // Cursor
