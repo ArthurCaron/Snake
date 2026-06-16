@@ -1,4 +1,4 @@
-package fr.mwet.snake.entities
+package fr.mwet.snake.game
 
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.Timer

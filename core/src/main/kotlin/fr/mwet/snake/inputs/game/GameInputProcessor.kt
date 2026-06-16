@@ -1,6 +1,6 @@
 package fr.mwet.snake.inputs.game
 
-import fr.mwet.snake.entities.GameWorld
+import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.save.fileFormats.GameKeymapping
 import ktx.app.KtxInputAdapter
 

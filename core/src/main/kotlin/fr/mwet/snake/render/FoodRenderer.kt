@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.DI
 import fr.mwet.snake.assets.TextureHandler
-import fr.mwet.snake.entities.Food
+import fr.mwet.snake.game.Food
 
 class FoodRenderer(private val food: Food) {
     private val textureHandler = DI.inject<TextureHandler>()

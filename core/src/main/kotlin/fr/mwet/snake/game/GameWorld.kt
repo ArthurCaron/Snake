@@ -1,4 +1,4 @@
-package fr.mwet.snake.entities
+package fr.mwet.snake.game
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.DI

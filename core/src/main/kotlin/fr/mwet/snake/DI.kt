@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
-import fr.mwet.snake.entities.GameWorld
+import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.inputs.game.*
