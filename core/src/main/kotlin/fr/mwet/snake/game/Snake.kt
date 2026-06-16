@@ -121,17 +121,6 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
         return false
     }
 
-    fun collides(x: Int, y: Int): Boolean {
-        var segment = tail
-        while (segment.next != null) {
-            if (abs(segment.x - x) < 0.15f && abs(segment.y - y) < 0.15f) {
-                return true
-            }
-            segment = segment.next!!
-        }
-        return abs(head.x - x) < 0.15f && abs(head.y - y) < 0.15f
-    }
-
     private fun addSegment(ox: Int, oy: Int) {
         val segment = segmentPool.obtain().apply { updatePosition(ox, oy) }
         head.next = segment
