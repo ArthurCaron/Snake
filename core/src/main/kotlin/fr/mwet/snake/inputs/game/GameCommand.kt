@@ -1,6 +1,8 @@
 package fr.mwet.snake.inputs.game
 
+import fr.mwet.snake.Game
 import fr.mwet.snake.game.Direction
+import fr.mwet.snake.screens.MainMenuScreen
 
 interface GameCommand {
     fun execute(targetActor: TargetActor)
@@ -8,6 +10,12 @@ interface GameCommand {
 
 interface TargetActor {
     fun setDirection(direction: Direction)
+}
+
+class GoBackToMainMenu : GameCommand {
+    override fun execute(targetActor: TargetActor) {
+        Game.setScreen<MainMenuScreen>()
+    }
 }
 
 class GoUp : GameCommand {

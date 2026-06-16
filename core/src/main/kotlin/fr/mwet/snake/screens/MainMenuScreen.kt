@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
+import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
@@ -71,6 +72,11 @@ class MainMenuScreen(
     override fun show() {
         animateGameTitle()
         animatePlayButton()
+        DI.registerGeneralInputProcessor()
+    }
+
+    override fun hide() {
+        DI.unRegisterGeneralInputProcessor()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -131,7 +137,6 @@ class MainMenuScreen(
     }
 
     override fun onEvent(event: MenuEvent) {
-        println(event)
         when (event) {
             MenuEvent.PlayGameClicked -> playGame()
         }
