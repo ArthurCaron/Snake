@@ -49,7 +49,7 @@ class Food {
     }
 
     private fun randomizePosition() {
-        x = Random.nextInt(0, WORLD_WIDTH.toInt() - 1)
-        y = Random.nextInt(0, WORLD_HEIGHT.toInt() - 1)
+        x = Random.nextInt(0, WORLD_WIDTH.toInt())
+        y = Random.nextInt(0, WORLD_HEIGHT.toInt())
     }
 }

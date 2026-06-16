@@ -250,6 +250,10 @@ class Snake(val gameWorld: GameWorld) : TargetActor {
             }
             segment = segment.next!!
         }
+        if (abs(head.x - x) < 0.15f && abs(head.y - y) < 0.15f) {
+            println("Collides: $x, $y")
+            return true
+        }
         return false
     }
 
