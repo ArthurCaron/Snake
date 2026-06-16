@@ -16,9 +16,9 @@ class GameWorld {
     }
 
     private fun newGame() {
-        food.reset(snake) // Should give a list of possible places instead, or forbidden places
         snake.reset()
         snake.setSpeed(3f)
+        food.reset(snake) // Should give a list of possible places instead, or forbidden places
     }
 
     fun lost() {
