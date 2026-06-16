@@ -4,34 +4,6 @@ size: 512, 128
 format: RGBA8888
 filter: MipMapLinearLinear, MipMapLinearLinear
 repeat: none
-Food
-  rotate: false
-  xy: 488, 116
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: 0
-Food
-  rotate: false
-  xy: 78, 14
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: 1
-Food
-  rotate: false
-  xy: 350, 48
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: 2
-SnakeSegment
-  rotate: false
-  xy: 350, 48
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: 0
 GameTitle
   rotate: false
   xy: 2, 58
@@ -86,13 +58,6 @@ SnakeHeadAnimation
   xy: 180, 24
   size: 32, 32
   orig: 32, 32
-  offset: 0, 0
-  index: 1
-SnakeSegment
-  rotate: false
-  xy: 488, 106
-  size: 8, 8
-  orig: 8, 8
   offset: 0, 0
   index: 1
 SnakeTail
