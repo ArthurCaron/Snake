@@ -12,9 +12,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
-import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.MenuEventBus
+import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.game.*
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
 import fr.mwet.snake.inputs.general.GoBackToMainMenu
@@ -38,8 +38,7 @@ object DI : Context() {
         val jsonifier = withBindSingleton<Jsonifier> { Jsonifier() }
         val highscoresFile = Highscores(
             highscores = listOf(
-                Highscore(name = "Test", score = 1000),
-                Highscore(name = "Test2", score = 2000)
+                Highscore(name = "Test", score = 1000), Highscore(name = "Test2", score = 2000)
             )
         ).toJson()
 
@@ -108,18 +107,10 @@ object DI : Context() {
 
         // Event Bus
         bindSingleton<GameEventBus> {
-            GameEventBus(
-                listOf(
-                    soundPlayer,
-                )
-            )
+            GameEventBus(mutableListOf(soundPlayer))
         }
         bindSingleton<MenuEventBus> {
-            MenuEventBus(
-                listOf(
-                    soundPlayer,
-                )
-            )
+            MenuEventBus(mutableListOf(soundPlayer))
         }
     }
 
@@ -151,13 +142,16 @@ object DI : Context() {
         val stage = inject<Stage>()
 
         // Event Bus
+        val gameEventBus = inject<GameEventBus>()
         val menuEventBus = inject<MenuEventBus>()
 
         // Game World
-        val gameWorld = withBindSingleton<GameWorld> { GameWorld() }
-        inputMultiplexer.addProcessor(withBindSingleton<GameInputProcessor> {
+        val gameWorld = withBindSingleton<GameWorld> { GameWorld(gameEventBus) }
+        gameEventBus.listen(gameWorld)
+        val gameInputProcessor = withBindSingleton<GameInputProcessor> {
             GameInputProcessor(keymapping.game, gameWorld)
-        })
+        }
+        inputMultiplexer.addProcessor(gameInputProcessor)
 
         // Screens
         Game.addScreen(withBindSingleton {
