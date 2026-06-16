@@ -34,8 +34,6 @@ class TextureHandler(assetManager: AssetManager) : DisposableRegistry by Disposa
 
     // Gameplay
     val gridCell: AtlasRegion by lazy { textureAtlas.findRegion("GridCell") }
-    val foodAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("Food") }
-    val snakeSegmentAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("SnakeSegment") }
 
     val strawberry: AtlasRegion by lazy { textureAtlas.findRegion("Strawberry") }
     val strawberryAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("StrawberryAnimation") }

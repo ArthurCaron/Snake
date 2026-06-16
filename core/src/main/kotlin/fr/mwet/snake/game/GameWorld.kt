@@ -34,15 +34,19 @@ class GameWorld(gameEventBus: GameEventBus) : GameEventListener {
         disintegratingSnakeRenderer.reset()
     }
 
-    fun render(batch: SpriteBatch, delta: Float) {
-        if (gameOver) {
-            disintegratingSnakeRenderer.render(batch, delta)
-            return
-        }
+    fun update(delta: Float) {
+        if (gameOver) return
 
         snake.update(delta)
         if (snake.hitFoodTest(food)) {
             food.newFood(snake)
+        }
+    }
+
+    fun render(batch: SpriteBatch, delta: Float) {
+        if (gameOver) {
+            disintegratingSnakeRenderer.render(batch, delta)
+            return
         }
         foodRenderer.render(batch, delta)
         snakeRenderer.render(batch, delta)

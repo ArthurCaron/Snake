@@ -35,6 +35,7 @@ class GameScreen(
         batch.use(gameCamera) {
             it.draw(textureHandler.background, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
             drawGridMap(it)
+            gameWorld.update(delta)
             gameWorld.render(it, delta)
         }
 
