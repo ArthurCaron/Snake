@@ -1,13 +1,18 @@
 package fr.mwet.snake.events
 
-class GameEventBus {
+interface GameEventBus {
+    fun listen(listener: GameEventListener)
+    fun emit(gameEvent: GameEvent)
+}
+
+class GameEventBusImpl : GameEventBus {
     private val listeners = mutableListOf<GameEventListener>()
 
-    fun listen(listener: GameEventListener) {
+    override fun listen(listener: GameEventListener) {
         listeners.add(listener)
     }
 
-    fun emit(gameEvent: GameEvent) {
+    override fun emit(gameEvent: GameEvent) {
         listeners.forEach { it.onEvent(gameEvent) }
     }
 }

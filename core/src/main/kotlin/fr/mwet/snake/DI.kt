@@ -13,7 +13,9 @@ import fr.mwet.snake.DI.bindSingleton
 import fr.mwet.snake.DI.inject
 import fr.mwet.snake.assets.*
 import fr.mwet.snake.events.GameEventBus
+import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.events.MenuEventBus
+import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.game.*
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
@@ -36,8 +38,8 @@ import ktx.inject.register
 object DI : Context() {
     fun initBeforeAssetsAreLoaded() = register {
         // Event Bus
-        val gameEventBus = withBindSingleton<GameEventBus> { GameEventBus() }
-        val menuEventBus = withBindSingleton<MenuEventBus> { MenuEventBus() }
+        val gameEventBus = withBindSingleton<GameEventBus> { GameEventBusImpl() }
+        val menuEventBus = withBindSingleton<MenuEventBus> { MenuEventBusImpl() }
 
         // Save system
         val jsonifier = withBindSingleton<Jsonifier> { Jsonifier() }
