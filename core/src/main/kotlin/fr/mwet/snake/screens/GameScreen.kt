@@ -3,10 +3,17 @@ package fr.mwet.snake.screens
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.Timer
+import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.TextureHandler
+import fr.mwet.snake.events.GameEvent
+import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.game.GameWorld
+import fr.mwet.snake.render.DisintegratingSnakeRenderer
+import fr.mwet.snake.render.FoodRenderer
+import fr.mwet.snake.render.SnakeRenderer
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
@@ -24,24 +31,58 @@ class GameScreen(
     private val stageViewport: StageViewport,
     private val gameCamera: OrthographicCamera,
     private val gameWorld: GameWorld,
-) : KtxScreen, DisposableRegistry by DisposableContainer() {
+) : GameEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
+    val foodRenderer = FoodRenderer(gameWorld.food)
+    val snakeRenderer = SnakeRenderer(gameWorld.snake)
+    val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(gameWorld.snake)
+
     override fun show() {
         stage.clear()
-        gameWorld.show()
+        gameWorld.newGame()
+        foodRenderer.reset()
+        snakeRenderer.reset()
+        disintegratingSnakeRenderer.reset()
     }
 
     override fun render(delta: Float) {
+        gameWorld.update(delta)
+
         gameViewport.apply(true)
         batch.use(gameCamera) {
             it.draw(textureHandler.background, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
             drawGridMap(it)
-            gameWorld.update(delta)
-            gameWorld.render(it, delta)
+            render(it, delta)
         }
 
         stageViewport.apply()
         stage.act(delta)
         stage.draw()
+    }
+
+    fun render(batch: SpriteBatch, delta: Float) {
+        if (gameWorld.gameOver) {
+            disintegratingSnakeRenderer.render(batch, delta)
+            return
+        }
+        foodRenderer.render(batch, delta)
+        snakeRenderer.render(batch, delta)
+    }
+
+    override fun onEvent(event: GameEvent) {
+        when (event) {
+            GameEvent.GameOver -> gameOver()
+            GameEvent.FoodEaten -> {}
+            GameEvent.SnakeMoved -> {}
+        }
+    }
+
+    private fun gameOver() {
+        disintegratingSnakeRenderer.disintegrate(gameWorld.snake)
+        Timer.schedule(object : Timer.Task() {
+            override fun run() {
+                Game.setScreen<MainMenuScreen>()
+            }
+        }, 1.5f)
     }
 
     private fun drawGridMap(batch: SpriteBatch) {

@@ -165,10 +165,8 @@ object DI : Context() {
                 gameCamera = camera,
             )
         }
-        menuEventBus.listen(mainMenuScreen)
-        Game.addScreen(mainMenuScreen)
-        Game.addScreen(withBindSingleton { SettingsScreen() })
-        Game.addScreen(withBindSingleton {
+        val settingsScreen = withBindSingleton { SettingsScreen() }
+        val gameScreen = withBindSingleton {
             GameScreen(
                 textureHandler = textureHandler,
                 stage = stage,
@@ -178,7 +176,14 @@ object DI : Context() {
                 gameCamera = camera,
                 gameWorld = gameWorld,
             )
-        })
+        }
+
+        menuEventBus.listen(mainMenuScreen)
+        gameEventBus.listen(gameScreen)
+
+        Game.addScreen(mainMenuScreen)
+        Game.addScreen(settingsScreen)
+        Game.addScreen(gameScreen)
     }
 }
 
