@@ -5,8 +5,8 @@ data class Food(
     var y: Int = 0,
 ) {
     fun reset(availableCells: Set<Cell>) {
-        val randomCell = availableCells.random()
-        x = randomCell.x
-        y = randomCell.y
+        val randomCell = availableCells.randomOrNull()
+        x = randomCell?.x ?: 0
+        y = randomCell?.y ?: 0
     }
 }
