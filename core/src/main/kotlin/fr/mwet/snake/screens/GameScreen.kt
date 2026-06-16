@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.TextureHandler
-import fr.mwet.snake.entities.GameWorld
+import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor

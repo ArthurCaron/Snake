@@ -1,4 +1,4 @@
-package fr.mwet.snake.entities
+package fr.mwet.snake.game
 
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH

@@ -1,4 +1,4 @@
-package fr.mwet.snake.entities
+package fr.mwet.snake.game
 
 enum class Direction(val directionX: Int, val directionY: Int) {
     UP(0, 1),
