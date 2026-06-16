@@ -8,8 +8,8 @@ class Cells {
     private val blockedCells = mutableSetOf<Cell>()
 
     init {
-        (0..WORLD_WIDTH.toInt()).forEach { width ->
-            (0..WORLD_HEIGHT.toInt()).forEach { height ->
+        (0..<WORLD_WIDTH.toInt()).forEach { width ->
+            (0..<WORLD_HEIGHT.toInt()).forEach { height ->
                 availableCells.add(Cell(width, height))
             }
         }
@@ -18,14 +18,14 @@ class Cells {
     fun computeAvailableCells(snake: Snake): Set<Cell> {
         freeAllCells()
 
-        blockedCells.add(Cell(snake.head.x.toInt(), snake.head.y.toInt()))
-        blockedCells.add(Cell(snake.tail.x.toInt(), snake.tail.y.toInt()))
+        blockedCells.add(Cell(snake.head.ox, snake.head.oy))
+        blockedCells.add(Cell(snake.tail.ox, snake.tail.oy))
 
         var segment: Segment? = snake.tail.next
         while (segment != null) {
             val next = segment.next
             if (next != null) {
-                blockedCells.add(Cell(segment.x.toInt(), segment.y.toInt()))
+                blockedCells.add(Cell(segment.ox, segment.oy))
             }
             segment = next
         }
