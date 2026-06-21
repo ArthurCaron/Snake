@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import fr.mwet.snake.DI.bindSingleton
@@ -30,7 +29,6 @@ import fr.mwet.snake.screens.MainMenuScreen
 import fr.mwet.snake.screens.SettingsScreen
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
-import ktx.actors.stage
 import ktx.inject.Context
 import ktx.inject.register
 
@@ -81,8 +79,8 @@ object DI : Context() {
         bindSingleton<TextureHandler> { TextureHandler(assetManager) }
 
         // Input Handlers
-        val inputMultiplexer = withBindSingleton<InputMultiplexer> { InputMultiplexer() }.also {
-            Gdx.input.inputProcessor = it
+        bindSingleton<InputMultiplexer> {
+            InputMultiplexer().also { Gdx.input.inputProcessor = it }
         }
         bindSingleton<GeneralInputProcessor> {
             GeneralInputProcessor(keymapping.general)
@@ -94,15 +92,9 @@ object DI : Context() {
         // Viewports
         val gameViewport = withBindSingleton<GameViewport> { GameViewport(camera) }
         Game.addViewport(gameViewport)
-        val stageViewport = withBindSingleton<StageViewport> { StageViewport() }
-        Game.addViewport(stageViewport)
 
         // Batches
         val spriteBatch = withBindSingleton<SpriteBatch> { SpriteBatch() }
-
-        // Stages
-        val stage = withBindSingleton<Stage> { stage(spriteBatch, stageViewport) }
-        inputMultiplexer.addProcessor(stage)
 
         Game.addScreen(withBindSingleton {
             LoadingScreen(
@@ -111,7 +103,6 @@ object DI : Context() {
                 gameCamera = camera,
             )
         })
-
         Game.setScreen<LoadingScreen>()
     }
 
@@ -120,10 +111,6 @@ object DI : Context() {
         val keymapping = inject<Keymappings>()
 
         // Assets
-        val assetHandler = inject<AssetHandler>()
-        val i18NHandler = inject<I18NHandler>()
-        val musicHandler = inject<MusicHandler>()
-        val soundPlayer = inject<SoundPlayer>()
         val textureHandler = inject<TextureHandler>()
 
         // Input Handlers
@@ -134,13 +121,9 @@ object DI : Context() {
 
         // Viewports
         val gameViewport = inject<GameViewport>()
-        val stageViewport = inject<StageViewport>()
 
         // Batches
         val spriteBatch = inject<SpriteBatch>()
-
-        // Stages
-        val stage = inject<Stage>()
 
         // Event Bus
         val gameEventBus = inject<GameEventBus>()
@@ -156,12 +139,11 @@ object DI : Context() {
         // Screens
         val mainMenuScreen = withBindSingleton {
             MainMenuScreen(
-                textureHandler = textureHandler,
                 menuEventBus = menuEventBus,
-                stage = stage,
+                textureHandler = textureHandler,
+                inputMultiplexer = inputMultiplexer,
                 batch = spriteBatch,
                 gameViewport = gameViewport,
-                stageViewport = stageViewport,
                 gameCamera = camera,
             )
         }
@@ -169,10 +151,9 @@ object DI : Context() {
         val gameScreen = withBindSingleton {
             GameScreen(
                 textureHandler = textureHandler,
-                stage = stage,
+                inputMultiplexer = inputMultiplexer,
                 batch = spriteBatch,
                 gameViewport = gameViewport,
-                stageViewport = stageViewport,
                 gameCamera = camera,
                 gameWorld = gameWorld,
             )
