@@ -1,8 +1,8 @@
 package fr.mwet.snake.screens
 
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Timer
 import fr.mwet.snake.DI
 import fr.mwet.snake.Game
@@ -18,6 +18,7 @@ import fr.mwet.snake.render.SnakeRenderer
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
+import ktx.actors.stage
 import ktx.app.KtxScreen
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
@@ -25,14 +26,21 @@ import ktx.graphics.use
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class GameScreen(
-    private val textureHandler: TextureHandler,
-    private val stage: Stage,
+    textureHandler: TextureHandler,
+    inputMultiplexer: InputMultiplexer,
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
-    private val stageViewport: StageViewport,
     private val gameCamera: OrthographicCamera,
     private val gameWorld: GameWorld,
 ) : GameEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
+    private val stageViewport = StageViewport().also {
+        Game.addViewport(it)
+    }
+    private val stage = stage(batch, stageViewport).also {
+        inputMultiplexer.addProcessor(it)
+    }
+    private val backgroundTexture = textureHandler.background
+    private val gridCellTexture = textureHandler.gridCell
     val foodRenderer = FoodRenderer(gameWorld.food)
     val snakeRenderer = SnakeRenderer(gameWorld.snake)
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(gameWorld.snake)
@@ -55,7 +63,7 @@ class GameScreen(
 
         gameViewport.apply(true)
         batch.use(gameCamera) {
-            it.draw(textureHandler.background, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+            it.draw(backgroundTexture, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
             drawGridMap(it)
             render(it, delta)
         }
@@ -95,7 +103,7 @@ class GameScreen(
         batch.setColor(1f, 1f, 1f, 0.05f)
         (0..<WORLD_WIDTH.toInt()).forEach { x ->
             (0..<WORLD_HEIGHT.toInt()).forEach { y ->
-                batch.draw(textureHandler.gridCell, x.toFloat(), y.toFloat(), 1f, 1f)
+                batch.draw(gridCellTexture, x.toFloat(), y.toFloat(), 1f, 1f)
             }
         }
         batch.resetColor()

@@ -1,12 +1,12 @@
 package fr.mwet.snake.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation.elasticOut
 import com.badlogic.gdx.math.Interpolation.linear
 import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Image
@@ -25,6 +25,7 @@ import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.onClick
 import ktx.actors.onEnter
 import ktx.actors.onExit
+import ktx.actors.stage
 import ktx.app.KtxScreen
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
@@ -34,14 +35,19 @@ import ktx.scene2d.scene2d
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class MainMenuScreen(
-    textureHandler: TextureHandler,
     menuEventBus: MenuEventBus,
-    private val stage: Stage,
+    textureHandler: TextureHandler,
+    inputMultiplexer: InputMultiplexer,
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
-    private val stageViewport: StageViewport,
     private val gameCamera: OrthographicCamera,
 ) : MenuEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
+    private val stageViewport = StageViewport().also {
+        Game.addViewport(it)
+    }
+    private val stage = stage(batch, stageViewport).also {
+        inputMultiplexer.addProcessor(it)
+    }
     private val backgroundTexture = textureHandler.background
     private val mainMenuTitle = MainMenuTitle(textureHandler, gameViewport)
     private val playButton = PlayButton(textureHandler, gameViewport, menuEventBus)
