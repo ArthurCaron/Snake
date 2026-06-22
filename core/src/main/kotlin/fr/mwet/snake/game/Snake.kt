@@ -1,151 +1,151 @@
 package fr.mwet.snake.game
 
-import com.badlogic.gdx.utils.Pool
-import fr.mwet.snake.events.GameEvent.SnakeMoved
-import fr.mwet.snake.events.GameEventBus
+import com.badlogic.gdx.math.Vector2
+import fr.mwet.snake.DI
 import fr.mwet.snake.inputs.game.TargetActor
-import fr.mwet.snake.utils.Direction
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.utils.*
 import ktx.assets.pool
-import kotlin.math.abs
 
-private const val SNAKE_DEFAULT_SPEED = 6f
+private const val TICKS_PER_SECOND = 3f
+private const val SECONDS_PER_TICK = 1f / TICKS_PER_SECOND
 
-class Snake(val gameEventBus: GameEventBus) : TargetActor {
-    private val segmentPool = pool { Segment() }
+class Snake(private val initialTailPosition: Vector2, private val initialDirection: Direction) : TargetActor {
+    private val snakeSegmentPool = SnakeSegmentPool()
 
-    lateinit var head: Segment
-    lateinit var tail: Segment
+    private val initialHeadPosition = DI.vectorPool.obtain(
+        initialTailPosition.x + initialDirection.directionX,
+        initialTailPosition.y + initialDirection.directionY
+    )
 
-    var currentDirection: Direction = Direction.UP
-    private var nextX: Int = 0
-    private var nextY: Int = 0
-    private var currentSpeed = SNAKE_DEFAULT_SPEED
+    val head = snakeSegmentPool.obtain(initialHeadPosition.copyVector())
+    val tail = snakeSegmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
+    var currentDirection = initialDirection
+    var futureDirection = currentDirection
+    private var secondsSinceLastTick: Float = 0f
+    private var isEating = false
 
     fun reset() {
-        currentDirection = Direction.UP
-        currentSpeed = SNAKE_DEFAULT_SPEED
+        head.position.move(initialHeadPosition)
+        tail.position.move(initialTailPosition)
+        freeBodyParts()
+        tail.linkPrevious(head)
+        currentDirection = initialDirection
+        futureDirection = currentDirection
+        secondsSinceLastTick = 0f
+    }
 
-        if (this::head.isInitialized) {
-            var segment: Segment? = tail
-            while (segment != null) {
-                val next = segment.next
-                segmentPool.free(segment)
-                segment = next
+    private fun freeBodyParts() {
+        var bodyPart = head.next
+        var next: SnakeSegment?
+        while (bodyPart != null) {
+            next = bodyPart.next
+            if (bodyPart != tail) {
+                snakeSegmentPool.free(bodyPart)
             }
+            bodyPart = next
         }
-
-        head = segmentPool.obtain().apply { updatePosition(3, 3) }
-        tail = segmentPool.obtain().apply { updatePosition(3, 2) }
-        tail.next = head
-
-        updateNext()
     }
 
-    fun update(delta: Float) {
-        var segment: Segment? = tail
-        while (segment != null) {
-            val next = segment.next
-            if (next != null) {
-                segment.x += (next.ox - segment.ox) * delta * currentSpeed
-                segment.y += (next.oy - segment.oy) * delta * currentSpeed
-            }
-            segment = next
-        }
+    fun update(delta: Float): Boolean {
+        secondsSinceLastTick += delta
+        if (secondsSinceLastTick < SECONDS_PER_TICK) return false
 
-        head.x += (nextX - head.ox) * delta * currentSpeed
-        head.y += (nextY - head.oy) * delta * currentSpeed
-
-        if (abs(nextX - head.x) < 0.15f && abs(nextY - head.y) < 0.15f) shiftSegments()
+        secondsSinceLastTick %= SECONDS_PER_TICK
+        move()
+        return true
     }
 
-    private fun shiftSegments() {
-        gameEventBus.emit(SnakeMoved)
-
-        var segment = tail
-        while (segment != head) {
-            val next = segment.next!!
-            segment.x = next.ox.toFloat()
-            segment.ox = next.ox
-            segment.y = next.oy.toFloat()
-            segment.oy = next.oy
-            segment = next
-        }
-        head.x = nextX.toFloat()
-        head.ox = nextX
-        head.y = nextY.toFloat()
-        head.oy = nextY
-        updateNext()
-    }
-
-    private fun updateNext() {
-        nextX = head.ox + currentDirection.directionX
-        nextY = head.oy + currentDirection.directionY
+    fun move() {
+        currentDirection = futureDirection
+        head.move(currentDirection)
+        isEating = false
+        tail.stayStill = false
     }
 
     override fun setDirection(newDirection: Direction) {
         if (newDirection.isOpposite(currentDirection)) return
-        currentDirection = newDirection
+        futureDirection = newDirection
     }
 
-    fun setSpeed(speed: Float) {
-        currentSpeed = speed
+    fun eatFood() {
+        if (isEating) return
+        isEating = true
+        tail.stayStill = true
+        val newBodyPart = snakeSegmentPool.obtain(tail.position.copyVector())
+        tail.previous?.let { newBodyPart.linkPrevious(it) }
+        newBodyPart.linkNext(tail)
     }
 
-    fun hasEatenFood(food: Food): Boolean {
-        return abs(head.x - food.position.x) < 0.1f && abs(head.y - food.position.y) < 0.1f
-    }
-
-    fun ateFood() {
-        updateNext()
-        addSegment(nextX, nextY)
-    }
-
-    fun hitBoundariesTest(): Boolean {
-        return head.x < (-1 + 0.15f) || head.x >= WORLD_WIDTH || head.y < (-1 + 0.15f) || head.y >= WORLD_HEIGHT
-    }
-
-    fun hitBodyTest(): Boolean {
-        var segment = tail
-        var index = 0
-        while (segment != head) {
-            if (abs(segment.x - head.x) < 0.15f && abs(segment.y - head.y) < 0.15f) {
-                return true
-            }
-            segment = segment.next!!
-            index++
-        }
-        return false
-    }
-
-    private fun addSegment(ox: Int, oy: Int) {
-        val segment = segmentPool.obtain().apply { updatePosition(ox, oy) }
-        head.next = segment
-        head = segment
+    fun collidesWithBoundaries() = head.collidesWithBoundaries()
+    fun collidesWithOwnBody() = head.collidesWithOwnBody()
+    fun collidesWithFood(food: Food) = head.collidesWith(food.position)
+    fun willCollideWithFood(food: Food): Boolean {
+        val vector = head.position.copyVector().move(futureDirection)
+        val doesCollide = vector.collidesWith(food.position)
+        vector.free()
+        return doesCollide
     }
 }
 
-data class Segment(
-    var ox: Int = 0,
-    var oy: Int = 0,
-) : Pool.Poolable {
-    var x: Float = ox.toFloat()
-    var y: Float = oy.toFloat()
-    var next: Segment? = null
+class SnakeSegmentPool {
+    private val snakeSegmentPool = pool { SnakeSegment(Vector2.Zero) }
 
-    fun updatePosition(ox: Int, oy: Int) {
-        this.ox = ox
-        this.oy = oy
-        x = ox.toFloat()
-        y = oy.toFloat()
+    fun obtain(position: Vector2): SnakeSegment = snakeSegmentPool.obtain().apply { this.position = position }
+    fun free(snakeSegment: SnakeSegment) {
+        snakeSegment.position.free()
+        snakeSegmentPool.free(snakeSegment)
+    }
+}
+
+data class SnakeSegment(var position: Vector2) {
+    var next: SnakeSegment? = null
+    var previous: SnakeSegment? = null
+    var stayStill: Boolean = false
+
+    fun linkNext(snakeSegment: SnakeSegment) {
+        next = snakeSegment
+        snakeSegment.previous = this
     }
 
-    override fun reset() {
-        ox = 0
-        oy = 0
-        x = 0f
-        y = 0f
-        next = null
+    fun linkPrevious(snakeSegment: SnakeSegment) {
+        previous = snakeSegment
+        snakeSegment.next = this
+    }
+
+    fun move(direction: Direction) {
+        if (stayStill) return
+        next?.move(position)
+        position.move(direction)
+    }
+
+    fun move(newPosition: Vector2) {
+        if (stayStill) return
+        next?.move(position)
+        position.move(newPosition)
+    }
+
+    fun collidesWith(otherPosition: Vector2): Boolean =
+        position.x == otherPosition.x && position.y == otherPosition.y
+
+    fun collidesWithBoundaries(): Boolean {
+        if (position.x < 0) return true
+        if (position.y < 0) return true
+        if (position.x >= WORLD_WIDTH) return true
+        if (position.y >= WORLD_HEIGHT) return true
+        return false
+    }
+
+    fun collidesWithOwnBody(): Boolean {
+        var bodyPart = previous
+        while (bodyPart != null) {
+            if (collidesWith(bodyPart.position)) return true
+            bodyPart = bodyPart.previous
+        }
+        bodyPart = next
+        while (bodyPart != null) {
+            if (collidesWith(bodyPart.position)) return true
+            bodyPart = bodyPart.next
+        }
+        return false
     }
 }

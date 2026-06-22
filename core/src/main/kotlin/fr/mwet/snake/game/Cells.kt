@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.DI
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.utils.copyVector
+import fr.mwet.snake.utils.free
 import ktx.assets.pool
 
 class Cells {
@@ -22,16 +24,10 @@ class Cells {
     fun computeAvailableCells(snake: Snake): Set<Cell> {
         freeAllCells()
 
-        blockedCells.add(cellPool.obtain(DI.vectorPool.obtain(snake.head.ox, snake.head.oy)))
-        blockedCells.add(cellPool.obtain(DI.vectorPool.obtain(snake.tail.ox, snake.tail.oy)))
-
-        var segment: Segment? = snake.tail.next
-        while (segment != null) {
-            val next = segment.next
-            if (next != null) {
-                blockedCells.add(cellPool.obtain(DI.vectorPool.obtain(segment.ox, segment.oy)))
-            }
-            segment = next
+        var snakeSegment: SnakeSegment? = snake.head
+        while (snakeSegment != null) {
+            blockedCells.add(cellPool.obtain(snakeSegment.position.copyVector()))
+            snakeSegment = snakeSegment.next
         }
 
         freeBlockedCells()
@@ -55,7 +51,10 @@ class CellPool {
     private val cellPool = pool { Cell(Vector2.Zero) }
 
     fun obtain(position: Vector2): Cell = cellPool.obtain().apply { this.position = position }
-    fun free(cell: Cell) = cellPool.free(cell)
+    fun free(cell: Cell) {
+        cell.position.free()
+        cellPool.free(cell)
+    }
 }
 
 data class Cell(var position: Vector2)
