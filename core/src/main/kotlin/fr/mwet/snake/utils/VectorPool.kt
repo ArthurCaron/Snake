@@ -1,6 +1,7 @@
 package fr.mwet.snake.utils
 
 import com.badlogic.gdx.math.Vector2
+import fr.mwet.snake.DI
 import ktx.assets.pool
 
 class VectorPool {
@@ -16,4 +17,8 @@ class VectorPool {
     }
 
     fun free(vector: Vector2) = vectorPool.free(vector)
+
+    fun copy(vector: Vector2) = obtain(vector)
 }
+
+fun Vector2.copyVector() = DI.vectorPool.copy(this)

@@ -1,15 +1,15 @@
 package fr.mwet.snake.inputs.game
 
 import fr.mwet.snake.Game
-import fr.mwet.snake.game.Direction
 import fr.mwet.snake.screens.MainMenuScreen
+import fr.mwet.snake.utils.Direction
 
 interface GameCommand {
     fun execute(targetActor: TargetActor)
 }
 
 interface TargetActor {
-    fun setDirection(direction: Direction)
+    fun setDirection(newDirection: Direction)
 }
 
 class GoBackToMainMenu : GameCommand {

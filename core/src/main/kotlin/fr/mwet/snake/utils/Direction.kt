@@ -1,4 +1,6 @@
-package fr.mwet.snake.game
+package fr.mwet.snake.utils
+
+import com.badlogic.gdx.math.Vector2
 
 enum class Direction(val directionX: Int, val directionY: Int) {
     UP(0, 1),
@@ -13,4 +15,14 @@ enum class Direction(val directionX: Int, val directionY: Int) {
         if (this == LEFT && direction == RIGHT) return true
         return false
     }
+}
+
+fun Vector2.move(direction: Direction) {
+    x += direction.directionX
+    y += direction.directionY
+}
+
+fun Vector2.move(position: Vector2) {
+    x = position.x
+    y = position.y
 }

@@ -24,6 +24,7 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
         if (gameOver) return
 
         snake.update(delta)
+        if (snake.hitBoundariesTest() || snake.hitBodyTest()) gameEventBus.emit(GameOver)
         if (snake.hasEatenFood(food)) {
             gameEventBus.emit(FoodEaten)
             snake.ateFood()

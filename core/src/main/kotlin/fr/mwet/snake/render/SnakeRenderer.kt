@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import fr.mwet.snake.DI
 import fr.mwet.snake.assets.TextureHandler
-import fr.mwet.snake.game.Direction
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.game.Snake
+import fr.mwet.snake.utils.Direction
 
 class SnakeRenderer(private val snake: Snake) {
     private val textureHandler = DI.inject<TextureHandler>()
