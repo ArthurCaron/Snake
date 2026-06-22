@@ -21,4 +21,9 @@ class VectorPool {
     fun copy(vector: Vector2) = obtain(vector)
 }
 
+fun Vector2.free() = DI.vectorPool.free(this)
+
 fun Vector2.copyVector() = DI.vectorPool.copy(this)
+
+fun Vector2.collidesWith(otherPosition: Vector2): Boolean =
+    x == otherPosition.x && y == otherPosition.y

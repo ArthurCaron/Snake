@@ -38,7 +38,7 @@ class GameScreen(
     private val backgroundTexture = textureHandler.background
     private val gridCellTexture = textureHandler.gridCell
     val foodRenderer = FoodRenderer(gameWorld.food)
-    val snakeRenderer = SnakeRenderer(gameWorld.snake)
+    val snakeRenderer = SnakeRenderer(textureHandler, gameWorld.snake)
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(gameWorld.snake)
 
     override fun show() {
@@ -89,7 +89,7 @@ class GameScreen(
     }
 
     private fun gameOver() {
-        disintegratingSnakeRenderer.disintegrate(gameWorld.snake)
+        disintegratingSnakeRenderer.disintegrate()
         Timer.schedule(object : Timer.Task() {
             override fun run() {
                 Game.setScreen<MainMenuScreen>()
