@@ -1,7 +1,6 @@
 package fr.mwet.snake.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation.elasticOut
@@ -37,7 +36,6 @@ import ktx.scene2d.scene2d
 class MainMenuScreen(
     menuEventBus: MenuEventBus,
     textureHandler: TextureHandler,
-    inputMultiplexer: InputMultiplexer,
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
     private val gameCamera: OrthographicCamera,
@@ -45,15 +43,14 @@ class MainMenuScreen(
     private val stageViewport = StageViewport().also {
         Game.addViewport(it)
     }
-    private val stage = stage(batch, stageViewport).also {
-        inputMultiplexer.addProcessor(it)
-    }
+    private val stage = stage(batch, stageViewport)
     private val backgroundTexture = textureHandler.background
     private val mainMenuTitle = MainMenuTitle(textureHandler, gameViewport)
     private val playButton = PlayButton(textureHandler, gameViewport, menuEventBus)
 
     override fun show() {
         DI.registerGeneralInputProcessor()
+        DI.registerInputProcessor(stage)
 
         mainMenuTitle.startAnimation()
         playButton.startAnimation()
@@ -61,6 +58,7 @@ class MainMenuScreen(
 
     override fun hide() {
         DI.unRegisterGeneralInputProcessor()
+        DI.unRegisterInputProcessor(stage)
 
         mainMenuTitle.resetAnimation()
         playButton.resetAnimation()
