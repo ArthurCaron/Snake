@@ -1,10 +1,11 @@
 package fr.mwet.snake.game
 
 import fr.mwet.snake.events.GameEvent
+import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.GameEventListener
 
-class GameWorld(gameEventBus: GameEventBus) : GameEventListener {
+class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
     val food: Food = Food()
     val snake = Snake(gameEventBus)
     val cells = Cells()
@@ -23,7 +24,9 @@ class GameWorld(gameEventBus: GameEventBus) : GameEventListener {
         if (gameOver) return
 
         snake.update(delta)
-        if (snake.hitFoodTest(food)) {
+        if (snake.hasEatenFood(food)) {
+            gameEventBus.emit(FoodEaten)
+            snake.ateFood()
             val availableCells = cells.computeAvailableCells(snake)
             food.reset(availableCells)
         }
@@ -31,9 +34,9 @@ class GameWorld(gameEventBus: GameEventBus) : GameEventListener {
 
     override fun onEvent(event: GameEvent) {
         when (event) {
-            GameEvent.GameOver -> gameOver = true
-            GameEvent.FoodEaten -> {}
-            GameEvent.SnakeMoved -> {}
+            GameOver -> gameOver = true
+            FoodEaten -> {}
+            SnakeMoved -> {}
         }
     }
 }

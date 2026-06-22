@@ -94,14 +94,13 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
         currentSpeed = speed
     }
 
-    fun hitFoodTest(food: Food): Boolean {
-        if (abs(head.x - food.x) < 0.1f && abs(head.y - food.y) < 0.1f) {
-            updateNext()
-            addSegment(nextX, nextY)
-            gameEventBus.emit(FoodEaten)
-            return true
-        }
-        return false
+    fun hasEatenFood(food: Food): Boolean {
+        return abs(head.x - food.x) < 0.1f && abs(head.y - food.y) < 0.1f
+    }
+
+    fun ateFood() {
+        updateNext()
+        addSegment(nextX, nextY)
     }
 
     private fun hitBoundariesTest(): Boolean {
