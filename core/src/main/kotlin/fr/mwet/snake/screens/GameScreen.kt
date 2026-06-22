@@ -1,6 +1,5 @@
 package fr.mwet.snake.screens
 
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Timer
@@ -27,7 +26,6 @@ import ktx.graphics.use
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class GameScreen(
     textureHandler: TextureHandler,
-    inputMultiplexer: InputMultiplexer,
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
     private val gameCamera: OrthographicCamera,
@@ -36,9 +34,7 @@ class GameScreen(
     private val stageViewport = StageViewport().also {
         Game.addViewport(it)
     }
-    private val stage = stage(batch, stageViewport).also {
-        inputMultiplexer.addProcessor(it)
-    }
+    private val stage = stage(batch, stageViewport)
     private val backgroundTexture = textureHandler.background
     private val gridCellTexture = textureHandler.gridCell
     val foodRenderer = FoodRenderer(gameWorld.food)
@@ -46,16 +42,18 @@ class GameScreen(
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(gameWorld.snake)
 
     override fun show() {
+        DI.registerGameInputProcessor()
+        DI.registerInputProcessor(stage)
         stage.clear()
         gameWorld.newGame()
         foodRenderer.reset()
         snakeRenderer.reset()
         disintegratingSnakeRenderer.reset()
-        DI.registerGameInputProcessor()
     }
 
     override fun hide() {
         DI.unRegisterGameInputProcessor()
+        DI.unRegisterInputProcessor(stage)
     }
 
     override fun render(delta: Float) {

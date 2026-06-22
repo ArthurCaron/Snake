@@ -3,6 +3,7 @@ package fr.mwet.snake
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys.*
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -113,9 +114,6 @@ object DI : Context() {
         // Assets
         val textureHandler = inject<TextureHandler>()
 
-        // Input Handlers
-        val inputMultiplexer = inject<InputMultiplexer>()
-
         // Cameras
         val camera = inject<OrthographicCamera>()
 
@@ -141,7 +139,6 @@ object DI : Context() {
             MainMenuScreen(
                 menuEventBus = menuEventBus,
                 textureHandler = textureHandler,
-                inputMultiplexer = inputMultiplexer,
                 batch = spriteBatch,
                 gameViewport = gameViewport,
                 gameCamera = camera,
@@ -151,7 +148,6 @@ object DI : Context() {
         val gameScreen = withBindSingleton {
             GameScreen(
                 textureHandler = textureHandler,
-                inputMultiplexer = inputMultiplexer,
                 batch = spriteBatch,
                 gameViewport = gameViewport,
                 gameCamera = camera,
@@ -167,29 +163,21 @@ object DI : Context() {
         Game.addScreen(gameScreen)
     }
 
-    fun registerGameInputProcessor() {
-        val gameInputProcessor = inject<GameInputProcessor>()
+    fun registerInputProcessor(inputProcessor: InputProcessor) {
         val inputMultiplexer = inject<InputMultiplexer>()
-        inputMultiplexer.addProcessor(gameInputProcessor)
+        inputMultiplexer.addProcessor(inputProcessor)
     }
 
-    fun unRegisterGameInputProcessor() {
-        val gameInputProcessor = inject<GameInputProcessor>()
+    fun unRegisterInputProcessor(inputProcessor: InputProcessor) {
         val inputMultiplexer = inject<InputMultiplexer>()
-        inputMultiplexer.removeProcessor(gameInputProcessor)
+        inputMultiplexer.removeProcessor(inputProcessor)
     }
 
-    fun registerGeneralInputProcessor() {
-        val generalInputProcessor = inject<GeneralInputProcessor>()
-        val inputMultiplexer = inject<InputMultiplexer>()
-        inputMultiplexer.addProcessor(generalInputProcessor)
-    }
+    fun registerGameInputProcessor() = registerInputProcessor(inject<GameInputProcessor>())
+    fun unRegisterGameInputProcessor() = unRegisterInputProcessor(inject<GameInputProcessor>())
 
-    fun unRegisterGeneralInputProcessor() {
-        val generalInputProcessor = inject<GeneralInputProcessor>()
-        val inputMultiplexer = inject<InputMultiplexer>()
-        inputMultiplexer.removeProcessor(generalInputProcessor)
-    }
+    fun registerGeneralInputProcessor() = registerInputProcessor(inject<GeneralInputProcessor>())
+    fun unRegisterGeneralInputProcessor() = unRegisterInputProcessor(inject<GeneralInputProcessor>())
 }
 
 inline fun <reified Type : Any> withBindSingleton(provider: () -> Type): Type {
