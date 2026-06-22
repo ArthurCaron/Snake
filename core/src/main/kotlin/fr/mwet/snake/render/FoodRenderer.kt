@@ -13,7 +13,7 @@ class FoodRenderer(private val food: Food) {
 
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
-        batch.draw(animation.getKeyFrame(eTime), food.x.toFloat(), food.y.toFloat(), 1f, 1f)
+        batch.draw(animation.getKeyFrame(eTime), food.position.x, food.position.y, 1f, 1f)
     }
 
     fun reset() {

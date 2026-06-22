@@ -1,15 +1,16 @@
 package fr.mwet.snake.game
 
 import com.badlogic.gdx.utils.Pool
-import fr.mwet.snake.events.GameEvent.*
+import fr.mwet.snake.events.GameEvent.SnakeMoved
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.game.TargetActor
+import fr.mwet.snake.utils.Direction
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.assets.pool
 import kotlin.math.abs
 
-const val SNAKE_DEFAULT_SPEED = 6f
+private const val SNAKE_DEFAULT_SPEED = 6f
 
 class Snake(val gameEventBus: GameEventBus) : TargetActor {
     private val segmentPool = pool { Segment() }
@@ -36,7 +37,7 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
         }
 
         head = segmentPool.obtain().apply { updatePosition(3, 3) }
-        tail = segmentPool.obtain().apply { updatePosition(4, 3) }
+        tail = segmentPool.obtain().apply { updatePosition(3, 2) }
         tail.next = head
 
         updateNext()
@@ -55,8 +56,6 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
 
         head.x += (nextX - head.ox) * delta * currentSpeed
         head.y += (nextY - head.oy) * delta * currentSpeed
-
-        if (hitBoundariesTest() || hitBodyTest()) gameEventBus.emit(GameOver)
 
         if (abs(nextX - head.x) < 0.15f && abs(nextY - head.y) < 0.15f) shiftSegments()
     }
@@ -85,9 +84,9 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
         nextY = head.oy + currentDirection.directionY
     }
 
-    override fun setDirection(direction: Direction) {
-        if (direction.isOpposite(currentDirection)) return
-        currentDirection = direction
+    override fun setDirection(newDirection: Direction) {
+        if (newDirection.isOpposite(currentDirection)) return
+        currentDirection = newDirection
     }
 
     fun setSpeed(speed: Float) {
@@ -95,7 +94,7 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
     }
 
     fun hasEatenFood(food: Food): Boolean {
-        return abs(head.x - food.x) < 0.1f && abs(head.y - food.y) < 0.1f
+        return abs(head.x - food.position.x) < 0.1f && abs(head.y - food.position.y) < 0.1f
     }
 
     fun ateFood() {
@@ -103,11 +102,11 @@ class Snake(val gameEventBus: GameEventBus) : TargetActor {
         addSegment(nextX, nextY)
     }
 
-    private fun hitBoundariesTest(): Boolean {
+    fun hitBoundariesTest(): Boolean {
         return head.x < (-1 + 0.15f) || head.x >= WORLD_WIDTH || head.y < (-1 + 0.15f) || head.y >= WORLD_HEIGHT
     }
 
-    private fun hitBodyTest(): Boolean {
+    fun hitBodyTest(): Boolean {
         var segment = tail
         var index = 0
         while (segment != head) {
