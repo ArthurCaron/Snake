@@ -27,38 +27,8 @@ class LoadingScreen(
     private val batch: SpriteBatch,
     private val gameCamera: OrthographicCamera,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val loadSegment = run {
-        // Create loading segment part, use Pixmap to generate the texture
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888).apply {
-            setColor(Color.WHITE)
-            fill()
-        }
-        Texture(pixmap).alsoRegister().also { pixmap.dispose() }
-    }
-
-    private val progressBar = run {
-        // Precalculated loading bar positions
-        val barWidth = 6f
-        val barHeight = 0.5f
-        ProgressBar(
-            position = Vector2((WORLD_WIDTH - barWidth) * 0.5f, (WORLD_HEIGHT - barHeight) * 0.5f),
-            fullSize = Vector2(barWidth, barHeight),
-        )
-    }
-
-    private val loadText = Texture(Gdx.files.internal("LoadingAssets.png")).alsoRegister().apply {
-        setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
-    }
-
-    private val loadingText = run {
-        // Calculate text positions to put in on screen in render loop
-        val textWidth = 3f
-        val textHeight = textWidth * 16 / 200f
-        LoadingText(
-            position = Vector2((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f),
-            size = Vector2(textWidth, textHeight),
-        )
-    }
+    private val progressBar = ProgressBar(barWidth = 6f, barHeight = 0.5f)
+    private val loadingText = LoadingText(textWidth = 3f, textHeight = 3f * 16 / 200f)
 
     override fun render(delta: Float) {
         val progress = assetHandler.loadAssets()
@@ -67,29 +37,46 @@ class LoadingScreen(
             Game.setScreen<MainMenuScreen>()
         } else {
             batch.use(gameCamera) {
-                // Draw the loading bar
-                batch.resetColor(0.2f)
-                batch.draw(loadSegment, progressBar.position, progressBar.fullSize)
-
-                batch.setColor(0.4f, 0.4f, 1f, 1f)
-                batch.draw(loadSegment, progressBar.position, progressBar.computeCurrentSize(progress))
-
-                // Draw the text
-                batch.resetColor()
-                batch.draw(loadText, loadingText.position, loadingText.size)
+                progressBar.render(batch, progress)
+                loadingText.render(batch)
             }
         }
     }
 }
 
-data class ProgressBar(
-    val position: Vector2,
-    var fullSize: Vector2,
-) {
-    fun computeCurrentSize(progress: Progress) = Vector2(progress.value * fullSize.x, fullSize.y)
+class ProgressBar(barWidth: Float, barHeight: Float) :
+    DisposableRegistry by DisposableContainer() {
+    private val position = Vector2((WORLD_WIDTH - barWidth) * 0.5f, (WORLD_HEIGHT - barHeight) * 0.5f)
+    private val fullSize = Vector2(barWidth, barHeight)
+
+    val texture = run {
+        // Create loading segment part, use Pixmap to generate the texture
+        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888).apply {
+            setColor(Color.WHITE)
+            fill()
+        }
+        Texture(pixmap).alsoRegister().also { pixmap.dispose() }
+    }
+
+    fun render(batch: SpriteBatch, progress: Progress) {
+        batch.resetColor(0.2f)
+        batch.draw(texture, position, fullSize)
+
+        batch.setColor(0.4f, 0.4f, 1f, 1f)
+        batch.draw(texture, position, Vector2(progress.value * fullSize.x, fullSize.y))
+    }
 }
 
-data class LoadingText(
-    val position: Vector2,
-    val size: Vector2,
-)
+class LoadingText(textWidth: Float, textHeight: Float) : DisposableRegistry by DisposableContainer() {
+    private val position = Vector2((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f)
+    private val size = Vector2(textWidth, textHeight)
+
+    val texture = Texture(Gdx.files.internal("LoadingAssets.png")).alsoRegister().apply {
+        setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+    }
+
+    fun render(batch: SpriteBatch) {
+        batch.resetColor()
+        batch.draw(texture, position, size)
+    }
+}
