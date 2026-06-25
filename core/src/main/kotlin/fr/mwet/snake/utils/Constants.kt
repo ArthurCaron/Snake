@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2
 const val WORLD_WIDTH = 16f
 const val WORLD_HEIGHT = 20f
 
+const val NO_VERSION = -1
+
 fun SpriteBatch.resetColor() = setColor(1f, 1f, 1f, 1f)
 
 fun SpriteBatch.resetColor(alpha: Float) = setColor(1f, 1f, 1f, alpha)

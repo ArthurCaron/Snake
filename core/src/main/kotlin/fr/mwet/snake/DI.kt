@@ -1,9 +1,9 @@
 package fr.mwet.snake
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input.Keys.*
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.Application.ApplicationType.WebGL
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -17,13 +17,15 @@ import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
-import fr.mwet.snake.inputs.game.*
+import fr.mwet.snake.inputs.game.GameInputProcessor
 import fr.mwet.snake.inputs.general.GeneralInputProcessor
-import fr.mwet.snake.inputs.general.StartGame
-import fr.mwet.snake.save.Jsonifier
-import fr.mwet.snake.save.fileFormats.*
-import fr.mwet.snake.save.fromJson
-import fr.mwet.snake.save.toJson
+import fr.mwet.snake.save.game.GameSaveRepository
+import fr.mwet.snake.save.metadata.MetadataRepository
+import fr.mwet.snake.save.serialization.FileTextStore
+import fr.mwet.snake.save.serialization.JsonStore
+import fr.mwet.snake.save.serialization.PreferencesTextStore
+import fr.mwet.snake.save.settings.Keymappings
+import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.screens.GameScreen
 import fr.mwet.snake.screens.LoadingScreen
 import fr.mwet.snake.screens.MainMenuScreen
@@ -43,32 +45,22 @@ object DI : Context() {
         val menuEventBus = withBindSingleton<MenuEventBus> { MenuEventBusImpl() }
 
         // Save system
-        val jsonifier = withBindSingleton<Jsonifier> { Jsonifier() }
-        val highscoresFile = Highscores(
-            highscores = listOf(
-                Highscore(name = "Test", score = 1000), Highscore(name = "Test2", score = 2000)
-            )
-        ).toJson()
+        val fileTextStore = withBindSingleton { FileTextStore(Gdx.files.local("save_data")) }
+        // Find the file around here: C:\Users\$user\.prefs\fr.mwet.snek.save_data
+        val preferencesTextStore =
+            withBindSingleton { PreferencesTextStore(Gdx.app.getPreferences("fr.mwet.snek.save_data")) }
+        val jsonStore = withBindSingleton<JsonStore> {
+            JsonStore(if (Gdx.app.type == WebGL) preferencesTextStore else fileTextStore)
+        }
+        val settingsRepository = withBindSingleton { SettingsRepository(jsonStore) }
+        val metadataRepository = withBindSingleton { MetadataRepository(jsonStore) }
+        val gameSaveRepository = withBindSingleton { GameSaveRepository(jsonStore) }
 
-        val keymappingsFile = Keymappings(
-            game = listOf(
-                GameKeymapping(GoBackToMainMenu(), ESCAPE),
-                GameKeymapping(GoUp(), UP),
-                GameKeymapping(GoUp(), W),
-                GameKeymapping(GoRight(), RIGHT),
-                GameKeymapping(GoRight(), D),
-                GameKeymapping(GoDown(), DOWN),
-                GameKeymapping(GoDown(), S),
-                GameKeymapping(GoLeft(), LEFT),
-                GameKeymapping(GoLeft(), A),
-            ), general = listOf(
-                GeneralKeymapping(StartGame(), ENTER)
-            )
-        ).toJson()
+        val settings = withBindSingleton { settingsRepository.load() }
+        val keymapping = withBindSingleton<Keymappings> { settings.keymappings }
 
-        // Should get them from file
-        val highscores = highscoresFile.fromJson()
-        val keymapping = withBindSingleton<Keymappings> { keymappingsFile.fromJson() }
+        val metadata = withBindSingleton { metadataRepository.load() }
+        val highScores = withBindSingleton { metadata.highScores }
 
         // Assets
         val assetManager = withBindSingleton<AssetManager> { AssetManager() }
