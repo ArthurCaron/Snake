@@ -28,9 +28,15 @@ class FileTextStore(private val root: FileHandle) : TextStore {
 
     override fun delete(path: String) = root.child(path).delete()
 
-    fun backupCorruptedFile(file: FileHandle) {
+    override fun backupCorrupted(path: String): Boolean {
+        val file = root.child(path)
+        if (!file.exists()) return false
+        return backupCorruptedFile(file)
+    }
+
+    fun backupCorruptedFile(file: FileHandle): Boolean {
         val backup = file.sibling("corrupted_${TimeUtils.millis()}_${file.name()}")
         file.copyTo(backup)
-        file.delete()
+        return file.delete()
     }
 }

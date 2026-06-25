@@ -5,4 +5,5 @@ interface TextStore {
     fun write(path: String, text: String)
     fun exists(path: String): Boolean
     fun delete(path: String): Boolean
+    fun backupCorrupted(path: String): Boolean
 }
