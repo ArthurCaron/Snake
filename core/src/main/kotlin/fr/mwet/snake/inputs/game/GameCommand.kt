@@ -1,7 +1,7 @@
 package fr.mwet.snake.inputs.game
 
-import fr.mwet.snake.Game
-import fr.mwet.snake.screens.MainMenuScreen
+import fr.mwet.snake.events.GameEvent
+import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.utils.Direction
 
 enum class GameActionId(val gameCommand: GameCommand) {
@@ -27,49 +27,54 @@ enum class GameActionId(val gameCommand: GameCommand) {
 }
 
 sealed interface GameCommand {
-    fun execute(targetActor: TargetActor)
+    fun execute(context: GameCommandContext)
 }
+
+class GameCommandContext(
+    val targetActor: TargetActor,
+    val gameEventBus: GameEventBus,
+)
 
 interface TargetActor {
     fun setDirection(newDirection: Direction)
 }
 
 object NullGameCommand : GameCommand {
-    override fun execute(targetActor: TargetActor) {}
+    override fun execute(context: GameCommandContext) {}
 }
 
 object GoBackToMainMenuCommand : GameCommand {
-    override fun execute(targetActor: TargetActor) {
-        Game.setScreen<MainMenuScreen>()
+    override fun execute(context: GameCommandContext) {
+        context.gameEventBus.emit(GameEvent.GoBackToMainMenu)
     }
 }
 
 object PauseCommand : GameCommand {
-    override fun execute(targetActor: TargetActor) {
-        Game.setScreen<MainMenuScreen>()
+    override fun execute(context: GameCommandContext) {
+        context.gameEventBus.emit(GameEvent.Pause)
     }
 }
 
 object GoUpCommand : GameCommand {
-    override fun execute(targetActor: TargetActor) {
-        targetActor.setDirection(Direction.UP)
+    override fun execute(context: GameCommandContext) {
+        context.targetActor.setDirection(Direction.UP)
     }
 }
 
 object GoRightCommand : GameCommand {
-    override fun execute(targetActor: TargetActor) {
-        targetActor.setDirection(Direction.RIGHT)
+    override fun execute(context: GameCommandContext) {
+        context.targetActor.setDirection(Direction.RIGHT)
     }
 }
 
 object GoDownCommand : GameCommand {
-    override fun execute(targetActor: TargetActor) {
-        targetActor.setDirection(Direction.DOWN)
+    override fun execute(context: GameCommandContext) {
+        context.targetActor.setDirection(Direction.DOWN)
     }
 }
 
 object GoLeftCommand : GameCommand {
-    override fun execute(targetActor: TargetActor) {
-        targetActor.setDirection(Direction.LEFT)
+    override fun execute(context: GameCommandContext) {
+        context.targetActor.setDirection(Direction.LEFT)
     }
 }

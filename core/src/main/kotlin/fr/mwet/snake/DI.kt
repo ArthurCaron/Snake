@@ -1,9 +1,9 @@
 package fr.mwet.snake
 
+import com.badlogic.gdx.Application.ApplicationType.WebGL
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
-import com.badlogic.gdx.Application.ApplicationType.WebGL
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -126,7 +126,7 @@ object DI : Context() {
         val gameWorld = withBindSingleton<GameWorld> { GameWorld(gameEventBus) }
         gameEventBus.listen(gameWorld)
         bindSingleton<GameInputProcessor> {
-            GameInputProcessor(keymapping.game, gameWorld)
+            GameInputProcessor(keymapping.game, gameEventBus, gameWorld)
         }
 
         // Screens

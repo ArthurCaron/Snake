@@ -40,6 +40,8 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
             GameOver -> gameOver = true
             FoodEaten -> {}
             SnakeMoved -> {}
+            GoBackToMainMenu -> {}
+            Pause -> {}
         }
     }
 }
