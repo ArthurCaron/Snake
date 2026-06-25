@@ -10,10 +10,7 @@ import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.assets.AssetHandler
 import fr.mwet.snake.assets.Progress
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
-import fr.mwet.snake.utils.draw
-import fr.mwet.snake.utils.resetColor
+import fr.mwet.snake.utils.*
 import ktx.app.KtxScreen
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
@@ -47,6 +44,7 @@ class ProgressBar(barWidth: Float, barHeight: Float) :
     DisposableRegistry by DisposableContainer() {
     private val position = DI.vectorPool.obtain((WORLD_WIDTH - barWidth) * 0.5f, (WORLD_HEIGHT - barHeight) * 0.5f)
     private val fullSize = DI.vectorPool.obtain(barWidth, barHeight)
+    private var size = DI.vectorPool.obtain(0, 0)
 
     val texture = run {
         // Create loading segment part, use Pixmap to generate the texture
@@ -62,7 +60,7 @@ class ProgressBar(barWidth: Float, barHeight: Float) :
         batch.draw(texture, position, fullSize)
 
         batch.setColor(0.4f, 0.4f, 1f, 1f)
-        batch.draw(texture, position, DI.vectorPool.obtain(progress.value * fullSize.x, fullSize.y))
+        batch.draw(texture, position, size.obtain(progress.value * fullSize.x, fullSize.y))
     }
 }
 
