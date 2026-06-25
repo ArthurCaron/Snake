@@ -3,7 +3,6 @@ package fr.mwet.snake.render
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.math.Vector2
-import fr.mwet.snake.DI
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.game.Snake
@@ -13,19 +12,21 @@ import fr.mwet.snake.utils.copyVector
 import fr.mwet.snake.utils.free
 import kotlin.random.Random
 
-class DisintegratingSnakeRenderer(val snake: Snake) {
-    private val textureHandler = DI.inject<TextureHandler>()
+class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Snake) {
     private var eTime = 0f
+    private val snakeHead = textureHandler.snakeHead
+    private val snakeBody = textureHandler.snakeBody
+    private val snakeTail = textureHandler.snakeTail
     private val bodyParts = mutableListOf<DisintegratingSegment>()
 
     fun disintegrate() {
-        bodyParts.add(DisintegratingSegment(snake.head.position.copyVector(), textureHandler.snakeHead))
-        bodyParts.add(DisintegratingSegment(snake.tail.position.copyVector(), textureHandler.snakeTail))
+        bodyParts.add(DisintegratingSegment(snake.head.position.copyVector(), snakeHead))
+        bodyParts.add(DisintegratingSegment(snake.tail.position.copyVector(), snakeTail))
 
         var segment: Segment? = snake.head.next
         while (segment != null) {
             if (segment != snake.tail) {
-                bodyParts.add(DisintegratingSegment(segment.position.copyVector(), textureHandler.snakeBody))
+                bodyParts.add(DisintegratingSegment(segment.position.copyVector(), snakeBody))
             }
             segment = segment.next
         }
