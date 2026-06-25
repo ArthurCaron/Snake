@@ -93,6 +93,9 @@ class SegmentPool {
     fun obtain(position: Vector2): Segment = segmentPool.obtain().apply { this.position = position }
     fun free(segment: Segment) {
         segment.position.free()
+        segment.next = null
+        segment.previous = null
+        segment.stayStill = false
         segmentPool.free(segment)
     }
 }
