@@ -17,7 +17,7 @@ class KeymappingsSave() {
     }
 
     fun restoreDefaults() {
-        version = if (version == NO_VERSION) DefaultUserPreferences.defaultUserPreferences().version else version
+        version = if (version == NO_VERSION) DefaultKeymappings.defaultKeymappings().version else version
 
         val gameMap = game.associate { it.action to it.keys }.toMutableMap()
         DefaultKeymappings.defaultKeymappings().game.forEach {
