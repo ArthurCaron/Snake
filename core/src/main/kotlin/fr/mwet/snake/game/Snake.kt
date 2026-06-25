@@ -10,15 +10,15 @@ private const val TICKS_PER_SECOND = 3f
 private const val SECONDS_PER_TICK = 1f / TICKS_PER_SECOND
 
 class Snake(private val initialTailPosition: Vector2, private val initialDirection: Direction) : TargetActor {
-    private val snakeSegmentPool = SnakeSegmentPool()
+    private val segmentPool = SegmentPool()
 
     private val initialHeadPosition = DI.vectorPool.obtain(
         initialTailPosition.x + initialDirection.directionX,
         initialTailPosition.y + initialDirection.directionY
     )
 
-    val head = snakeSegmentPool.obtain(initialHeadPosition.copyVector())
-    val tail = snakeSegmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
+    val head = segmentPool.obtain(initialHeadPosition.copyVector())
+    val tail = segmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
     var currentDirection = initialDirection
     var futureDirection = currentDirection
     private var secondsSinceLastTick: Float = 0f
@@ -36,11 +36,11 @@ class Snake(private val initialTailPosition: Vector2, private val initialDirecti
 
     private fun freeBodyParts() {
         var bodyPart = head.next
-        var next: SnakeSegment?
+        var next: Segment?
         while (bodyPart != null) {
             next = bodyPart.next
             if (bodyPart != tail) {
-                snakeSegmentPool.free(bodyPart)
+                segmentPool.free(bodyPart)
             }
             bodyPart = next
         }
@@ -71,7 +71,7 @@ class Snake(private val initialTailPosition: Vector2, private val initialDirecti
         if (isEating) return
         isEating = true
         tail.stayStill = true
-        val newBodyPart = snakeSegmentPool.obtain(tail.position.copyVector())
+        val newBodyPart = segmentPool.obtain(tail.position.copyVector())
         tail.previous?.let { newBodyPart.linkPrevious(it) }
         newBodyPart.linkNext(tail)
     }
@@ -87,29 +87,29 @@ class Snake(private val initialTailPosition: Vector2, private val initialDirecti
     }
 }
 
-class SnakeSegmentPool {
-    private val snakeSegmentPool = pool { SnakeSegment(Vector2.Zero) }
+class SegmentPool {
+    private val segmentPool = pool { Segment(Vector2.Zero) }
 
-    fun obtain(position: Vector2): SnakeSegment = snakeSegmentPool.obtain().apply { this.position = position }
-    fun free(snakeSegment: SnakeSegment) {
-        snakeSegment.position.free()
-        snakeSegmentPool.free(snakeSegment)
+    fun obtain(position: Vector2): Segment = segmentPool.obtain().apply { this.position = position }
+    fun free(segment: Segment) {
+        segment.position.free()
+        segmentPool.free(segment)
     }
 }
 
-data class SnakeSegment(var position: Vector2) {
-    var next: SnakeSegment? = null
-    var previous: SnakeSegment? = null
+data class Segment(var position: Vector2) {
+    var next: Segment? = null
+    var previous: Segment? = null
     var stayStill: Boolean = false
 
-    fun linkNext(snakeSegment: SnakeSegment) {
-        next = snakeSegment
-        snakeSegment.previous = this
+    fun linkNext(segment: Segment) {
+        next = segment
+        segment.previous = this
     }
 
-    fun linkPrevious(snakeSegment: SnakeSegment) {
-        previous = snakeSegment
-        snakeSegment.next = this
+    fun linkPrevious(segment: Segment) {
+        previous = segment
+        segment.next = this
     }
 
     fun move(direction: Direction) {

@@ -8,7 +8,7 @@ import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.utils.Direction
 
 class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
-    val food: Food = Food()
+    val food: Food = Food(DI.vectorPool.obtain(-1, -1))
     val snake = Snake(DI.vectorPool.obtain(4f, 3f), Direction.UP)
     val cells = Cells()
 
