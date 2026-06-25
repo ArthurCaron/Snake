@@ -8,12 +8,14 @@ class GameInputProcessor(
     gameKeymappings: List<GameKeymapping>,
     private val gameWorld: GameWorld
 ) : KtxInputAdapter {
-    private val keycodeMapping: Map<Int, GameCommand> =
-        gameKeymappings.flatMap { it.keys.map { key -> key to it.action } }.toMap()
+    private val keycodeMapping: Map<Int, List<GameCommand>> =
+        gameKeymappings
+            .flatMap { keymapping -> keymapping.keys.map { key -> key to keymapping.action } }
+            .groupBy({ it.first }, { it.second })
 
     override fun keyDown(keycode: Int): Boolean {
-        keycodeMapping[keycode]?.let {
-            it.execute(gameWorld.snake)
+        keycodeMapping[keycode]?.let { commands ->
+            commands.forEach { it.execute(gameWorld.snake) }
             return true
         }
         return false
