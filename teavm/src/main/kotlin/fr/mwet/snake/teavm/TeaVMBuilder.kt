@@ -19,8 +19,14 @@ object TeaVMBuilder {
             // additionalAssetsClasspathFiles += "fr/mwet/snake/asset.extension"
         }
 
-        // Register any classes or packages that require reflection here:
-        // TeaReflectionSupplier.addReflectionClass("fr.mwet.snake.reflect")
+        // Register DTOs used by libGDX Json. TeaVM needs explicit reflection metadata for them.
+        listOf(
+            "fr.mwet.snake.save.settings.serializable",
+            "fr.mwet.snake.save.metadata.serializable",
+            "fr.mwet.snake.save.game.serializable",
+        ).forEach(TeaReflectionSupplier::addReflectionClass)
+        // This one does the whole folder
+//        TeaReflectionSupplier.addReflectionClass("fr.mwet.snake.save")
 
         val tool = TeaBuilder.config(teaBuildConfiguration)
         tool.mainClass = "fr.mwet.snake.teavm.TeaVMLauncher"

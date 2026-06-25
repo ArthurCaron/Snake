@@ -32,11 +32,23 @@ dependencies {
 
 }
 
+
+tasks.register("cleanTeaVMWebapp", Delete) {
+  delete file("build/dist")
+}
+
 tasks.register("buildJavaScript", JavaExec) {
-  dependsOn classes
+  dependsOn classes, cleanTeaVMWebapp
   setDescription("Transpile bytecode to JavaScript via TeaVM")
   mainClass.set(project.mainClassName)
   setClasspath(sourceSets.main.runtimeClasspath)
+
+  doLast {
+    copy {
+      from(rootProject.file("graphics/web/favicon.ico"))
+      into(layout.buildDirectory.dir("dist/webapp"))
+    }
+  }
 }
 build.dependsOn buildJavaScript
 
