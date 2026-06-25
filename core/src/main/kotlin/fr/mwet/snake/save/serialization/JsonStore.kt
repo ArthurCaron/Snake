@@ -1,5 +1,6 @@
 package fr.mwet.snake.save.serialization
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Json
 import com.badlogic.gdx.utils.JsonWriter
 
@@ -11,7 +12,15 @@ class JsonStore(val textStore: TextStore) {
     }
 
     inline fun <reified T : Any> readOrNull(path: String): T? {
-        return textStore.read(path)?.let { json.fromJson(T::class.java, it) }
+        val text = textStore.read(path) ?: return null
+
+        return runCatching {
+            json.fromJson(T::class.java, text)
+        }.getOrElse {
+            Gdx.app.error("JsonStore", "Failed to load $path. Backing up corrupted save.", it)
+            textStore.backupCorrupted(path)
+            null
+        }
     }
 
     inline fun <reified T : Any> readOrCreate(path: String, defaultValue: () -> T): T {
