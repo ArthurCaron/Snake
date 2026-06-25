@@ -9,6 +9,7 @@ import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.GameEvent
+import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.render.DisintegratingSnakeRenderer
@@ -88,9 +89,16 @@ class GameScreen(
 
     override fun onEvent(event: GameEvent) {
         when (event) {
-            GameEvent.GameOver -> gameOver()
-            GameEvent.FoodEaten -> {}
-            GameEvent.SnakeMoved -> {}
+            GameOver -> gameOver()
+            FoodEaten -> {}
+            SnakeMoved -> {}
+            GoBackToMainMenu -> {
+                Game.setScreen<MainMenuScreen>()
+            }
+
+            Pause -> {
+                Game.setScreen<MainMenuScreen>()
+            }
         }
     }
 
