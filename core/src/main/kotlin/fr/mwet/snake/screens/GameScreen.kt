@@ -40,6 +40,12 @@ class GameScreen(
     val foodRenderer = FoodRenderer(gameWorld.food)
     val snakeRenderer = SnakeRenderer(textureHandler, gameWorld.snake)
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(gameWorld.snake)
+    val gameOverTask = object : Timer.Task() {
+        override fun run() {
+            Game.setScreen<MainMenuScreen>()
+        }
+    }
+    var scheduledGameOverTask: Timer.Task? = null
 
     override fun show() {
         DI.registerGameInputProcessor()
@@ -90,11 +96,7 @@ class GameScreen(
 
     private fun gameOver() {
         disintegratingSnakeRenderer.disintegrate()
-        Timer.schedule(object : Timer.Task() {
-            override fun run() {
-                Game.setScreen<MainMenuScreen>()
-            }
-        }, 1.5f)
+        scheduledGameOverTask = Timer.schedule(gameOverTask, 1.5f)
     }
 
     private fun drawGridMap(batch: SpriteBatch) {
