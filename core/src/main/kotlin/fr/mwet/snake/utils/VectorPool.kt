@@ -23,14 +23,6 @@ class VectorPool {
 
 fun Vector2.free() = DI.vectorPool.free(this)
 
-fun Vector2.obtain(otherVector: Vector2) = obtain(otherVector.x, otherVector.y)
-
-fun Vector2.obtain(x: Float, y: Float): Vector2 {
-    val newVector2 = DI.vectorPool.obtain(x, y)
-    free()
-    return newVector2
-}
-
 fun Vector2.copyVector() = DI.vectorPool.copy(this)
 
 fun Vector2.collidesWith(otherPosition: Vector2): Boolean =
