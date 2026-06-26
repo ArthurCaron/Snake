@@ -79,7 +79,7 @@ object DI : Context() {
             InputMultiplexer().also { Gdx.input.inputProcessor = it }
         }
         bindSingleton<GeneralInputProcessor> {
-            GeneralInputProcessor(keymapping.general)
+            GeneralInputProcessor(keymapping.general, menuEventBus)
         }
 
         // Cameras
