@@ -23,9 +23,15 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
         if (gameOver) return
 
         val snakeMoved = snake.update(delta)
+        if (snake.collidesWithBoundaries() || snake.collidesWithOwnBody()) {
+            gameEventBus.emit(GameOver)
+            return
+        }
+
         if (snakeMoved) gameEventBus.emit(SnakeMoved)
-        if (snake.collidesWithBoundaries() || snake.collidesWithOwnBody()) gameEventBus.emit(GameOver)
+
         if (snake.willCollideWithFood(food)) snake.eatFood()
+
         if (snake.collidesWithFood(food)) {
             gameEventBus.emit(FoodEaten)
             val availableCells = cells.computeAvailableCells(snake)
@@ -36,10 +42,7 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
     override fun onEvent(event: GameEvent) {
         when (event) {
             GameOver -> gameOver = true
-            FoodEaten -> {}
-            SnakeMoved -> {}
-            GoBackToMainMenu -> {}
-            Pause -> {}
+            FoodEaten, SnakeMoved, GoBackToMainMenu, Pause -> {}
         }
     }
 }

@@ -90,15 +90,9 @@ class GameScreen(
     override fun onEvent(event: GameEvent) {
         when (event) {
             GameOver -> gameOver()
-            FoodEaten -> {}
-            SnakeMoved -> {}
-            GoBackToMainMenu -> {
-                Game.setScreen<MainMenuScreen>()
-            }
-
-            Pause -> {
-                Game.setScreen<MainMenuScreen>()
-            }
+            GoBackToMainMenu -> Game.setScreen<MainMenuScreen>()
+            Pause -> Game.setScreen<MainMenuScreen>()
+            FoodEaten, SnakeMoved -> {}
         }
     }
 

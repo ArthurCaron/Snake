@@ -86,9 +86,7 @@ class MainMenuScreen(
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            MenuEvent.PlayGameClicked -> {
-                playButton.startGame()
-            }
+            MenuEvent.PlayGameClicked -> playButton.startGame()
         }
     }
 }
@@ -106,8 +104,7 @@ private class MainMenuTitle(
 
     fun resetPosition() {
         actor.setPosition(
-            (Gdx.graphics.width - actor.width) * 0.5f,
-            (Gdx.graphics.height - actor.height) * 0.75f
+            (Gdx.graphics.width - actor.width) * 0.5f, (Gdx.graphics.height - actor.height) * 0.75f
         )
     }
 
@@ -173,8 +170,7 @@ private class PlayButton(
 
     fun resetPosition() {
         actor.setPosition(
-            (Gdx.graphics.width - actor.width) * 0.5f,
-            (Gdx.graphics.height - actor.height) * 0.25f
+            (Gdx.graphics.width - actor.width) * 0.5f, (Gdx.graphics.height - actor.height) * 0.25f
         )
     }
 
@@ -182,11 +178,9 @@ private class PlayButton(
         actor.setColor(1f, 1f, 1f, 0f)
         actor.addAction(
             parallel(
-                delay(0.75f, fadeIn(0.35f)),
-                forever(
+                delay(0.75f, fadeIn(0.35f)), forever(
                     sequence(
-                        moveBy(0f, 5f, 1f, linear),
-                        moveBy(0f, -5f, 1f, linear)
+                        moveBy(0f, 5f, 1f, linear), moveBy(0f, -5f, 1f, linear)
                     )
                 )
             )
