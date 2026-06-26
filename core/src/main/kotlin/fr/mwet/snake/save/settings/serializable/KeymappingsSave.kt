@@ -60,7 +60,7 @@ class GeneralKeymappingSave() {
 object DefaultKeymappings {
     fun defaultGame() = arrayListOf(
         GameKeymappingSave(GameActionId.GoBackToMainMenu, arrayListOf(Input.Keys.ESCAPE)),
-        GameKeymappingSave(GameActionId.Pause, arrayListOf(Input.Keys.ESCAPE)),
+        GameKeymappingSave(GameActionId.Pause, arrayListOf(Input.Keys.SPACE)),
         GameKeymappingSave(GameActionId.GoUp, arrayListOf(Input.Keys.Z, Input.Keys.W, Input.Keys.UP)),
         GameKeymappingSave(GameActionId.GoRight, arrayListOf(Input.Keys.D, Input.Keys.RIGHT)),
         GameKeymappingSave(GameActionId.GoDown, arrayListOf(Input.Keys.S, Input.Keys.DOWN)),
