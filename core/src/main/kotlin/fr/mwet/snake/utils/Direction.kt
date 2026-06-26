@@ -23,8 +23,10 @@ fun Vector2.move(direction: Direction): Vector2 {
     return this
 }
 
-fun Vector2.move(position: Vector2): Vector2 {
-    x = position.x
-    y = position.y
+fun Vector2.move(position: Vector2) = move(position.x, position.y)
+fun Vector2.move(x: Int, y: Int) = move(x.toFloat(), y.toFloat())
+fun Vector2.move(x: Float, y: Float): Vector2 {
+    this.x = x
+    this.y = y
     return this
 }

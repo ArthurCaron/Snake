@@ -60,7 +60,7 @@ class ProgressBar(barWidth: Float, barHeight: Float) :
         batch.draw(texture, position, fullSize)
 
         batch.setColor(0.4f, 0.4f, 1f, 1f)
-        batch.draw(texture, position, size.obtain(progress.value * fullSize.x, fullSize.y))
+        batch.draw(texture, position, size.move(progress.value * fullSize.x, fullSize.y))
     }
 }
 

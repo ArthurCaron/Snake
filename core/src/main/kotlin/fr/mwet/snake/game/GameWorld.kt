@@ -1,15 +1,13 @@
 package fr.mwet.snake.game
 
-import fr.mwet.snake.DI
 import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.GameEventListener
-import fr.mwet.snake.utils.Direction
 
 class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
-    val food: Food = Food(DI.vectorPool.obtain(-1, -1))
-    val snake = Snake(DI.vectorPool.obtain(4f, 3f), Direction.UP)
+    val food: Food = Food()
+    val snake = Snake()
     val cells = Cells()
 
     var gameOver = false

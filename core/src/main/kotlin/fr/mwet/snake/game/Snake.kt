@@ -9,14 +9,15 @@ import ktx.assets.pool
 private const val TICKS_PER_SECOND = 3f
 private const val SECONDS_PER_TICK = 1f / TICKS_PER_SECOND
 
-class Snake(private val initialTailPosition: Vector2, private val initialDirection: Direction) : TargetActor {
+private val initialDirection = Direction.UP
+private val initialTailPosition = DI.vectorPool.obtain(4f, 3f)
+private val initialHeadPosition = DI.vectorPool.obtain(
+    initialTailPosition.x + initialDirection.directionX,
+    initialTailPosition.y + initialDirection.directionY
+)
+
+class Snake : TargetActor {
     private val segmentPool = SegmentPool()
-
-    private val initialHeadPosition = DI.vectorPool.obtain(
-        initialTailPosition.x + initialDirection.directionX,
-        initialTailPosition.y + initialDirection.directionY
-    )
-
     val head = segmentPool.obtain(initialHeadPosition.copyVector())
     val tail = segmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
     var currentDirection = initialDirection
@@ -88,11 +89,11 @@ class Snake(private val initialTailPosition: Vector2, private val initialDirecti
 }
 
 class SegmentPool {
-    private val segmentPool = pool { Segment(Vector2.Zero) }
+    private val segmentPool = pool { Segment(DI.vectorPool.obtain(-1, -1)) }
 
-    fun obtain(position: Vector2): Segment = segmentPool.obtain().apply { this.position = position }
+    fun obtain(position: Vector2): Segment = segmentPool.obtain().apply { move(position) }
     fun free(segment: Segment) {
-        segment.position.free()
+        segment.position.move(-1, -1)
         segment.next = null
         segment.previous = null
         segment.stayStill = false
