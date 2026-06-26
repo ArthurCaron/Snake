@@ -2,7 +2,7 @@ package fr.mwet.snake.game
 
 import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.DI
-import fr.mwet.snake.inputs.game.TargetActor
+import fr.mwet.snake.inputs.TargetActor
 import fr.mwet.snake.utils.*
 import ktx.assets.pool
 

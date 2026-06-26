@@ -1,4 +1,4 @@
-package fr.mwet.snake.inputs.general
+package fr.mwet.snake.inputs
 
 import fr.mwet.snake.save.settings.GeneralKeymapping
 import ktx.app.KtxInputAdapter

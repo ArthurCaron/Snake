@@ -1,8 +1,8 @@
 package fr.mwet.snake.save.settings.serializable
 
 import com.badlogic.gdx.Input
-import fr.mwet.snake.inputs.game.GameActionId
-import fr.mwet.snake.inputs.general.GeneralActionId
+import fr.mwet.snake.inputs.GameActionId
+import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.utils.NO_VERSION
 
 class KeymappingsSave() {

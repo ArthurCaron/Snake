@@ -1,7 +1,7 @@
 package fr.mwet.snake.save.settings
 
-import fr.mwet.snake.inputs.game.GameActionId
-import fr.mwet.snake.inputs.general.GeneralActionId
+import fr.mwet.snake.inputs.GameActionId
+import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.settings.serializable.*
 

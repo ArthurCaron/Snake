@@ -1,4 +1,4 @@
-package fr.mwet.snake.inputs.game
+package fr.mwet.snake.inputs
 
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.game.GameWorld
