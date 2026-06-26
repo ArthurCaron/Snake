@@ -49,7 +49,7 @@ class TextureHandler(assetManager: AssetManager) : DisposableRegistry by Disposa
         val pm = Pixmap(1, 1, Format.RGBA8888)
         pm.setColor(BACKGROUND_COLOR)
         pm.fill()
-        val backgroundTexture = Texture(pm)
+        val backgroundTexture = Texture(pm).alsoRegister()
         pm.dispose()
         backgroundTexture
     }
