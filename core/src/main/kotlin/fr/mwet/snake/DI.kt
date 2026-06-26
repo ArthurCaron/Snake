@@ -17,8 +17,8 @@ import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
-import fr.mwet.snake.inputs.game.GameInputProcessor
-import fr.mwet.snake.inputs.general.GeneralInputProcessor
+import fr.mwet.snake.inputs.GameInputProcessor
+import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.save.game.GameSaveRepository
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.serialization.FileTextStore

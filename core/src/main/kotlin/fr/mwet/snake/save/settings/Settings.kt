@@ -1,9 +1,9 @@
 package fr.mwet.snake.save.settings
 
-import fr.mwet.snake.inputs.game.GameCommand
-import fr.mwet.snake.inputs.game.NullGameCommand
-import fr.mwet.snake.inputs.general.GeneralCommand
-import fr.mwet.snake.inputs.general.NullGeneralCommand
+import fr.mwet.snake.inputs.GameCommand
+import fr.mwet.snake.inputs.GeneralCommand
+import fr.mwet.snake.inputs.NullGameCommand
+import fr.mwet.snake.inputs.NullGeneralCommand
 
 data class Settings(
     val userPreferences: UserPreferences,

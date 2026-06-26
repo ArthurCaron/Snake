@@ -1,4 +1,4 @@
-package fr.mwet.snake.inputs.general
+package fr.mwet.snake.inputs
 
 import fr.mwet.snake.DI
 import fr.mwet.snake.events.MenuEvent.PlayGameClicked
