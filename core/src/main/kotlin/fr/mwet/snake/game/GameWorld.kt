@@ -4,35 +4,39 @@ import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.GameEventListener
+import fr.mwet.snake.utils.free
 
 class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
-    val food: Food = Food()
-    val snake = Snake()
+    val ticker = Ticker()
     val cells = Cells()
+    val snake = Snake()
+    val food = Food()
 
-    var lost = false
-    var won = false
+    var gameStopped = false
 
     fun newGame() {
-        lost = false
-        won = false
+        gameStopped = false
+        ticker.reset()
         snake.reset()
         resetFood()
     }
 
     fun update(delta: Float) {
-        if (lost) return
-        if (won) return
+        if (gameStopped) return
+        if (!ticker.update(delta)) return
 
-        val snakeMoved = snake.update(delta)
+        snake.move()
+        gameEventBus.emit(SnakeMoved)
+
         if (snake.collidesWithBoundaries() || snake.collidesWithOwnBody()) {
             gameEventBus.emit(Lost)
             return
         }
 
-        if (snakeMoved) gameEventBus.emit(SnakeMoved)
-
-        if (snake.willCollideWithFood(food)) snake.eatFood()
+        val nextHeadPosition = snake.computeNextHeadPosition()
+        val willEat = food.isAt(nextHeadPosition)
+        nextHeadPosition.free()
+        if (willEat) snake.eatFood()
 
         if (snake.collidesWithFood(food)) {
             gameEventBus.emit(FoodEaten)
@@ -51,9 +55,26 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
 
     override fun onEvent(event: GameEvent) {
         when (event) {
-            Lost -> lost = true
-            Won -> won = true
+            Lost, Won -> gameStopped = true
             FoodEaten, SnakeMoved, GoBackToMainMenu, Pause -> {}
         }
+    }
+}
+
+class Ticker {
+    private val ticksPerSecond = 5f
+    private val secondsPerTick = 1f / ticksPerSecond
+    private var secondsSinceLastTick: Float = 0f
+
+    fun reset() {
+        secondsSinceLastTick = 0f
+    }
+
+    fun update(delta: Float): Boolean {
+        secondsSinceLastTick += delta
+        if (secondsSinceLastTick < secondsPerTick) return false
+
+        secondsSinceLastTick -= secondsPerTick
+        return true
     }
 }

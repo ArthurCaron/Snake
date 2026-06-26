@@ -6,9 +6,6 @@ import fr.mwet.snake.inputs.TargetActor
 import fr.mwet.snake.utils.*
 import ktx.assets.pool
 
-private const val TICKS_PER_SECOND = 3f
-private const val SECONDS_PER_TICK = 1f / TICKS_PER_SECOND
-
 private val initialDirection = Direction.UP
 private val initialTailPosition = DI.vectorPool.obtain(4f, 3f)
 private val initialHeadPosition = DI.vectorPool.obtain(
@@ -22,7 +19,6 @@ class Snake : TargetActor {
     val tail = segmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
     var currentDirection = initialDirection
     var futureDirection = currentDirection
-    private var secondsSinceLastTick: Float = 0f
     private var isEating = false
 
     fun reset() {
@@ -30,9 +26,10 @@ class Snake : TargetActor {
         tail.position.move(initialTailPosition)
         freeBodyParts()
         tail.linkPrevious(head)
+        tail.stayStill = false
         currentDirection = initialDirection
         futureDirection = currentDirection
-        secondsSinceLastTick = 0f
+        isEating = false
     }
 
     private fun freeBodyParts() {
@@ -47,14 +44,7 @@ class Snake : TargetActor {
         }
     }
 
-    fun update(delta: Float): Boolean {
-        secondsSinceLastTick += delta
-        if (secondsSinceLastTick < SECONDS_PER_TICK) return false
-
-        secondsSinceLastTick %= SECONDS_PER_TICK
-        move()
-        return true
-    }
+    fun computeNextHeadPosition() = head.position.copyVector().move(futureDirection)
 
     fun move() {
         currentDirection = futureDirection
@@ -80,12 +70,6 @@ class Snake : TargetActor {
     fun collidesWithBoundaries() = head.collidesWithBoundaries()
     fun collidesWithOwnBody() = head.collidesWithOwnBody()
     fun collidesWithFood(food: Food) = head.collidesWith(food.position)
-    fun willCollideWithFood(food: Food): Boolean {
-        val vector = head.position.copyVector().move(futureDirection)
-        val doesCollide = vector.collidesWith(food.position)
-        vector.free()
-        return doesCollide
-    }
 }
 
 class SegmentPool {

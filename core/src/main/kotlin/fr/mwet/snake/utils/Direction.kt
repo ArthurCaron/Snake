@@ -17,12 +17,7 @@ enum class Direction(val directionX: Int, val directionY: Int) {
     }
 }
 
-fun Vector2.move(direction: Direction): Vector2 {
-    x += direction.directionX
-    y += direction.directionY
-    return this
-}
-
+fun Vector2.move(direction: Direction) = move(x + direction.directionX, y + direction.directionY)
 fun Vector2.move(position: Vector2) = move(position.x, position.y)
 fun Vector2.move(x: Int, y: Int) = move(x.toFloat(), y.toFloat())
 fun Vector2.move(x: Float, y: Float): Vector2 {

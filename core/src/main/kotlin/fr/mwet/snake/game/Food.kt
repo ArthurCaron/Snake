@@ -8,4 +8,6 @@ data class Food(val position: Vector2 = DI.vectorPool.obtain(-1, -1)) {
     fun move(newPosition: Vector2) {
         position.move(newPosition)
     }
+
+    fun isAt(position: Vector2) = position == this.position
 }
