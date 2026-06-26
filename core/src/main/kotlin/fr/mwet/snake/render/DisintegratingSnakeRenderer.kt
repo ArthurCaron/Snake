@@ -14,13 +14,17 @@ import kotlin.random.Random
 
 class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Snake) {
     private var eTime = 0f
-    private val snakeHead = textureHandler.snakeHead
-    private val snakeBody = textureHandler.snakeBody
-    private val snakeTail = textureHandler.snakeTail
+
+    //    private val snakeHead = textureHandler.snakeHead
+//    private val snakeBody = textureHandler.snakeBody
+//    private val snakeTail = textureHandler.snakeTail
+    private val snekHeadAll = textureHandler.snekHeadAll
+    private val snakeBody = textureHandler.snekBodyStraight
+    private val snakeTail = textureHandler.snekTail
     private val bodyParts = mutableListOf<DisintegratingSegment>()
 
     fun disintegrate() {
-        bodyParts.add(DisintegratingSegment(snake.head.position.copyVector(), snakeHead))
+        bodyParts.add(DisintegratingSegment(snake.head.position.copyVector(), snekHeadAll))
         bodyParts.add(DisintegratingSegment(snake.tail.position.copyVector(), snakeTail))
 
         var segment: Segment? = snake.head.next
