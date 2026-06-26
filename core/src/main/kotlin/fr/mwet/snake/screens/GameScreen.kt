@@ -46,7 +46,6 @@ class GameScreen(
             Game.setScreen<MainMenuScreen>()
         }
     }
-    var scheduledGameOverTask: Timer.Task? = null
 
     override fun show() {
         DI.registerGameInputProcessor()
@@ -61,6 +60,7 @@ class GameScreen(
     override fun hide() {
         DI.unRegisterGameInputProcessor()
         DI.unRegisterInputProcessor(stage)
+        gameOverTask.cancel()
     }
 
     override fun render(delta: Float) {
@@ -104,7 +104,8 @@ class GameScreen(
 
     private fun gameOver() {
         disintegratingSnakeRenderer.disintegrate()
-        scheduledGameOverTask = Timer.schedule(gameOverTask, 1.5f)
+        gameOverTask.cancel()
+        Timer.schedule(gameOverTask, 1.5f)
     }
 
     private fun drawGridMap(batch: SpriteBatch) {
