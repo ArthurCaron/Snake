@@ -79,7 +79,7 @@ class GameScreen(
     }
 
     fun render(batch: SpriteBatch, delta: Float) {
-        if (gameWorld.lost) {
+        if (gameWorld.gameStopped) {
             disintegratingSnakeRenderer.render(batch, delta)
             return
         }
