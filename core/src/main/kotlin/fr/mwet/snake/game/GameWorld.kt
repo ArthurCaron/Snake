@@ -10,21 +10,23 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
     val snake = Snake()
     val cells = Cells()
 
-    var gameOver = false
+    var lost = false
+    var won = false
 
     fun newGame() {
-        gameOver = false
+        lost = false
+        won = false
         snake.reset()
-        val availableCells = cells.computeAvailableCells(snake)
-        food.reset(availableCells)
+        resetFood()
     }
 
     fun update(delta: Float) {
-        if (gameOver) return
+        if (lost) return
+        if (won) return
 
         val snakeMoved = snake.update(delta)
         if (snake.collidesWithBoundaries() || snake.collidesWithOwnBody()) {
-            gameEventBus.emit(GameOver)
+            gameEventBus.emit(Lost)
             return
         }
 
@@ -34,14 +36,23 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
 
         if (snake.collidesWithFood(food)) {
             gameEventBus.emit(FoodEaten)
-            val availableCells = cells.computeAvailableCells(snake)
-            food.reset(availableCells)
+            resetFood()
+        }
+    }
+
+    private fun resetFood() {
+        val newCell = cells.randomAvailableCell(snake)
+        if (newCell == null) {
+            gameEventBus.emit(Won)
+        } else {
+            food.move(newCell.position)
         }
     }
 
     override fun onEvent(event: GameEvent) {
         when (event) {
-            GameOver -> gameOver = true
+            Lost -> lost = true
+            Won -> won = true
             FoodEaten, SnakeMoved, GoBackToMainMenu, Pause -> {}
         }
     }

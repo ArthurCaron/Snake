@@ -16,7 +16,7 @@ class Cells {
     private val availableCells = mutableSetOf<Cell>()
     private val forbiddenPositions = mutableSetOf<Vector2>()
 
-    fun computeAvailableCells(snake: Snake): Set<Cell> {
+    fun randomAvailableCell(snake: Snake): Cell? {
         var segment: Segment? = snake.head
         while (segment != null) {
             forbiddenPositions.add(segment.position)
@@ -31,7 +31,7 @@ class Cells {
         }
         forbiddenPositions.clear()
 
-        return availableCells
+        return availableCells.randomOrNull()
     }
 }
 
