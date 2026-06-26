@@ -15,6 +15,12 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
         Animation(1f / 2f, textureHandler.snakeHeadAnimation, Animation.PlayMode.LOOP_PINGPONG)
     private val animationFlipped =
         Animation(1f / 2f, textureHandler.snakeHeadFlippedAnimation, Animation.PlayMode.LOOP_PINGPONG)
+    private val snekBodyStraight = textureHandler.snekBodyStraight
+    private val snekBodyTurn = textureHandler.snekBodyTurn
+    private val snekHead = textureHandler.snekHead
+    private val snekHeadAll = textureHandler.snekHeadAll
+    private val snekTail = textureHandler.snekTail
+    private val snekGooglyAnimation = Animation(0.5f, textureHandler.snekGoogly, Animation.PlayMode.LOOP)
 
     private var eTime = 0f
 
@@ -24,23 +30,59 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
         var segment: Segment? = snake.head
         while (segment != null) {
             when (segment) {
-                snake.tail -> drawSegment(batch, segment, snakeTail)
+                snake.tail -> drawSegment(batch, segment, snekTail)
                 snake.head -> {
                     if (snake.currentDirection == Direction.LEFT) {
-                        drawHead(batch, snake.head, animation)
+                        drawHead(batch, segment, snekHeadAll)
                     } else {
-                        drawHead(batch, snake.head, animationFlipped)
+                        drawHead(batch, segment, snekHeadAll)
                     }
                 }
 
-                else -> drawSegment(batch, segment, snakeBody)
+                else -> drawSegment(batch, segment, snekBodyStraight)
             }
             segment = segment.next
         }
     }
 
+//    fun render(batch: SpriteBatch, delta: Float) {
+//        eTime += delta
+//
+//        var segment: Segment? = snake.head
+//        while (segment != null) {
+//            when (segment) {
+//                snake.tail -> drawSegment(batch, segment, snakeTail)
+//                snake.head -> {
+//                    if (snake.currentDirection == Direction.LEFT) {
+//                        drawHead(batch, segment, animation)
+//                    } else {
+//                        drawHead(batch, segment, animationFlipped)
+//                    }
+//                }
+//
+//                else -> drawSegment(batch, segment, snakeBody)
+//            }
+//            segment = segment.next
+//        }
+//    }
+
     fun reset() {
         eTime = 0f
+    }
+
+    private fun drawHead(batch: SpriteBatch, segment: Segment, texture: AtlasRegion) {
+        batch.draw(
+            texture,
+            segment.position.x,
+            segment.position.y,
+            0.5f,
+            0.5f,
+            1f,
+            1f,
+            1f,
+            1f,
+            getAngleFromDirection(snake.currentDirection)
+        )
     }
 
     private fun drawHead(batch: SpriteBatch, segment: Segment, animation: Animation<AtlasRegion>) {

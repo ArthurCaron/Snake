@@ -25,25 +25,42 @@ class TextureHandler(assetManager: AssetManager) : DisposableRegistry by Disposa
     )
 
     // Cursor
-    val cursor: AtlasRegion by lazy { textureAtlas.findRegion("cursor") }
+    private val miscFolder = "misc"
+    val cursor: AtlasRegion by lazy { textureAtlas.findRegion("$miscFolder/cursor") }
 
     // Menus
-    val gameTitle: AtlasRegion by lazy { textureAtlas.findRegion("GameTitle") }
-    val playBtn: AtlasRegion by lazy { textureAtlas.findRegion("PlayBtn") }
-    val playBtnDown: AtlasRegion by lazy { textureAtlas.findRegion("PlayBtnDown") }
+    private val mainMenuFolder = "mainMenu"
+    val gameTitle: AtlasRegion by lazy { textureAtlas.findRegion("$mainMenuFolder/gameTitle") }
+    val playBtn: AtlasRegion by lazy { textureAtlas.findRegion("$mainMenuFolder/playBtn") }
+    val playBtnDown: AtlasRegion by lazy { textureAtlas.findRegion("$mainMenuFolder/playBtnDown") }
 
-    // Gameplay
-    val gridCell: AtlasRegion by lazy { textureAtlas.findRegion("GridCell") }
+    // Game
+    private val gameFolder = "game"
+    val gridCell: AtlasRegion by lazy { textureAtlas.findRegion("$gameFolder/gridCell") }
 
-    val strawberry: AtlasRegion by lazy { textureAtlas.findRegion("Strawberry") }
-    val strawberryAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("StrawberryAnimation") }
-    val snakeHead: AtlasRegion by lazy { textureAtlas.findRegion("SnakeHead") }
-    val snakeHeadAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("SnakeHeadAnimation") }
+    // Chloe
+    private val chloeFruitFolder = "$gameFolder/chloe/fruit"
+    private val chloeSnekFolder = "$gameFolder/chloe/snek"
+    val strawberry: AtlasRegion by lazy { textureAtlas.findRegion("$chloeFruitFolder/strawberry") }
+    val strawberryAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$chloeFruitFolder/strawberryAnimation") }
+    val snakeHead: AtlasRegion by lazy { textureAtlas.findRegion("$chloeSnekFolder/snakeHead") }
+    val snakeHeadAnimation: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$chloeSnekFolder/snakeHeadAnimation") }
     val snakeHeadFlippedAnimation: Array<AtlasRegion> by lazy {
         snakeHeadAnimation.map { AtlasRegion(it).apply { flip(false, true) } }.toGdxArray()
     }
-    val snakeBody: AtlasRegion by lazy { textureAtlas.findRegion("SnakeBody") }
-    val snakeTail: AtlasRegion by lazy { textureAtlas.findRegion("SnakeTail") }
+    val snakeBody: AtlasRegion by lazy { textureAtlas.findRegion("$chloeSnekFolder/snakeBody") }
+    val snakeTail: AtlasRegion by lazy { textureAtlas.findRegion("$chloeSnekFolder/snakeTail") }
+
+    // Arthur
+    private val arthurFruitFolder = "$gameFolder/arthur/fruit"
+    private val arthurSnekFolder = "$gameFolder/arthur/snek"
+    val snekBodyStraight: AtlasRegion by lazy { textureAtlas.findRegion("$arthurSnekFolder/snekBodyStraight") }
+    val snekBodyTurn: AtlasRegion by lazy { textureAtlas.findRegion("$arthurSnekFolder/snekBodyTurn") }
+    val snekHead: AtlasRegion by lazy { textureAtlas.findRegion("$arthurSnekFolder/snekHead") }
+    val snekHeadAll: AtlasRegion by lazy { textureAtlas.findRegion("$arthurSnekFolder/snekHeadAll") }
+    val snekTail: AtlasRegion by lazy { textureAtlas.findRegion("$arthurSnekFolder/snekTail") }
+    val snekGoogly: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$chloeFruitFolder/snekGoogly") }
+
 
     val background: Texture by lazy {
         val pm = Pixmap(1, 1, Format.RGBA8888)

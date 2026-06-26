@@ -1,96 +1,259 @@
 
 textures.png
-size: 512, 128
+size: 64, 64
 format: RGBA8888
-filter: Nearest, Nearest
+filter: MipMapLinearLinear, MipMapLinearLinear
 repeat: none
-GameTitle
+game/gridCell
   rotate: false
-  xy: 2, 58
-  size: 418, 66
-  orig: 418, 66
-  offset: 0, 0
-  index: -1
-GridCell
-  rotate: false
-  xy: 78, 24
+  xy: 2, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-PlayBtn
+
+textures2.png
+size: 128, 256
+format: RGBA8888
+filter: MipMapLinearLinear, MipMapLinearLinear
+repeat: none
+game/arthur/snek/snekBodyStraight
   rotate: false
-  xy: 2, 30
-  size: 74, 26
-  orig: 74, 26
+  xy: 2, 206
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1
-PlayBtnDown
+game/arthur/snek/snekBodyStraight2
+  rotate: false
+  xy: 2, 172
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekBodyTurn
+  rotate: false
+  xy: 36, 206
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 70, 206
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 2, 104
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 36, 138
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 70, 172
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 2, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 36, 104
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 6
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 70, 138
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 7
+game/arthur/snek/snekGoogly
+  rotate: false
+  xy: 2, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 8
+game/arthur/snek/snekGooglyEmpty
+  rotate: false
+  xy: 2, 138
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekGooglyEmpty2
+  rotate: false
+  xy: 36, 172
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekHead
+  rotate: false
+  xy: 36, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekHeadAll
+  rotate: false
+  xy: 70, 104
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekHeadAll2
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekTail
+  rotate: false
+  xy: 36, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekTail2
+  rotate: false
+  xy: 70, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/arthur/snek/snekTail3
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+textures3.png
+size: 128, 64
+format: RGBA8888
+filter: MipMapLinearLinear, MipMapLinearLinear
+repeat: none
+game/chloe/fruit/strawberry
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/chloe/fruit/strawberryAnimation
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+game/chloe/fruit/strawberryAnimation
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+
+textures4.png
+size: 256, 64
+format: RGBA8888
+filter: MipMapLinearLinear, MipMapLinearLinear
+repeat: none
+game/chloe/snek/snakeBody
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/chloe/snek/snakeHead
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game/chloe/snek/snakeHeadAnimation
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+game/chloe/snek/snakeHeadAnimation
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+game/chloe/snek/snakeTail
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+textures5.png
+size: 512, 128
+format: RGBA8888
+filter: MipMapLinearLinear, MipMapLinearLinear
+repeat: none
+mainMenu/gameTitle
+  rotate: false
+  xy: 2, 30
+  size: 418, 66
+  orig: 418, 66
+  offset: 0, 0
+  index: -1
+mainMenu/playBtn
   rotate: false
   xy: 2, 2
   size: 74, 26
   orig: 74, 26
   offset: 0, 0
   index: -1
-SnakeBody
+mainMenu/playBtnDown
   rotate: false
-  xy: 112, 24
-  size: 32, 32
-  orig: 32, 32
+  xy: 422, 70
+  size: 74, 26
+  orig: 74, 26
   offset: 0, 0
   index: -1
-SnakeHead
+
+textures6.png
+size: 128, 128
+format: RGBA8888
+filter: MipMapLinearLinear, MipMapLinearLinear
+repeat: none
+misc/cursor
   rotate: false
-  xy: 146, 24
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-SnakeHeadAnimation
-  rotate: false
-  xy: 146, 24
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: 0
-SnakeHeadAnimation
-  rotate: false
-  xy: 180, 24
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: 1
-SnakeTail
-  rotate: false
-  xy: 214, 24
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-Strawberry
-  rotate: false
-  xy: 248, 24
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-StrawberryAnimation
-  rotate: false
-  xy: 282, 24
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: 0
-StrawberryAnimation
-  rotate: false
-  xy: 316, 24
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: 1
-cursor
-  rotate: false
-  xy: 422, 60
+  xy: 2, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
