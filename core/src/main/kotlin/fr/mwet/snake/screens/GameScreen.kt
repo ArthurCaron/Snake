@@ -41,7 +41,7 @@ class GameScreen(
     val foodRenderer = FoodRenderer(textureHandler, gameWorld.food)
     val snakeRenderer = SnakeRenderer(textureHandler, gameWorld.snake)
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(textureHandler, gameWorld.snake)
-    val gameOverTask = object : Timer.Task() {
+    val lostTask = object : Timer.Task() {
         override fun run() {
             Game.setScreen<MainMenuScreen>()
         }
@@ -60,7 +60,7 @@ class GameScreen(
     override fun hide() {
         DI.unRegisterGameInputProcessor()
         DI.unRegisterInputProcessor(stage)
-        gameOverTask.cancel()
+        lostTask.cancel()
     }
 
     override fun render(delta: Float) {
@@ -79,7 +79,7 @@ class GameScreen(
     }
 
     fun render(batch: SpriteBatch, delta: Float) {
-        if (gameWorld.gameOver) {
+        if (gameWorld.lost) {
             disintegratingSnakeRenderer.render(batch, delta)
             return
         }
@@ -89,17 +89,22 @@ class GameScreen(
 
     override fun onEvent(event: GameEvent) {
         when (event) {
-            GameOver -> gameOver()
+            Lost -> lost()
+            Won -> won()
             GoBackToMainMenu -> Game.setScreen<MainMenuScreen>()
             Pause -> Game.setScreen<MainMenuScreen>()
             FoodEaten, SnakeMoved -> {}
         }
     }
 
-    private fun gameOver() {
+    private fun lost() {
         disintegratingSnakeRenderer.disintegrate()
-        gameOverTask.cancel()
-        Timer.schedule(gameOverTask, 1.5f)
+        lostTask.cancel()
+        Timer.schedule(lostTask, 1.5f)
+    }
+
+    private fun won() {
+        // Do something
     }
 
     private fun drawGridMap(batch: SpriteBatch) {
