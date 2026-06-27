@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.utils.NO_VERSION
+import fr.mwet.snake.utils.doesNotContainKey
 
 class KeymappingsSave() {
     var version: Int = NO_VERSION
@@ -21,7 +22,7 @@ class KeymappingsSave() {
 
         val gameMap = game.associate { it.action to it.keys }.toMutableMap()
         DefaultKeymappings.defaultKeymappings().game.forEach {
-            if (!gameMap.containsKey(it.action)) {
+            if (gameMap.doesNotContainKey(it.action)) {
                 gameMap[it.action] = it.keys
             }
         }
@@ -29,7 +30,7 @@ class KeymappingsSave() {
 
         val generalMap = general.associate { it.action to it.keys }.toMutableMap()
         DefaultKeymappings.defaultKeymappings().general.forEach {
-            if (!generalMap.containsKey(it.action)) {
+            if (generalMap.doesNotContainKey(it.action)) {
                 generalMap[it.action] = it.keys
             }
         }

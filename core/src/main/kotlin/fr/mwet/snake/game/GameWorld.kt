@@ -1,10 +1,12 @@
 package fr.mwet.snake.game
 
+import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.GameEventListener
-import fr.mwet.snake.utils.free
+import fr.mwet.snake.utils.WORLD_HEIGHT
+import fr.mwet.snake.utils.WORLD_WIDTH
 
 class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
     val ticker = Ticker()
@@ -23,25 +25,32 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
 
     fun update(delta: Float) {
         if (gameStopped) return
-        if (!ticker.update(delta)) return
+        if (ticker.update(delta) == UpdateResult.KeepWaiting) return
 
-        snake.move()
-        gameEventBus.emit(SnakeMoved)
+        val willEatFood = food.isAt(snake.nextHeadPosition)
+        val willBeOutsideWorld = isOutsideWorld(snake.nextHeadPosition)
+        val willCollideWithBody = snake.wouldCollideWithBodyAfterMoving(willEatFood = willEatFood)
 
-        if (snake.collidesWithBoundaries() || snake.collidesWithOwnBody()) {
+        if (willBeOutsideWorld || willCollideWithBody) {
             gameEventBus.emit(Lost)
             return
         }
 
-        val nextHeadPosition = snake.computeNextHeadPosition()
-        val willEat = food.isAt(nextHeadPosition)
-        nextHeadPosition.free()
-        if (willEat) snake.eatFood()
+        snake.move(eatFood = willEatFood)
+        gameEventBus.emit(SnakeMoved)
 
-        if (snake.collidesWithFood(food)) {
+        if (willEatFood) {
             gameEventBus.emit(FoodEaten)
             resetFood()
         }
+    }
+
+    private fun isOutsideWorld(position: Vector2): Boolean {
+        if (position.x < 0) return true
+        if (position.y < 0) return true
+        if (position.x >= WORLD_WIDTH) return true
+        if (position.y >= WORLD_HEIGHT) return true
+        return false
     }
 
     private fun resetFood() {
@@ -58,23 +67,5 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
             Lost, Won -> gameStopped = true
             FoodEaten, SnakeMoved, GoBackToMainMenu, Pause -> {}
         }
-    }
-}
-
-class Ticker {
-    private val ticksPerSecond = 5f
-    private val secondsPerTick = 1f / ticksPerSecond
-    private var secondsSinceLastTick: Float = 0f
-
-    fun reset() {
-        secondsSinceLastTick = 0f
-    }
-
-    fun update(delta: Float): Boolean {
-        secondsSinceLastTick += delta
-        if (secondsSinceLastTick < secondsPerTick) return false
-
-        secondsSinceLastTick -= secondsPerTick
-        return true
     }
 }
