@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.DI
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.utils.doesNotContain
 
 class Cells {
     private val allPositions: List<Cell> = buildList {
@@ -25,7 +26,7 @@ class Cells {
 
         availableCells.clear()
         allPositions.forEach {
-            if (!forbiddenPositions.contains(it.position)) {
+            if (forbiddenPositions.doesNotContain(it.position)) {
                 availableCells.add(it)
             }
         }

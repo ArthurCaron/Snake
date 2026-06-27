@@ -148,7 +148,7 @@ private class PlayButton(
         onClick { menuEventBus.emit(MenuEvent.PlayGameClicked) }
         onEnter { replaceHoverAction(scaleTo(1.25f, 1.25f, 0.3f, elasticOut)) }
         onExit {
-            if (!clicked) {
+            if (clicked.not()) {
                 replaceHoverAction(scaleTo(1f, 1f, 0.5f, elasticOut))
             }
         }

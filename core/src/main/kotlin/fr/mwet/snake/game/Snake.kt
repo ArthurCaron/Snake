@@ -3,7 +3,10 @@ package fr.mwet.snake.game
 import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.DI
 import fr.mwet.snake.inputs.TargetActor
-import fr.mwet.snake.utils.*
+import fr.mwet.snake.utils.Direction
+import fr.mwet.snake.utils.collidesWith
+import fr.mwet.snake.utils.copyVector
+import fr.mwet.snake.utils.move
 import ktx.assets.pool
 
 private val initialDirection = Direction.UP
@@ -19,7 +22,7 @@ class Snake : TargetActor {
     val tail = segmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
     var currentDirection = initialDirection
     var futureDirection = currentDirection
-    private var isEating = false
+    var nextHeadPosition = DI.vectorPool.obtain(-1, -1)
 
     fun reset() {
         head.position.move(initialHeadPosition)
@@ -29,7 +32,7 @@ class Snake : TargetActor {
         tail.stayStill = false
         currentDirection = initialDirection
         futureDirection = currentDirection
-        isEating = false
+        updateNextHeadPosition()
     }
 
     private fun freeBodyParts() {
@@ -44,32 +47,40 @@ class Snake : TargetActor {
         }
     }
 
-    fun computeNextHeadPosition() = head.position.copyVector().move(futureDirection)
+    fun move(eatFood: Boolean) {
+        if (eatFood) {
+            tail.stayStill = true
+            val newBodyPart = segmentPool.obtain(tail.position.copyVector())
+            tail.previous?.let { newBodyPart.linkPrevious(it) }
+            newBodyPart.linkNext(tail)
+        }
 
-    fun move() {
         currentDirection = futureDirection
         head.move(currentDirection)
-        isEating = false
         tail.stayStill = false
+        updateNextHeadPosition()
     }
 
     override fun setDirection(newDirection: Direction) {
         if (newDirection.isOpposite(currentDirection)) return
         futureDirection = newDirection
+        updateNextHeadPosition()
     }
 
-    fun eatFood() {
-        if (isEating) return
-        isEating = true
-        tail.stayStill = true
-        val newBodyPart = segmentPool.obtain(tail.position.copyVector())
-        tail.previous?.let { newBodyPart.linkPrevious(it) }
-        newBodyPart.linkNext(tail)
+    private fun updateNextHeadPosition() {
+        nextHeadPosition.move(head.position).move(futureDirection)
     }
 
-    fun collidesWithBoundaries() = head.collidesWithBoundaries()
-    fun collidesWithOwnBody() = head.collidesWithOwnBody()
-    fun collidesWithFood(food: Food) = head.collidesWith(food.position)
+    fun wouldCollideWithBodyAfterMoving(willEatFood: Boolean): Boolean {
+        var bodyPart: Segment? = head
+        while (bodyPart != null) {
+            if (bodyPart != tail || willEatFood) {
+                if (nextHeadPosition.collidesWith(bodyPart.position)) return true
+            }
+            bodyPart = bodyPart.next
+        }
+        return false
+    }
 }
 
 class SegmentPool {
@@ -110,30 +121,5 @@ data class Segment(var position: Vector2) {
         if (stayStill) return
         next?.move(position)
         position.move(newPosition)
-    }
-
-    fun collidesWith(otherPosition: Vector2): Boolean =
-        position.x == otherPosition.x && position.y == otherPosition.y
-
-    fun collidesWithBoundaries(): Boolean {
-        if (position.x < 0) return true
-        if (position.y < 0) return true
-        if (position.x >= WORLD_WIDTH) return true
-        if (position.y >= WORLD_HEIGHT) return true
-        return false
-    }
-
-    fun collidesWithOwnBody(): Boolean {
-        var bodyPart = previous
-        while (bodyPart != null) {
-            if (collidesWith(bodyPart.position)) return true
-            bodyPart = bodyPart.previous
-        }
-        bodyPart = next
-        while (bodyPart != null) {
-            if (collidesWith(bodyPart.position)) return true
-            bodyPart = bodyPart.next
-        }
-        return false
     }
 }

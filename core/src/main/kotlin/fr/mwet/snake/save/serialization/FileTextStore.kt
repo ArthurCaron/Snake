@@ -2,11 +2,12 @@ package fr.mwet.snake.save.serialization
 
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.TimeUtils
+import fr.mwet.snake.utils.doesNotExists
 
 class FileTextStore(private val root: FileHandle) : TextStore {
     override fun read(path: String): String? {
         val file = root.child(path)
-        if (!file.exists()) return null
+        if (file.doesNotExists()) return null
 
         return runCatching {
             file.readString("UTF-8")
@@ -30,7 +31,7 @@ class FileTextStore(private val root: FileHandle) : TextStore {
 
     override fun backupCorrupted(path: String): Boolean {
         val file = root.child(path)
-        if (!file.exists()) return false
+        if (file.doesNotExists()) return false
         return backupCorruptedFile(file)
     }
 
