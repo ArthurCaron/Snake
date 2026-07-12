@@ -1,0 +1,11 @@
+- un menu principal propre : faire un bouton play semblable à celui de youtube avec une dent pour le signe play au centre (voir dessin 1 croqui).
+- Roue aléatoire avec bruit satisfaisant pour bonus (vitesse,skin etc) .
+- Un endroit avec des ranks pour montrer la progresion du joeur en temps réel.
+- Casier:pour vchanger son skin.
+- Changer de map (si jamais quelqu'un en crées)
+- Money en jeu que l'on gagane par rapport par exemple au ombre de fraise mangées et au score.
+- Puis le meilleur score affiché en haut a gauche pour rapeller au joueur ce qu'il doit dépasser.
+- un menu pause : meilleur score et score actuel.
+- Un bouton quitter plus missions en cour (si jamais)
+- Money et récompense. Paramètres. Et bien sur bouton reprendre. Tout ça page 2 design.
+- des paramètres : musique, effets sonores, langue 
