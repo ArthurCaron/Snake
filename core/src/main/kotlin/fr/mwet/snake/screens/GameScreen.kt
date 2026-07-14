@@ -1,5 +1,6 @@
 package fr.mwet.snake.screens
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Timer
@@ -24,6 +25,8 @@ import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.graphics.use
 
+private val BACKGROUND_COLOR = Color.valueOf("#1f1f1f")
+
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class GameScreen(
     textureHandler: TextureHandler,
@@ -36,7 +39,8 @@ class GameScreen(
         Game.addViewport(it)
     }
     private val stage = stage(batch, stageViewport)
-    private val backgroundTexture = textureHandler.background
+    private val backgroundTexture =
+        textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = BACKGROUND_COLOR)
     private val gridCellTexture = textureHandler.gridCell
     val foodRenderer = FoodRenderer(textureHandler, gameWorld.food)
     val snakeRenderer = SnakeRenderer(textureHandler, gameWorld.snake)
@@ -68,7 +72,7 @@ class GameScreen(
 
         gameViewport.apply(true)
         batch.use(gameCamera) {
-            it.draw(backgroundTexture, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+            it.draw(backgroundTexture, 0f, 0f)
             drawGridMap(it)
             render(it, delta)
         }

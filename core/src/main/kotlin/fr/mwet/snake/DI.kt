@@ -64,10 +64,12 @@ object DI : Context() {
 
         // Assets
         val assetManager = withBindSingleton<AssetManager> { AssetManager() }
+        assetManager.registerFontLoaders()
         val assetHandler = withBindSingleton<AssetHandler> { AssetHandler(assetManager) }
         val i18NHandler = withBindSingleton<I18NHandler> { I18NHandler(assetManager) }
         assetHandler.listenToAssetsLoaded(i18NHandler)
-        bindSingleton<MusicHandler> { MusicHandler(assetManager) }
+        val fontHandler = withBindSingleton<FontHandler> { FontHandler(assetManager) }
+        val musicHandler = withBindSingleton<MusicHandler> { MusicHandler(assetManager) }
         val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
         val soundPlayer = withBindSingleton<SoundPlayer> { SoundPlayer(soundHandler) }
         gameEventBus.listen(soundPlayer)
@@ -107,6 +109,7 @@ object DI : Context() {
         val keymapping = inject<Keymappings>()
 
         // Assets
+        val fontHandler = inject<FontHandler>()
         val textureHandler = inject<TextureHandler>()
 
         // Cameras
@@ -133,6 +136,7 @@ object DI : Context() {
         val mainMenuScreen = withBindSingleton {
             MainMenuScreen(
                 menuEventBus = menuEventBus,
+                fontHandler = fontHandler,
                 textureHandler = textureHandler,
                 batch = spriteBatch,
                 gameViewport = gameViewport,
