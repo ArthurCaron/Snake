@@ -1,0 +1,6 @@
+eclipse.project.name = appName + '-asset-catalog-generator'
+
+dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+}

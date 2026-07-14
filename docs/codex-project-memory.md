@@ -49,9 +49,11 @@ This file is durable context for future Codex chats. Read it before doing a whol
 
 ## Assets And Web
 
-- Packed gameplay textures are generated into `assets/textures`.
-- Source textures live under `graphics/textures`.
-- Web/favicon custom assets live under `graphics/web` and are copied by Gradle rather than moved into generated folders.
+- `sourceAssets` is the human-edited asset root. Treat `assets` as generated runtime output.
+- Packed gameplay textures are generated from `sourceAssets/textures` into `assets/textures`.
+- Fonts, i18n bundles, music, and sounds are synced from `sourceAssets` into matching folders under `assets` by Gradle.
+- Root runtime assets such as `LoadingAssets.png` and `SplashScreen.png` live in `sourceAssets/root` and are copied to the root of `assets` by Gradle.
+- Web/favicon custom assets live under `sourceAssets/web` and are copied by Gradle rather than moved into generated folders.
 - Pixel art should use crisp nearest-neighbor filtering unless intentionally smoothed.
 - `assets/included-in-template` contains default template UI assets; do not read or analyze it unless the task is specifically about those assets.
 
@@ -88,8 +90,8 @@ Skip unless relevant:
 - `assets/included-in-template/`
 - `lwjgl3/src/main/resources/libgdx*.png`
 - `android/` default launcher/resources
-- `graphics/xcfFiles/`
-- `graphics/piskelFiles/`
+- `sourceAssets/xcfFiles/`
+- `sourceAssets/piskelFiles/`
 
 Use `rg --files` and targeted `rg` searches before opening many files. Do not recursively inspect generated libGDX folders unless the user asks about them or the issue points there.
 

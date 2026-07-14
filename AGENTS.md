@@ -24,7 +24,7 @@ This is a Kotlin/libGDX/KTX Snake game. Prefer project-specific context from thi
 - `assets/textures/textures*.png` and `assets/textures/textures.atlas` unless debugging packed assets.
 - `assets/included-in-template/` unless debugging default libGDX/KTX UI assets.
 - `lwjgl3/` and `android/` unless the issue is platform-launcher-specific.
-- Binary/source art files under `graphics/xcfFiles/` and `graphics/piskelFiles/` unless the task is about art assets.
+- Binary/source art files under `sourceAssets/xcfFiles/` and `sourceAssets/piskelFiles/` unless the task is about art assets.
 - `teavm/build/` output. Read `teavm/src` and `teavm/build.gradle` only for web/TeaVM issues.
 
 ## Commands

@@ -41,3 +41,33 @@ dependencies {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
 }
+
+def generatedAssetCatalogDir = layout.buildDirectory.dir("generated/source/assetCatalog/kotlin")
+
+sourceSets {
+  main {
+    kotlin.srcDir(generatedAssetCatalogDir)
+  }
+}
+
+tasks.register("generateAssetCatalog", JavaExec) {
+  dependsOn(rootProject.tasks.named("prepareAssets"))
+  dependsOn(":tools:asset-catalog-generator:classes")
+
+  inputs.dir(rootProject.file("assets"))
+  inputs.file(rootProject.file("assets/textures/textures.atlas"))
+  outputs.dir(generatedAssetCatalogDir)
+
+  classpath = project(":tools:asset-catalog-generator").sourceSets.main.runtimeClasspath
+  mainClass.set("fr.mwet.tools.assetcataloggenerator.MainKt")
+
+  args(
+    "--input", rootProject.file("assets").absolutePath,
+    "--output", generatedAssetCatalogDir.get().asFile.absolutePath,
+    "--package", "fr.mwet.snake.generated.assets",
+  )
+}
+
+tasks.named("compileKotlin") {
+  dependsOn("generateAssetCatalog")
+}

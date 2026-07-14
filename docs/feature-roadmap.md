@@ -142,7 +142,7 @@ Done means: gameplay has feedback, pacing, and presentation worthy of a portfoli
 
 ## P2 - Web And Release Polish
 
-- [ ] Keep favicon/web assets copied from `graphics/web`.
+- [ ] Keep favicon/web assets copied from `sourceAssets/web`.
 - [ ] Add web loading/fallback text for asset failures.
 - [ ] Add fullscreen or fit-to-window behavior if desired.
 - [ ] Make web storage failures visible and recoverable.

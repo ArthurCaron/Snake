@@ -9,14 +9,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
+import fr.mwet.snake.generated.assets.FontAssets
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.assets.getValue
 import ktx.assets.loadAsset
 
-private const val FONTS_ROOT = "fonts"
-private const val CHEWY_FILE = "$FONTS_ROOT/chewy/Chewy-Regular.ttf"
-private const val FREDOKA_FILE = "$FONTS_ROOT/fredoka/Fredoka-Regular.ttf"
+private const val CHEWY_FILE = FontAssets.Chewy.ChewyRegular
+private const val FREDOKA_FILE = FontAssets.Fredoka.FredokaRegular
 
 private const val TITLE_FONT_ASSET = "generated-fonts/title-chewy-160.ttf"
 private const val UI_FONT_ASSET = "generated-fonts/ui-fredoka-36.ttf"
@@ -25,6 +25,8 @@ private const val BUTTON_FONT_ASSET = "generated-fonts/button-fredoka-60.ttf"
 private const val FRENCH_CHARS = "ÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸàâäçéèêëîïôöùûüÿœŒæÆ"
 
 class FontHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
+    private val characters = FreeTypeFontGenerator.DEFAULT_CHARS + FRENCH_CHARS
+
     val titleFont: BitmapFont by assetManager.loadAsset(
         AssetDescriptor(
             TITLE_FONT_ASSET,
@@ -45,7 +47,7 @@ class FontHandler(assetManager: AssetManager) : DisposableRegistry by Disposable
             fontParameters(
                 fontFile = FREDOKA_FILE,
                 size = 36,
-                characters = FreeTypeFontGenerator.DEFAULT_CHARS + FRENCH_CHARS,
+                characters = characters,
             )
         )
     )
@@ -57,7 +59,7 @@ class FontHandler(assetManager: AssetManager) : DisposableRegistry by Disposable
             fontParameters(
                 fontFile = FREDOKA_FILE,
                 size = 60,
-                characters = FreeTypeFontGenerator.DEFAULT_CHARS + FRENCH_CHARS,
+                characters = characters,
             )
         )
     )
