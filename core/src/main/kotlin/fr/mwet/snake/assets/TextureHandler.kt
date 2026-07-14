@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Array
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
@@ -16,23 +18,12 @@ import ktx.assets.loadAsset
 import ktx.collections.toGdxArray
 
 private const val TEXTURES_ATLAS_ROOT = "textures/textures.atlas"
-private val BACKGROUND_COLOR = Color.valueOf("#1f1f1f")
 
 class TextureHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
     // Texture Atlas
     private val textureAtlas by assetManager.loadAsset(
         AssetDescriptor(TEXTURES_ATLAS_ROOT, TextureAtlas::class.java)
     )
-
-    // Cursor
-    private val miscFolder = "misc"
-    val cursor: AtlasRegion by lazy { textureAtlas.findRegion("$miscFolder/cursor") }
-
-    // Menus
-    private val mainMenuFolder = "mainMenu"
-    val gameTitle: AtlasRegion by lazy { textureAtlas.findRegion("$mainMenuFolder/gameTitle") }
-    val playBtn: AtlasRegion by lazy { textureAtlas.findRegion("$mainMenuFolder/playBtn") }
-    val playBtnDown: AtlasRegion by lazy { textureAtlas.findRegion("$mainMenuFolder/playBtnDown") }
 
     // Game
     private val gameFolder = "game"
@@ -61,13 +52,47 @@ class TextureHandler(assetManager: AssetManager) : DisposableRegistry by Disposa
     val snekTail: AtlasRegion by lazy { textureAtlas.findRegion("$arthurSnekFolder/snekTail") }
     val snekGoogly: Array<AtlasRegion> by lazy { textureAtlas.findRegions("$chloeFruitFolder/snekGoogly") }
 
+    fun rectangleTexture(width: Float, height: Float, fill: Color = Color.BLACK) =
+        rectangleTexture(width.toInt(), height.toInt(), fill)
 
-    val background: Texture by lazy {
-        val pm = Pixmap(1, 1, Format.RGBA8888)
-        pm.setColor(BACKGROUND_COLOR)
-        pm.fill()
-        val backgroundTexture = Texture(pm).alsoRegister()
-        pm.dispose()
-        backgroundTexture
+    fun rectangleTexture(width: Int, height: Int, fill: Color = Color.BLACK) =
+        rectangleWithBorderTexture(width = width, height = height, fill = fill)
+
+    fun rectangleWithBorderTexture(
+        width: Float,
+        height: Float,
+        border: Int = 0,
+        fill: Color = Color.BLACK,
+        borderColor: Color = Color.BLACK
+    ) = rectangleWithBorderTexture(width.toInt(), height.toInt(), border, fill, borderColor)
+
+    fun rectangleWithBorderTexture(
+        width: Int,
+        height: Int,
+        border: Int = 0,
+        fill: Color = Color.BLACK,
+        borderColor: Color = Color.BLACK,
+    ): Texture {
+        val pixmap = Pixmap(width, height, Format.RGBA8888)
+
+        pixmap.setColor(borderColor)
+        pixmap.fillRectangle(0, 0, width, height)
+
+        pixmap.setColor(fill)
+        pixmap.fillRectangle(
+            border,
+            border,
+            width - border * 2,
+            height - border * 2,
+        )
+
+        val texture = Texture(pixmap).alsoRegister()
+        pixmap.dispose()
+
+        return texture
     }
 }
+
+fun Texture.toDrawable() = TextureRegionDrawable(TextureRegion(this))
+
+fun TextureRegion.toDrawable() = TextureRegionDrawable(this)

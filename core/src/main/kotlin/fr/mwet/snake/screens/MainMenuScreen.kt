@@ -1,21 +1,25 @@
 package fr.mwet.snake.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Color.WHITE
+import com.badlogic.gdx.graphics.Color.valueOf
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation.elasticOut
-import com.badlogic.gdx.math.Interpolation.linear
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
-import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
+import fr.mwet.snake.assets.FontHandler
 import fr.mwet.snake.assets.TextureHandler
+import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
@@ -29,12 +33,13 @@ import ktx.app.KtxScreen
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.graphics.use
-import ktx.scene2d.image
-import ktx.scene2d.scene2d
+
+private val BACKGROUND_COLOR = Color.valueOf("#1f1f1f")
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class MainMenuScreen(
     menuEventBus: MenuEventBus,
+    fontHandler: FontHandler,
     textureHandler: TextureHandler,
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
@@ -44,9 +49,11 @@ class MainMenuScreen(
         Game.addViewport(it)
     }
     private val stage = stage(batch, stageViewport)
-    private val backgroundTexture = textureHandler.background
-    private val mainMenuTitle = MainMenuTitle(textureHandler, gameViewport)
-    private val playButton = PlayButton(textureHandler, gameViewport, menuEventBus)
+    private val backgroundTexture =
+        textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = BACKGROUND_COLOR)
+    private val styles = Styles(fontHandler, textureHandler)
+    private val mainMenuTitle = MainMenuTitle(styles, gameViewport)
+    private val playButton = PlayButton(styles, menuEventBus)
 
     override fun show() {
         DI.registerGeneralInputProcessor()
@@ -76,7 +83,7 @@ class MainMenuScreen(
     override fun render(delta: Float) {
         gameViewport.apply(true)
         batch.use(gameCamera) {
-            it.draw(backgroundTexture, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+            it.draw(backgroundTexture, 0f, 0f)
         }
 
         stageViewport.apply(true)
@@ -91,31 +98,37 @@ class MainMenuScreen(
     }
 }
 
-private class MainMenuTitle(
-    textureHandler: TextureHandler,
-    private val gameViewport: GameViewport,
-) {
-    val actor: Image = scene2d.image(textureHandler.gameTitle) {
-        val defaultRatio = height / width
-        width = gameViewport.screenWidth * 0.70f
-        height = width * defaultRatio
+private class MainMenuTitle(styles: Styles, private val gameViewport: GameViewport) {
+    val actor = Label("Snek", styles.title).apply {
+        setAlignment(Align.center)
         setOrigin(Align.center)
     }
 
     fun resetPosition() {
+        actor.setFontScale(1f)
+        actor.pack()
+
+        val targetWidth = gameViewport.screenWidth * 0.70f
+        if (actor.width > 0f) {
+            actor.setFontScale(targetWidth / actor.width)
+        }
+
+        actor.pack()
+        actor.setOrigin(Align.center)
         actor.setPosition(
-            (Gdx.graphics.width - actor.width) * 0.5f, (Gdx.graphics.height - actor.height) * 0.75f
+            (Gdx.graphics.width - actor.width) * 0.5f,
+            (Gdx.graphics.height - actor.height) * 0.75f,
         )
     }
 
     fun startAnimation() {
-        actor.setScale(0.001f)
-        actor.addAction(
-            sequence(
-                delay(0.5f),
-                scaleTo(1f, 1f, 1.25f, elasticOut),
-            )
-        )
+//        actor.setScale(0.001f)
+//        actor.addAction(
+//            sequence(
+//                delay(0.5f),
+//                scaleTo(1f, 1f, 1.25f, elasticOut),
+//            )
+//        )
     }
 
     fun resetAnimation() {
@@ -123,22 +136,13 @@ private class MainMenuTitle(
     }
 }
 
-private class PlayButton(
-    textureHandler: TextureHandler,
-    private val gameViewport: GameViewport,
-    menuEventBus: MenuEventBus,
-) {
+private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
     private var clicked = false
-    private val up = TextureRegionDrawable(textureHandler.playBtn)
-    private val down = TextureRegionDrawable(textureHandler.playBtnDown)
-
     private var hoverAction: Action? = null
-    val actor: Image = scene2d.image(up) {
-        val defaultRatio = height / width
-        width = gameViewport.screenWidth * 0.95f * 0.5f
-        height = width * defaultRatio
+
+    val actor = TextButton("Play", styles.playButton).apply {
         setOrigin(Align.center)
-    }.apply {
+
         val replaceHoverAction = { action: Action ->
             hoverAction?.let { removeAction(it) }
             hoverAction = action
@@ -156,9 +160,7 @@ private class PlayButton(
 
     fun startGame() {
         if (clicked) return
-
         clicked = true
-        actor.drawable = down
 
         actor.addAction(
             sequence(
@@ -170,29 +172,56 @@ private class PlayButton(
 
     fun resetPosition() {
         actor.setPosition(
-            (Gdx.graphics.width - actor.width) * 0.5f, (Gdx.graphics.height - actor.height) * 0.25f
+            (Gdx.graphics.width - actor.width) * 0.5f,
+            (Gdx.graphics.height - actor.height) * 0.25f
         )
     }
 
     fun startAnimation() {
-        actor.setColor(1f, 1f, 1f, 0f)
-        actor.addAction(
-            parallel(
-                delay(0.75f, fadeIn(0.35f)), forever(
-                    sequence(
-                        moveBy(0f, 5f, 1f, linear), moveBy(0f, -5f, 1f, linear)
-                    )
-                )
-            )
-        )
+//        actor.setColor(1f, 1f, 1f, 0f)
+//        actor.addAction(
+//            parallel(
+//                delay(0.75f, fadeIn(0.35f)), forever(
+//                    sequence(
+//                        moveBy(0f, 5f, 1f, linear),
+//                        moveBy(0f, -5f, 1f, linear)
+//                    )
+//                )
+//            )
+//        )
     }
 
     fun resetAnimation() {
         actor.clearActions()
         clicked = false
         hoverAction = null
-        actor.drawable = up
         actor.setScale(1f)
         actor.setColor(1f, 1f, 1f, 0f)
+    }
+}
+
+private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
+    val title = Label.LabelStyle(fontHandler.titleFont, WHITE)
+
+    val playButton = TextButton.TextButtonStyle().apply {
+        up = textureHandler.rectangleWithBorderTexture(
+            width = 256,
+            height = 96,
+            border = 4,
+            fill = valueOf("1f1f1f"),
+            borderColor = WHITE,
+        ).toDrawable()
+
+        down = textureHandler.rectangleWithBorderTexture(
+            width = 256,
+            height = 96,
+            border = 4,
+            fill = valueOf("25351f"),
+            borderColor = WHITE,
+        ).toDrawable()
+
+        font = fontHandler.buttonFont
+        fontColor = WHITE
+        downFontColor = WHITE
     }
 }
