@@ -1,4 +1,4 @@
-package fr.mwet.tools.assetcataloggenerator
+package fr.mwet.tools.assetcataloggenerator.renderer
 
 fun renderAssetCatalog(
     packageName: String,
@@ -28,19 +28,3 @@ private fun StringBuilder.renderAssetCatalogNode(node: AssetCatalogNode, indentL
         appendLine("$tabs}")
     }
 }
-
-fun indent(level: Int): String = "    ".repeat(level)
-
-fun String.escapeCharsForKotlinString(): String =
-    buildString {
-        this@escapeCharsForKotlinString.forEach { char ->
-            when (char) {
-                '\\' -> append("\\\\")
-                '"' -> append("\\\"")
-                '\n' -> append("\\n")
-                '\r' -> append("\\r")
-                '\t' -> append("\\t")
-                else -> append(char)
-            }
-        }
-    }

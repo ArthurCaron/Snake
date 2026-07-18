@@ -1,6 +1,7 @@
-package fr.mwet.tools.assetcataloggenerator
+package fr.mwet.tools.assetcataloggenerator.renderer
 
 import fr.mwet.tools.assetcataloggenerator.reader.AssetCatalogItem
+import fr.mwet.tools.assetcataloggenerator.toCleanVariableName
 
 class AssetCatalogNode(val name: String = "") {
     val constants = mutableListOf<AssetCatalogConstant>()
