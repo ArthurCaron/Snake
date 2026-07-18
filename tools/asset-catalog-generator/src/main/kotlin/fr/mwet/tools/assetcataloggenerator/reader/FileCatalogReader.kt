@@ -5,7 +5,7 @@ import fr.mwet.tools.assetcataloggenerator.toAssetPathString
 import java.nio.file.Files
 import java.nio.file.Path
 
-fun readFileCatalogReader(
+fun readFileCatalogItems(
     inputDir: Path,
     specificDir: String,
     extensions: Set<String>,

@@ -1,51 +1,25 @@
 package fr.mwet.snake.assets
 
-import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Pixmap.Format
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Array
-import fr.mwet.snake.generated.assets.TextureRegions
+import fr.mwet.snake.generated.assets.TextureAssets
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
-import ktx.assets.getValue
-import ktx.assets.loadAsset
 import ktx.collections.toGdxArray
 
-class TextureHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
-    private val textureAtlas by assetManager.loadAsset(
-        AssetDescriptor("textures/textures.atlas", TextureAtlas::class.java)
-    )
-
-    val gridCell: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.GridCell) }
-
-    val strawberry: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Chloe.Fruit.Strawberry) }
-    val strawberryAnimation: Array<AtlasRegion> by lazy {
-        textureAtlas.findRegions(TextureRegions.Game.Chloe.Fruit.StrawberryAnimation)
-    }
-
-    val snakeHead: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Chloe.Snek.SnakeHead) }
-    val snakeHeadAnimation: Array<AtlasRegion> by lazy {
-        textureAtlas.findRegions(TextureRegions.Game.Chloe.Snek.SnakeHeadAnimation)
-    }
+class TextureHandler(assetManager: AssetManager) :
+    TextureAssets(assetManager),
+    DisposableRegistry by DisposableContainer() {
     val snakeHeadFlippedAnimation: Array<AtlasRegion> by lazy {
         snakeHeadAnimation.map { AtlasRegion(it).apply { flip(false, true) } }.toGdxArray()
     }
-    val snakeBody: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Chloe.Snek.SnakeBody) }
-    val snakeTail: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Chloe.Snek.SnakeTail) }
-
-    val snekBodyStraight: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Arthur.Snek.SnekBodyStraight) }
-    val snekBodyTurn: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Arthur.Snek.SnekBodyTurn) }
-    val snekHead: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Arthur.Snek.SnekHead) }
-    val snekHeadAll: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Arthur.Snek.SnekHeadAll) }
-    val snekTail: AtlasRegion by lazy { textureAtlas.findRegion(TextureRegions.Game.Arthur.Snek.SnekTail) }
-    val snekGoogly: Array<AtlasRegion> by lazy { textureAtlas.findRegions(TextureRegions.Game.Arthur.Snek.SnekGoogly) }
 
     fun rectangleTexture(width: Float, height: Float, fill: Color = Color.BLACK) =
         rectangleTexture(width.toInt(), height.toInt(), fill)

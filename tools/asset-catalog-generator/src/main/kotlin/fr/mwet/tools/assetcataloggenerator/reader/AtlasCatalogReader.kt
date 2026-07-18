@@ -3,23 +3,28 @@ package fr.mwet.tools.assetcataloggenerator.reader
 import java.nio.file.Files
 import java.nio.file.Path
 
-fun readAtlasCatalogReader(atlasPath: Path): List<AssetCatalogItem> {
+fun readAtlasRegionCatalogItems(atlasPath: Path): List<AtlasRegionCatalogItem> {
     if (!Files.isRegularFile(atlasPath)) {
         return emptyList()
     }
 
-    return parseAtlasRegions(atlasPath).map { regionName ->
-        val segments = regionName.split('/').filter { it.isNotBlank() }
-        AssetCatalogItem(
-            groups = segments.dropLast(1),
-            name = segments.last(),
-            fullPath = regionName,
-        )
-    }
+    return parseAtlasRegionsWithFrameCounts(atlasPath).entries
+        .sortedBy { it.key }
+        .map { (regionName, frameCount) ->
+            val segments = regionName.split('/').filter { it.isNotBlank() }
+            AtlasRegionCatalogItem(
+                item = AssetCatalogItem(
+                    groups = segments.dropLast(1),
+                    name = segments.last(),
+                    fullPath = regionName,
+                ),
+                frameCount = frameCount,
+            )
+        }
 }
 
-private fun parseAtlasRegions(atlasPath: Path): List<String> {
-    val regionNames = linkedSetOf<String>()
+private fun parseAtlasRegionsWithFrameCounts(atlasPath: Path): Map<String, Int> {
+    val regionsWithFrameCounts = linkedMapOf<String, Int>()
     Files.readAllLines(atlasPath).forEach { line ->
         if (line.isBlank() || line.startsWith(" ")) return@forEach
 
@@ -27,7 +32,7 @@ private fun parseAtlasRegions(atlasPath: Path): List<String> {
         if (trimmed.contains(':')) return@forEach
         if (trimmed.endsWith(".png", ignoreCase = true)) return@forEach
 
-        regionNames += trimmed
+        regionsWithFrameCounts[trimmed] = regionsWithFrameCounts.getOrDefault(trimmed, 0) + 1
     }
-    return regionNames.sorted()
+    return regionsWithFrameCounts
 }
