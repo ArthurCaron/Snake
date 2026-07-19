@@ -4,6 +4,7 @@ package fr.mwet.snake.teavm
 
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication
+import com.github.xpenatan.gdx.backends.teavm.TeaAssetPreloadListener
 import fr.mwet.snake.Main
 
 /** Launches the TeaVM/HTML application. */
@@ -18,6 +19,11 @@ fun main() {
         //// If width and height are both -1, then the app will fill the canvas size.
         width = -1
         height = -1
+
+        // FreeType's TeaVM implementation calls into the JavaScript Module supplied by this script.
+        preloadListener = TeaAssetPreloadListener { assetLoader ->
+            assetLoader.loadScript("freetype.js")
+        }
     }
     TeaApplication(Main(), config)
 }

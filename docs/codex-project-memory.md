@@ -57,6 +57,15 @@ This file is durable context for future Codex chats. Read it before doing a whol
 - Pixel art should use crisp nearest-neighbor filtering unless intentionally smoothed.
 - `assets/included-in-template` contains default template UI assets; do not read or analyze it unless the task is specifically about those assets.
 
+## Reusable Tooling Direction
+
+- The user definitely wants to turn `tools/asset-catalog-generator` into reusable project infrastructure later, but not right now.
+- Do not suggest a long-term copy/paste workflow for future projects. The preferred future shape is a reusable Gradle plugin that can be imported/configured by each game project.
+- A future plugin should package the generator and Gradle wiring together: asset sync, TexturePacker integration, generated source directory setup, task dependencies, and configurable catalog specs.
+- Expected plugin configuration should cover source/runtime asset directories, generated package name, texture atlas path, and file catalogs such as sounds, music, and fonts.
+- Local reuse should probably start with a Gradle composite build from something like `F:\Workspace\io.karon\libgdx-kotlin-tooling`, then later move to `mavenLocal()` or a real package registry if useful.
+- Wait until the Snake project structure is more solid, likely when moving on from this project, before extracting this into a reusable plugin.
+
 ## Current Known Next Work
 
 - Pause/resume flow before full game save.
@@ -66,6 +75,7 @@ This file is durable context for future Codex chats. Read it before doing a whol
 - Settings screen/key remapping UI.
 - Possible event-bus unsubscribe/scope support if listeners stop being singleton-lifetime objects.
 - Tests for movement edge cases, save serialization, corrupt-save fallback, keymapping grouping, and TeaVM-sensitive DTOs.
+- Later, extract `tools/asset-catalog-generator` into a reusable Gradle plugin rather than copying generator modules/build snippets between projects.
 
 ## Reading Strategy For Future Chats
 
