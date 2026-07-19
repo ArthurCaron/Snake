@@ -54,6 +54,25 @@ tasks.register("buildJavaScript", JavaExec) {
     }
   }
 }
+
+def stopStaleTeaVMServer = tasks.register("stopStaleTeaVMServer", Exec) {
+  group = "application"
+  description = "Stop a stale Gretty server listening on the TeaVM development port"
+  onlyIf { System.getProperty("os.name").startsWith("Windows") }
+  commandLine(
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy", "Bypass",
+    "-File", file("stop-server.ps1").absolutePath,
+    "-Port", "8080",
+  )
+}
+
+tasks.matching { it.name == "jettyRun" }.configureEach {
+  dependsOn(stopStaleTeaVMServer)
+}
+
 build.dependsOn buildJavaScript
 
 tasks.register("run") {
