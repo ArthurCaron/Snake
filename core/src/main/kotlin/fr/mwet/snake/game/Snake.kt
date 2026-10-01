@@ -126,4 +126,12 @@ class Segment(var position: Vector2) {
         next?.move(position)
         position.move(newPosition)
     }
+
+    fun directionTo(neighbour: Segment?): Direction = when {
+        neighbour == null -> Direction.UP
+        neighbour.position.x > position.x -> Direction.RIGHT
+        neighbour.position.x < position.x -> Direction.LEFT
+        neighbour.position.y > position.y -> Direction.UP
+        else -> Direction.DOWN
+    }
 }

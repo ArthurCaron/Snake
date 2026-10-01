@@ -7,6 +7,7 @@ import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.game.Snake
 import fr.mwet.snake.utils.Direction
+import fr.mwet.snake.utils.Direction.*
 
 class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
     private val snakeTail = textureHandler.snakeTail
@@ -21,6 +22,16 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
     private val snekHeadAll = textureHandler.snekHeadAll
     private val snekTail = textureHandler.snekTail
     private val snekGooglyAnimation = Animation(0.5f, textureHandler.snekGoogly, Animation.PlayMode.LOOP)
+
+    private class DirectionPair(val first: Direction, val second: Direction) {
+        fun matches(first: Direction, second: Direction): Boolean =
+            (this.first == first && this.second == second) ||
+                (this.first == second && this.second == first)
+    }
+
+    private val rightDown = DirectionPair(RIGHT, DOWN)
+    private val upRight = DirectionPair(UP, RIGHT)
+    private val leftUp = DirectionPair(LEFT, UP)
 
     private var eTime = 0f
 
@@ -39,10 +50,31 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
                     }
                 }
 
-                else -> drawSegment(batch, segment, snekBodyStraight)
+                else -> drawBody(batch, segment)
             }
             segment = segment.next
         }
+    }
+
+    private fun drawBody(batch: SpriteBatch, segment: Segment) {
+        val frontSegmentDirection = segment.directionTo(segment.previous)
+        val backSegmentDirection = segment.directionTo(segment.next)
+        if (frontSegmentDirection.isOpposite(backSegmentDirection)) {
+            drawSegment(batch, segment, snekBodyStraight)
+        } else {
+            drawRotated(batch, segment, snekBodyTurn, turnAngle(frontSegmentDirection, backSegmentDirection))
+        }
+    }
+
+    private fun turnAngle(direction: Direction, otherDirection: Direction): Float = when {
+        rightDown.matches(direction, otherDirection) -> 0f
+        upRight.matches(direction, otherDirection) -> 90f
+        leftUp.matches(direction, otherDirection) -> 180f
+        else -> 270f
+    }
+
+    private fun drawRotated(batch: SpriteBatch, segment: Segment, texture: AtlasRegion, angle: Float) {
+        batch.draw(texture, segment.position.x, segment.position.y, 0.5f, 0.5f, 1f, 1f, 1f, 1f, angle)
     }
 
 //    fun render(batch: SpriteBatch, delta: Float) {
@@ -116,22 +148,22 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
     }
 
     fun Segment.getAngleFromPrevious(): Float {
-        val direction = if (previous == null) Direction.UP
-        else if (position.x < previous!!.position.x) Direction.RIGHT
-        else if (position.x > previous!!.position.x) Direction.LEFT
-        else if (position.y > previous!!.position.y) Direction.DOWN
-        else if (position.y < previous!!.position.y) Direction.UP
-        else /* WTF */ Direction.UP
+        val direction = if (previous == null) UP
+        else if (position.x < previous!!.position.x) RIGHT
+        else if (position.x > previous!!.position.x) LEFT
+        else if (position.y > previous!!.position.y) DOWN
+        else if (position.y < previous!!.position.y) UP
+        else /* WTF */ UP
 
         return getAngleFromDirection(direction)
     }
 
     fun getAngleFromDirection(direction: Direction): Float {
         return when (direction) {
-            Direction.UP -> 270f
-            Direction.RIGHT -> 180f
-            Direction.DOWN -> 90f
-            Direction.LEFT -> 0f
+            UP -> 270f
+            RIGHT -> 180f
+            DOWN -> 90f
+            LEFT -> 0f
         }
     }
 }
