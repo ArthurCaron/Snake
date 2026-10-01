@@ -1,16 +1,16 @@
 ﻿# Snake Agent Notes
 
-This is a Kotlin/libGDX/KTX Snake game. Prefer project-specific context from this file and `docs/codex-project-memory.md` before doing a broad repository scan.
+This is a Kotlin/libGDX/KTX Snake game. Prefer project-specific context from this file and `~/.codex/central-memory/Subjects/Snake/docs/codex-project-memory.md` (Obsidian vault, not this repository) before doing a broad repository scan.
 
 ## Reusable Skill
 
-- Reusable libGDX/KTX guidance lives at `F:\Workspace\codex\skills\libgdx-kotlin-game`.
+- Reusable libGDX/KTX guidance lives at `F:\Obsidian\Codex\Config\skills\libgdx-kotlin-game`.
 - When available in Codex, use `$libgdx-kotlin-game` for cross-project architecture, save/web/assets, lifecycle, and review guidance.
 - Keep Snake-specific facts in this repo. Promote only stable reusable lessons into the skill.
 
 ## What To Read First
 
-- `docs/codex-project-memory.md` for architecture decisions, current direction, and review preferences.
+- `~/.codex/central-memory/Subjects/Snake/docs/codex-project-memory.md` for architecture decisions, current direction, and review preferences.
 - `core/src/main/kotlin/fr/mwet/snake/game` for gameplay state and rules.
 - `core/src/main/kotlin/fr/mwet/snake/screens` for screen flow and UI behavior.
 - `core/src/main/kotlin/fr/mwet/snake/save` for save/settings/metadata serialization.
@@ -40,5 +40,4 @@ This is a Kotlin/libGDX/KTX Snake game. Prefer project-specific context from thi
 - Be explicit when existing code is good and should be kept.
 - Avoid broad refactors unless they clearly reduce risk or match the project's current direction.
 - The user cares about avoiding unnecessary allocation and GC pressure in gameplay code. Prefer mutable scratch objects and pools where that fits libGDX style, but call out ownership risks clearly.
-
 
