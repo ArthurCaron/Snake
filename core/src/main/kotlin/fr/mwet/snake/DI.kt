@@ -194,6 +194,8 @@ object DI : Context() {
     fun unRegisterGeneralInputProcessor() = unRegisterInputProcessor(inject<GeneralInputProcessor>())
 }
 
+private const val UI_REFERENCE_SHORT_SIDE = 900f
+
 inline fun <reified Type : Any> withBindSingleton(provider: () -> Type): Type {
     bindSingleton(provider())
     return inject<Type>()
@@ -201,4 +203,9 @@ inline fun <reified Type : Any> withBindSingleton(provider: () -> Type): Type {
 
 class GameViewport(camera: OrthographicCamera) : FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera)
 
-class StageViewport : ScreenViewport()
+class StageViewport : ScreenViewport() {
+    override fun update(screenWidth: Int, screenHeight: Int, centerCamera: Boolean) {
+        unitsPerPixel = UI_REFERENCE_SHORT_SIDE / maxOf(1, minOf(screenWidth, screenHeight))
+        super.update(screenWidth, screenHeight, centerCamera)
+    }
+}

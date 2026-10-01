@@ -52,7 +52,7 @@ class MainMenuScreen(
     private val backgroundTexture =
         textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = Palette.background)
     private val styles = Styles(fontHandler, textureHandler)
-    private val mainMenuTitle = MainMenuTitle(styles, gameViewport)
+    private val mainMenuTitle = MainMenuTitle(styles)
     private val playButton = PlayButton(styles, menuEventBus)
     private val bestScoreLabel = Label("", styles.info)
 
@@ -79,15 +79,20 @@ class MainMenuScreen(
     }
 
     override fun resize(width: Int, height: Int) {
+        stageViewport.update(width, height, true)
+        val stageWidth = stageViewport.worldWidth
+        val stageHeight = stageViewport.worldHeight
+        val boardWidth = minOf(width.toFloat(), height * WORLD_WIDTH / WORLD_HEIGHT) * stageViewport.unitsPerPixel
+
         stage.clear()
         stage.addActor(mainMenuTitle.actor)
         stage.addActor(playButton.actor)
         stage.addActor(bestScoreLabel)
 
-        mainMenuTitle.resetPosition()
-        playButton.resetPosition()
+        mainMenuTitle.resetPosition(stageWidth, stageHeight, boardWidth)
+        playButton.resetPosition(stageWidth, stageHeight)
         bestScoreLabel.setPosition(
-            (Gdx.graphics.width - bestScoreLabel.width) * 0.5f,
+            (stageWidth - bestScoreLabel.width) * 0.5f,
             playButton.actor.y - bestScoreLabel.height - 32f,
         )
     }
@@ -110,17 +115,17 @@ class MainMenuScreen(
     }
 }
 
-private class MainMenuTitle(styles: Styles, private val gameViewport: GameViewport) {
+private class MainMenuTitle(styles: Styles) {
     val actor = Label("Snek", styles.title).apply {
         setAlignment(Align.center)
         setOrigin(Align.center)
     }
 
-    fun resetPosition() {
+    fun resetPosition(stageWidth: Float, stageHeight: Float, boardWidth: Float) {
         actor.setFontScale(1f)
         actor.pack()
 
-        val targetWidth = gameViewport.screenWidth * 0.70f
+        val targetWidth = boardWidth * 0.70f
         if (actor.width > 0f) {
             actor.setFontScale(targetWidth / actor.width)
         }
@@ -128,8 +133,8 @@ private class MainMenuTitle(styles: Styles, private val gameViewport: GameViewpo
         actor.pack()
         actor.setOrigin(Align.center)
         actor.setPosition(
-            (Gdx.graphics.width - actor.width) * 0.5f,
-            (Gdx.graphics.height - actor.height) * 0.75f,
+            (stageWidth - actor.width) * 0.5f,
+            (stageHeight - actor.height) * 0.75f,
         )
     }
 
@@ -182,10 +187,10 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
         )
     }
 
-    fun resetPosition() {
+    fun resetPosition(stageWidth: Float, stageHeight: Float) {
         actor.setPosition(
-            (Gdx.graphics.width - actor.width) * 0.5f,
-            (Gdx.graphics.height - actor.height) * 0.25f
+            (stageWidth - actor.width) * 0.5f,
+            (stageHeight - actor.height) * 0.25f
         )
     }
 
