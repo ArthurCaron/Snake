@@ -1,6 +1,5 @@
 package fr.mwet.snake.screens
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation.elasticOut
@@ -23,6 +22,7 @@ import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.save.metadata.BestScore
+import fr.mwet.snake.save.settings.AudioSettings
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.onClick
@@ -111,6 +111,7 @@ class MainMenuScreen(
     override fun onEvent(event: MenuEvent) {
         when (event) {
             MenuEvent.PlayGameClicked -> playButton.startGame()
+            MenuEvent.SoundToggled, MenuEvent.MusicToggled -> {}
         }
     }
 }

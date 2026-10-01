@@ -22,6 +22,8 @@ class SettingsRepository(private val jsonStore: JsonStore) {
             userPreferences = UserPreferences(
                 version = userPreferencesSave.version,
                 locale = userPreferencesSave.locale,
+                soundOn = userPreferencesSave.soundOn,
+                musicOn = userPreferencesSave.musicOn,
             ),
             keymappings = Keymappings(
                 game = keymappingsSave.game.map { it.toKeymapping() },
@@ -51,5 +53,6 @@ class SettingsRepository(private val jsonStore: JsonStore) {
     private fun GeneralKeymapping.toSerializable() =
         GeneralKeymappingSave(action = GeneralActionId.from(action), keys = keys)
 
-    private fun UserPreferences.toSerializable() = UserPreferencesSave(version = version, locale = locale)
+    private fun UserPreferences.toSerializable() =
+        UserPreferencesSave(version = version, locale = locale, soundOn = soundOn, musicOn = musicOn)
 }

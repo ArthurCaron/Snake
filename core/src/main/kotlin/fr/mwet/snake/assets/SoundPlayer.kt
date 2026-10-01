@@ -5,9 +5,16 @@ import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventListener
+import fr.mwet.snake.save.settings.AudioSettings
 
-class SoundPlayer(private val soundHandler: SoundHandler) : MenuEventListener, GameEventListener {
-    private var switchId: Long = 0
+private const val MUSIC_VOLUME = 0.5f
+
+class SoundPlayer(
+    private val soundHandler: SoundHandler,
+    private val musicHandler: MusicHandler,
+    private val audioSettings: AudioSettings,
+) : MenuEventListener, GameEventListener {
+    private var buttonPressedId: Long = 0
     private var moveId: Long = 0
     private var eatId: Long = 0
 
@@ -15,29 +22,66 @@ class SoundPlayer(private val soundHandler: SoundHandler) : MenuEventListener, G
         when (event) {
             SnakeMoved -> playMove()
             FoodEaten -> playEat()
-            Lost -> soundHandler.lostSound.play()
-            Won -> soundHandler.wonSound.play()
-            Pause -> soundHandler.pauseSound.play()
+            Lost -> playLost()
+            Won -> playWon()
+            Pause -> playPause()
             GoBackToMainMenu -> {}
         }
     }
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            MenuEvent.PlayGameClicked -> playSwitch()
+            MenuEvent.PlayGameClicked -> {
+                playButtonPressed()
+            }
+
+            MenuEvent.SoundToggled -> {
+                playButtonPressed()
+            }
+
+            MenuEvent.MusicToggled -> {
+                playButtonPressed()
+
+                val music = musicHandler.music
+                if (audioSettings.musicOn) {
+                    music.isLooping = true
+                    music.volume = MUSIC_VOLUME
+                    if (!music.isPlaying) music.play()
+                } else {
+                    music.pause()
+                }
+            }
         }
     }
 
-    fun playSwitch() {
-        switchId = soundHandler.switchSound.play()
+    fun playButtonPressed() {
+        if (!audioSettings.soundOn) return
+        buttonPressedId = soundHandler.buttonPressedSound.play()
     }
 
     fun playMove() {
+        if (!audioSettings.soundOn) return
         soundHandler.moveSound.stop()
         moveId = soundHandler.moveSound.play()
     }
 
     fun playEat() {
+        if (!audioSettings.soundOn) return
         eatId = soundHandler.eatSound.play()
+    }
+
+    fun playLost() {
+        if (!audioSettings.soundOn) return
+        soundHandler.lostSound.play()
+    }
+
+    fun playWon() {
+        if (!audioSettings.soundOn) return
+        soundHandler.wonSound.play()
+    }
+
+    fun playPause() {
+        if (!audioSettings.soundOn) return
+        soundHandler.pauseSound.play()
     }
 }

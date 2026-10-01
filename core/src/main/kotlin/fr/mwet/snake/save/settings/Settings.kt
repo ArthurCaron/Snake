@@ -13,6 +13,8 @@ data class Settings(
 data class UserPreferences(
     val version: Int,
     val locale: String,
+    val soundOn: Boolean,
+    val musicOn: Boolean,
 )
 
 data class Keymappings(
