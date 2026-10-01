@@ -17,8 +17,10 @@ import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
+import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralInputProcessor
+import fr.mwet.snake.inputs.SwipeInputProcessor
 import fr.mwet.snake.save.metadata.BestScore
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.serialization.FileTextStore
@@ -131,9 +133,9 @@ object DI : Context() {
 
         // Game World
         val gameWorld = withBindSingleton<GameWorld> { GameWorld(gameEventBus) }
-        bindSingleton<GameInputProcessor> {
-            GameInputProcessor(keymapping.game, gameEventBus, gameWorld)
-        }
+        val gameCommandContext = GameCommandContext(gameWorld, gameEventBus)
+        bindSingleton<GameInputProcessor> { GameInputProcessor(keymapping.game, gameCommandContext) }
+        bindSingleton<SwipeInputProcessor> { SwipeInputProcessor(gameCommandContext) }
 
         // Screens
         val mainMenuScreen = withBindSingleton {
@@ -176,8 +178,15 @@ object DI : Context() {
         inputMultiplexer.removeProcessor(inputProcessor)
     }
 
-    fun registerGameInputProcessor() = registerInputProcessor(inject<GameInputProcessor>())
-    fun unRegisterGameInputProcessor() = unRegisterInputProcessor(inject<GameInputProcessor>())
+    fun registerGameInputProcessor() {
+        registerInputProcessor(inject<GameInputProcessor>())
+        registerInputProcessor(inject<SwipeInputProcessor>())
+    }
+
+    fun unRegisterGameInputProcessor() {
+        unRegisterInputProcessor(inject<GameInputProcessor>())
+        unRegisterInputProcessor(inject<SwipeInputProcessor>())
+    }
 
     fun registerGeneralInputProcessor() = registerInputProcessor(inject<GeneralInputProcessor>())
     fun unRegisterGeneralInputProcessor() = unRegisterInputProcessor(inject<GeneralInputProcessor>())
