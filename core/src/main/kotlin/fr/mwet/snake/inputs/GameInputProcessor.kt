@@ -15,7 +15,7 @@ class GameInputProcessor(
             .flatMap { keymapping -> keymapping.keys.map { key -> key to keymapping.action } }
             .groupBy({ it.first }, { it.second })
     private val context = GameCommandContext(
-        targetActor = gameWorld.snake,
+        targetActor = gameWorld,
         gameEventBus = gameEventBus,
     )
 

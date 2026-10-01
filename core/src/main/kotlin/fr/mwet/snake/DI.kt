@@ -124,7 +124,6 @@ object DI : Context() {
 
         // Game World
         val gameWorld = withBindSingleton<GameWorld> { GameWorld(gameEventBus) }
-        gameEventBus.listen(gameWorld)
         bindSingleton<GameInputProcessor> {
             GameInputProcessor(keymapping.game, gameEventBus, gameWorld)
         }

@@ -11,6 +11,7 @@ import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventListener
+import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.render.DisintegratingSnakeRenderer
 import fr.mwet.snake.render.FoodRenderer
@@ -81,8 +82,12 @@ class GameScreen(
         stage.draw()
     }
 
+    override fun pause() {
+        gameWorld.pause()
+    }
+
     fun render(batch: SpriteBatch, delta: Float) {
-        if (gameWorld.gameStopped) {
+        if (gameWorld.state == GameState.Lost) {
             disintegratingSnakeRenderer.render(batch, delta)
             return
         }
@@ -95,7 +100,7 @@ class GameScreen(
             Lost -> lost()
             Won -> won()
             GoBackToMainMenu -> Game.setScreen<MainMenuScreen>()
-            Pause -> Game.setScreen<MainMenuScreen>()
+            Pause -> togglePause()
             FoodEaten, SnakeMoved -> {}
         }
     }
@@ -104,6 +109,10 @@ class GameScreen(
         disintegratingSnakeRenderer.disintegrate()
         lostTask.cancel()
         Timer.schedule(lostTask, 1.5f)
+    }
+
+    private fun togglePause() {
+        if (gameWorld.state == GameState.Paused) gameWorld.resume() else gameWorld.pause()
     }
 
     private fun won() {
