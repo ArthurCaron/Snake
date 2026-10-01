@@ -15,7 +15,10 @@ class SoundPlayer(private val soundHandler: SoundHandler) : MenuEventListener, G
         when (event) {
             SnakeMoved -> playMove()
             FoodEaten -> playEat()
-            Lost, Won, GoBackToMainMenu, Pause -> {}
+            Lost -> soundHandler.lostSound.play()
+            Won -> soundHandler.wonSound.play()
+            Pause -> soundHandler.pauseSound.play()
+            GoBackToMainMenu -> {}
         }
     }
 
