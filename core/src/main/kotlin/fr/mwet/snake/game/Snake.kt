@@ -15,13 +15,15 @@ private val initialHeadPosition = DI.vectorPool.obtain(
     initialTailPosition.x + initialDirection.directionX,
     initialTailPosition.y + initialDirection.directionY
 )
+private const val MAX_PENDING_DIRECTIONS = 2
 
 class Snake : TargetActor {
     private val segmentPool = SegmentPool()
     val head = segmentPool.obtain(initialHeadPosition.copyVector())
     val tail = segmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
     var currentDirection = initialDirection
-    var futureDirection = currentDirection
+    private val pendingDirections = ArrayDeque<Direction>(MAX_PENDING_DIRECTIONS)
+    val futureDirection: Direction get() = pendingDirections.firstOrNull() ?: currentDirection
     var nextHeadPosition = DI.vectorPool.obtain(-1, -1)
 
     fun reset() {
@@ -31,7 +33,7 @@ class Snake : TargetActor {
         tail.linkPrevious(head)
         tail.stayStill = false
         currentDirection = initialDirection
-        futureDirection = currentDirection
+        pendingDirections.clear()
         updateNextHeadPosition()
     }
 
@@ -55,15 +57,17 @@ class Snake : TargetActor {
             newBodyPart.linkNext(tail)
         }
 
-        currentDirection = futureDirection
+        currentDirection = pendingDirections.removeFirstOrNull() ?: currentDirection
         head.move(currentDirection)
         tail.stayStill = false
         updateNextHeadPosition()
     }
 
     override fun setDirection(newDirection: Direction) {
-        if (newDirection.isOpposite(currentDirection)) return
-        futureDirection = newDirection
+        if (pendingDirections.size == MAX_PENDING_DIRECTIONS) return
+        val lastDirection = pendingDirections.lastOrNull() ?: currentDirection
+        if (newDirection == lastDirection || newDirection.isOpposite(lastDirection)) return
+        pendingDirections.addLast(newDirection)
         updateNextHeadPosition()
     }
 
