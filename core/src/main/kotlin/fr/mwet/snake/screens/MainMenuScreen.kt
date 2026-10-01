@@ -1,9 +1,7 @@
 package fr.mwet.snake.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Color.WHITE
-import com.badlogic.gdx.graphics.Color.valueOf
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation.elasticOut
@@ -23,6 +21,7 @@ import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
+import fr.mwet.snake.render.Palette
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.onClick
@@ -34,7 +33,6 @@ import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.graphics.use
 
-private val BACKGROUND_COLOR = Color.valueOf("#1f1f1f")
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class MainMenuScreen(
@@ -50,7 +48,7 @@ class MainMenuScreen(
     }
     private val stage = stage(batch, stageViewport)
     private val backgroundTexture =
-        textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = BACKGROUND_COLOR)
+        textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = Palette.background)
     private val styles = Styles(fontHandler, textureHandler)
     private val mainMenuTitle = MainMenuTitle(styles, gameViewport)
     private val playButton = PlayButton(styles, menuEventBus)
@@ -208,7 +206,7 @@ private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
             width = 256,
             height = 96,
             border = 4,
-            fill = valueOf("1f1f1f"),
+            fill = Palette.background,
             borderColor = WHITE,
         ).toDrawable()
 
@@ -216,7 +214,7 @@ private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
             width = 256,
             height = 96,
             border = 4,
-            fill = valueOf("25351f"),
+            fill = Palette.accent,
             borderColor = WHITE,
         ).toDrawable()
 

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
 import fr.mwet.snake.generated.assets.FontAssets
+import fr.mwet.snake.render.Palette
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.assets.getValue
@@ -76,7 +77,7 @@ private fun fontParameters(
     fontParameters.characters = characters
     fontParameters.color = Color.WHITE
     fontParameters.borderWidth = borderWidth
-    fontParameters.borderColor = Color.valueOf("25351f")
+    fontParameters.borderColor = Palette.accent
     fontParameters.minFilter = Texture.TextureFilter.Linear
     fontParameters.magFilter = Texture.TextureFilter.Linear
 }
