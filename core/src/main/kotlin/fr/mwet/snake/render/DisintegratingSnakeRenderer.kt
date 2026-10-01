@@ -15,9 +15,6 @@ import kotlin.random.Random
 class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Snake) {
     private var eTime = 0f
 
-    //    private val snakeHead = textureHandler.snakeHead
-//    private val snakeBody = textureHandler.snakeBody
-//    private val snakeTail = textureHandler.snakeTail
     private val snekHeadAll = textureHandler.snekHeadAll
     private val snakeBody = textureHandler.snekBodyStraight
     private val snakeTail = textureHandler.snekTail

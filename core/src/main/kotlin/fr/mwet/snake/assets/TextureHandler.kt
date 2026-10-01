@@ -5,22 +5,15 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Pixmap.Format
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.badlogic.gdx.utils.Array
 import fr.mwet.snake.generated.assets.TextureAssets
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
-import ktx.collections.toGdxArray
 
 class TextureHandler(assetManager: AssetManager) :
     TextureAssets(assetManager),
     DisposableRegistry by DisposableContainer() {
-    val snakeHeadFlippedAnimation: Array<AtlasRegion> by lazy {
-        snakeHeadAnimation.map { AtlasRegion(it).apply { flip(false, true) } }.toGdxArray()
-    }
-
     fun rectangleTexture(width: Float, height: Float, fill: Color = Color.BLACK) =
         rectangleTexture(width.toInt(), height.toInt(), fill)
 
