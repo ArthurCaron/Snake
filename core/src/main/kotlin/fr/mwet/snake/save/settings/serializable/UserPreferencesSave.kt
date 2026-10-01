@@ -8,10 +8,14 @@ private const val NO_LOCALE = ""
 class UserPreferencesSave() {
     var version: Int = NO_VERSION
     var locale: String = NO_LOCALE
+    var soundOn: Boolean = true
+    var musicOn: Boolean = true
 
-    constructor(version: Int, locale: String) : this() {
+    constructor(version: Int, locale: String, soundOn: Boolean, musicOn: Boolean) : this() {
         this.version = version
         this.locale = locale
+        this.soundOn = soundOn
+        this.musicOn = musicOn
     }
 
     fun restoreDefaults() {
@@ -24,5 +28,7 @@ object DefaultUserPreferences {
     fun defaultUserPreferences() = UserPreferencesSave(
         version = 0,
         locale = Locale.getDefault().toString(),
+        soundOn = true,
+        musicOn = true,
     )
 }

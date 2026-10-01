@@ -27,6 +27,7 @@ import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.serialization.FileTextStore
 import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.serialization.PreferencesTextStore
+import fr.mwet.snake.save.settings.AudioSettings
 import fr.mwet.snake.save.settings.Keymappings
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.screens.GameScreen
@@ -74,7 +75,8 @@ object DI : Context() {
         val fontHandler = withBindSingleton<FontHandler> { FontHandler(assetManager) }
         val musicHandler = withBindSingleton<MusicHandler> { MusicHandler(assetManager) }
         val soundHandler = withBindSingleton<SoundHandler> { SoundHandler(assetManager) }
-        val soundPlayer = withBindSingleton<SoundPlayer> { SoundPlayer(soundHandler) }
+        val audioSettings = withBindSingleton { AudioSettings(settingsRepository, settings) }
+        val soundPlayer = withBindSingleton<SoundPlayer> { SoundPlayer(soundHandler, musicHandler, audioSettings) }
         gameEventBus.listen(soundPlayer)
         menuEventBus.listen(soundPlayer)
         bindSingleton<TextureHandler> { TextureHandler(assetManager) }
