@@ -144,6 +144,7 @@ object DI : Context() {
                 batch = spriteBatch,
                 gameViewport = gameViewport,
                 gameCamera = camera,
+                bestScore = bestScore,
             )
         }
         val gameScreen = withBindSingleton {

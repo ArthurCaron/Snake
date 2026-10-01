@@ -22,6 +22,7 @@ import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.render.Palette
+import fr.mwet.snake.save.metadata.BestScore
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.onClick
@@ -42,6 +43,7 @@ class MainMenuScreen(
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
     private val gameCamera: OrthographicCamera,
+    private val bestScore: BestScore,
 ) : MenuEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
     private val stageViewport = StageViewport().also {
         Game.addViewport(it)
@@ -52,6 +54,7 @@ class MainMenuScreen(
     private val styles = Styles(fontHandler, textureHandler)
     private val mainMenuTitle = MainMenuTitle(styles, gameViewport)
     private val playButton = PlayButton(styles, menuEventBus)
+    private val bestScoreLabel = Label("", styles.info)
 
     override fun show() {
         DI.registerGeneralInputProcessor()
@@ -59,6 +62,12 @@ class MainMenuScreen(
 
         mainMenuTitle.startAnimation()
         playButton.startAnimation()
+        updateBestScoreLabel()
+    }
+
+    private fun updateBestScoreLabel() {
+        bestScoreLabel.setText(I18N.best(bestScore.value))
+        bestScoreLabel.pack()
     }
 
     override fun hide() {
@@ -73,9 +82,14 @@ class MainMenuScreen(
         stage.clear()
         stage.addActor(mainMenuTitle.actor)
         stage.addActor(playButton.actor)
+        stage.addActor(bestScoreLabel)
 
         mainMenuTitle.resetPosition()
         playButton.resetPosition()
+        bestScoreLabel.setPosition(
+            (Gdx.graphics.width - bestScoreLabel.width) * 0.5f,
+            playButton.actor.y - bestScoreLabel.height - 32f,
+        )
     }
 
     override fun render(delta: Float) {
@@ -200,6 +214,7 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
 
 private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
     val title = Label.LabelStyle(fontHandler.titleFont, Palette.text)
+    val info = Label.LabelStyle(fontHandler.uiFont, Palette.text)
 
     val playButton = TextButton.TextButtonStyle().apply {
         up = textureHandler.rectangleWithBorderTexture(
