@@ -88,3 +88,14 @@ tasks.register("run") {
   description = "Run the JavaScript application hosted via a local Jetty server at http://localhost:8080/"
   dependsOn(buildJavaScript, tasks.named("jettyRun"))
 }
+
+tasks.register("webZip", Zip) {
+  group = "distribution"
+  description = "Zip the web build, ready for itch.io or any static host"
+  dependsOn(buildJavaScript)
+  from(layout.buildDirectory.dir("dist/webapp")) {
+    exclude("WEB-INF/**")
+  }
+  archiveFileName = "${appName}-web.zip"
+  destinationDirectory = layout.buildDirectory.dir("dist")
+}
