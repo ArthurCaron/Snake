@@ -16,6 +16,8 @@ dependencies {
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+
+  testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
 }
 
 def generatedAssetCatalogDir = layout.buildDirectory.dir("generated/source/assetCatalog/kotlin")

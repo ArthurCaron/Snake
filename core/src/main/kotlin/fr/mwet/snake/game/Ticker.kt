@@ -14,6 +14,7 @@ class Ticker {
         if (secondsSinceLastTick < secondsPerTick) return UpdateResult.KeepWaiting
 
         secondsSinceLastTick -= secondsPerTick
+        if (secondsSinceLastTick >= secondsPerTick) secondsSinceLastTick = 0f
         return UpdateResult.DoUpdate
     }
 }
