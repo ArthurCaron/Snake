@@ -19,6 +19,8 @@ fun main() {
         //// If width and height are both -1, then the app will fill the canvas size.
         width = -1
         height = -1
+        // Render at the device resolution (devicePixelRatio), not in CSS pixels: crisp pixel art on phones.
+        usePhysicalPixels = true
 
         // FreeType's TeaVM implementation calls into the JavaScript Module supplied by this script.
         preloadListener = TeaAssetPreloadListener { assetLoader ->
