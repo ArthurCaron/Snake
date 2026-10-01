@@ -196,7 +196,7 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
         clicked = false
         hoverAction = null
         actor.setScale(1f)
-        actor.setColor(1f, 1f, 1f, 0f)
+        actor.setColor(1f, 1f, 1f, 1f)
     }
 }
 
