@@ -49,10 +49,20 @@ class GameScreen(
     val foodRenderer = FoodRenderer(textureHandler, gameWorld.food)
     val snakeRenderer = SnakeRenderer(textureHandler, gameWorld.snake)
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(textureHandler, gameWorld.snake)
-    private val hud = GameHud(styles)
+
+    private val readyPrompt = ReadyPrompt(styles, onStart = { gameWorld.start() })
+    private val pauseOverlay = PauseOverlay(
+        styles,
+        onResume = { gameWorld.resume() },
+        onMainMenu = { Game.setScreen<MainMenuScreen>() },
+    )
+
+    private val hud = GameHud(styles, onPause = { gameWorld.pause() })
     private var gameState: GameState? = null
 
     init {
+        stage.addActor(readyPrompt.actor)
+        stage.addActor(pauseOverlay.actor)
         stage.addActor(hud.actor)
     }
 
@@ -97,6 +107,9 @@ class GameScreen(
 
     private fun onStateChanged(state: GameState) {
         gameState = state
+        readyPrompt.actor.isVisible = state == GameState.Ready
+        pauseOverlay.actor.isVisible = state == GameState.Paused
+        hud.showPauseButton(state == GameState.Ready || state == GameState.Playing)
         if (gameWorld.isOver) bestScore.submit(gameWorld.score)
     }
 
@@ -117,7 +130,7 @@ class GameScreen(
         when (event) {
             Lost -> lost()
             Won -> won()
-            GoBackToMainMenu -> Game.setScreen<MainMenuScreen>()
+            GoBackToMainMenu -> back()
             Pause -> togglePause()
             FoodEaten, SnakeMoved -> {}
         }
@@ -129,12 +142,19 @@ class GameScreen(
         Timer.schedule(lostTask, 1.5f)
     }
 
-    private fun togglePause() {
-        if (gameWorld.state == GameState.Paused) gameWorld.resume() else gameWorld.pause()
-    }
-
     private fun won() {
         // Do something
+    }
+
+    private fun back() {
+        when (gameWorld.state) {
+            GameState.Ready, GameState.Playing -> gameWorld.pause()
+            GameState.Paused, GameState.Lost, GameState.Won -> Game.setScreen<MainMenuScreen>()
+        }
+    }
+
+    private fun togglePause() {
+        if (gameWorld.state == GameState.Paused) gameWorld.resume() else gameWorld.pause()
     }
 
     private fun drawGridMap(batch: SpriteBatch) {

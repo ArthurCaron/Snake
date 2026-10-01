@@ -25,7 +25,11 @@ enum class I18N : BundleLine {
     settings,
     settingsSound,
     score,
-    best;
+    best,
+    tapToStart,
+    paused,
+    resume,
+    mainMenu;
 
     override val bundle: I18NBundle
         get() = i18nBundle
