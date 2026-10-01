@@ -8,6 +8,7 @@ import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.save.settings.AudioSettings
 
 private const val MUSIC_VOLUME = 0.5f
+private const val MOVE_VOLUME = 0.25f
 
 class SoundPlayer(
     private val soundHandler: SoundHandler,
@@ -62,7 +63,7 @@ class SoundPlayer(
     fun playMove() {
         if (!audioSettings.soundOn) return
         soundHandler.moveSound.stop()
-        moveId = soundHandler.moveSound.play()
+        moveId = soundHandler.moveSound.play(MOVE_VOLUME)
     }
 
     fun playEat() {
