@@ -2,7 +2,6 @@ package fr.mwet.snake.screens
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.Timer
 import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
@@ -28,6 +27,7 @@ import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.graphics.use
 
+private const val LOST_OVERLAY_DELAY = 1f
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class GameScreen(
@@ -56,6 +56,11 @@ class GameScreen(
         onResume = { gameWorld.resume() },
         onMainMenu = { Game.setScreen<MainMenuScreen>() },
     )
+    private val endOverlay = EndOverlay(
+        styles,
+        onPlayAgain = { startNewGame() },
+        onMainMenu = { Game.setScreen<MainMenuScreen>() },
+    )
 
     private val hud = GameHud(styles, onPause = { gameWorld.pause() })
     private var gameState: GameState? = null
@@ -63,29 +68,28 @@ class GameScreen(
     init {
         stage.addActor(readyPrompt.actor)
         stage.addActor(pauseOverlay.actor)
+        stage.addActor(endOverlay.actor)
         stage.addActor(hud.actor)
-    }
-
-    val lostTask = object : Timer.Task() {
-        override fun run() {
-            Game.setScreen<MainMenuScreen>()
-        }
     }
 
     override fun show() {
         DI.registerGameInputProcessor()
         DI.registerInputProcessor(stage)
-        gameWorld.newGame()
-        gameState = null
-        foodRenderer.reset()
-        snakeRenderer.reset()
-        disintegratingSnakeRenderer.reset()
+        startNewGame()
     }
 
     override fun hide() {
         DI.unRegisterGameInputProcessor()
         DI.unRegisterInputProcessor(stage)
-        lostTask.cancel()
+        endOverlay.hide()
+    }
+
+    private fun startNewGame() {
+        gameWorld.newGame()
+        gameState = null
+        foodRenderer.reset()
+        snakeRenderer.reset()
+        disintegratingSnakeRenderer.reset()
     }
 
     override fun render(delta: Float) {
@@ -110,7 +114,20 @@ class GameScreen(
         readyPrompt.actor.isVisible = state == GameState.Ready
         pauseOverlay.actor.isVisible = state == GameState.Paused
         hud.showPauseButton(state == GameState.Ready || state == GameState.Playing)
-        if (gameWorld.isOver) bestScore.submit(gameWorld.score)
+        when (state) {
+            GameState.Lost -> {
+                disintegratingSnakeRenderer.disintegrate()
+                showEndOverlay(won = false, delay = LOST_OVERLAY_DELAY)
+            }
+
+            GameState.Won -> showEndOverlay(won = true, delay = 0f)
+            GameState.Ready, GameState.Playing, GameState.Paused -> endOverlay.hide()
+        }
+    }
+
+    private fun showEndOverlay(won: Boolean, delay: Float) {
+        val isNewRecord = bestScore.submit(gameWorld.score)
+        endOverlay.show(won, gameWorld.score, bestScore.value, isNewRecord, delay)
     }
 
     override fun pause() {
@@ -118,32 +135,22 @@ class GameScreen(
     }
 
     fun render(batch: SpriteBatch, delta: Float) {
-        if (gameWorld.state == GameState.Lost) {
-            disintegratingSnakeRenderer.render(batch, delta)
-            return
+        when (gameWorld.state) {
+            GameState.Lost -> disintegratingSnakeRenderer.render(batch, delta)
+            GameState.Won -> snakeRenderer.render(batch, delta)
+            GameState.Ready, GameState.Playing, GameState.Paused -> {
+                foodRenderer.render(batch, delta)
+                snakeRenderer.render(batch, delta)
+            }
         }
-        foodRenderer.render(batch, delta)
-        snakeRenderer.render(batch, delta)
     }
 
     override fun onEvent(event: GameEvent) {
         when (event) {
-            Lost -> lost()
-            Won -> won()
             GoBackToMainMenu -> back()
             Pause -> togglePause()
-            FoodEaten, SnakeMoved -> {}
+            FoodEaten, SnakeMoved, Lost, Won -> {}
         }
-    }
-
-    private fun lost() {
-        disintegratingSnakeRenderer.disintegrate()
-        lostTask.cancel()
-        Timer.schedule(lostTask, 1.5f)
-    }
-
-    private fun won() {
-        // Do something
     }
 
     private fun back() {

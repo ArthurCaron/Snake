@@ -29,7 +29,11 @@ enum class I18N : BundleLine {
     tapToStart,
     paused,
     resume,
-    mainMenu;
+    mainMenu,
+    gameOver,
+    victory,
+    newRecord,
+    playAgain;
 
     override val bundle: I18NBundle
         get() = i18nBundle
