@@ -14,11 +14,15 @@ fun main() {
         //width = 640
         //height = 480
         //// If width and height are both 0, then the app will use all available space.
-        //width = 0
-        //height = 0
+        // Only this mode resizes the canvas to the window, at load and on every resize. With -1, the canvas keeps the
+        // 800x600 of index.html and usePhysicalPixels has no effect.
+        width = 0
+        height = 0
         //// If width and height are both -1, then the app will fill the canvas size.
-        width = -1
-        height = -1
+        //width = -1
+        //height = -1
+        // Render at the device resolution (devicePixelRatio), not in CSS pixels: crisp pixel art on phones.
+        usePhysicalPixels = true
 
         // FreeType's TeaVM implementation calls into the JavaScript Module supplied by this script.
         preloadListener = TeaAssetPreloadListener { assetLoader ->

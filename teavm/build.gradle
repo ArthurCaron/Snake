@@ -51,6 +51,16 @@ tasks.register("buildJavaScript", JavaExec) {
       from(rootProject.file("sourceAssets/web/favicon.ico"))
       into(layout.buildDirectory.dir("dist/webapp"))
     }
+
+    // The gdx-teavm index.html has no viewport meta tag: phones render it 980 px wide and zoom on double tap.
+    File indexFile = layout.buildDirectory.file("dist/webapp/index.html").get().asFile
+    String index = indexFile.text
+    if (!index.contains('<head>') || !index.contains('</style>')) {
+      throw new GradleException("index.html changed in gdx-teavm: add the mobile viewport and touch-action by hand")
+    }
+    indexFile.text = index
+      .replace('<head>', '<head>\n    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">')
+      .replace('</style>', '    canvas { touch-action: none; }\n    </style>')
   }
 }
 

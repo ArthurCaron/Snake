@@ -15,6 +15,7 @@ object TeaVMBuilder {
         val teaBuildConfiguration = TeaBuildConfiguration().apply {
             assetsPath.add(AssetFileHandle("../assets"))
             webappPath = File("build/dist").canonicalPath
+            htmlTitle = "Snake"
             // Register any extra classpath assets here:
             // additionalAssetsClasspathFiles += "fr/mwet/snake/asset.extension"
         }
