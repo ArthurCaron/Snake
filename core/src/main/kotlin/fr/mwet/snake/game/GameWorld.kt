@@ -21,10 +21,14 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
     var state = GameState.Ready
         private set
 
+    var score = 0
+        private set
+
     val isOver get() = state == GameState.Lost || state == GameState.Won
 
     fun newGame() {
         state = GameState.Ready
+        score = 0
         ticker.reset()
         snake.reset()
         resetFood()
@@ -70,6 +74,7 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
         gameEventBus.emit(SnakeMoved)
 
         if (willEatFood) {
+            score++
             gameEventBus.emit(FoodEaten)
             ticker.speedUp(TICKS_PER_SECOND_GAINED_PER_FOOD, MAX_TICKS_PER_SECOND)
             resetFood()

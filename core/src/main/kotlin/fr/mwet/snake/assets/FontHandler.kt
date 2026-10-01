@@ -75,7 +75,7 @@ private fun fontParameters(
     fontFileName = fontFile
     fontParameters.size = size
     fontParameters.characters = characters
-    fontParameters.color = Color.WHITE
+    fontParameters.color = Palette.text
     fontParameters.borderWidth = borderWidth
     fontParameters.borderColor = Palette.accent
     fontParameters.minFilter = Texture.TextureFilter.Linear

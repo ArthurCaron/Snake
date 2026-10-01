@@ -23,7 +23,9 @@ enum class I18N : BundleLine {
     play,
     highscore,
     settings,
-    settingsSound;
+    settingsSound,
+    score,
+    best;
 
     override val bundle: I18NBundle
         get() = i18nBundle

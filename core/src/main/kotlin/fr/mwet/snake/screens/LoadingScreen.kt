@@ -1,7 +1,6 @@
 package fr.mwet.snake.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
@@ -10,6 +9,7 @@ import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.assets.AssetHandler
 import fr.mwet.snake.assets.Progress
+import fr.mwet.snake.render.Palette
 import fr.mwet.snake.utils.*
 import ktx.app.KtxScreen
 import ktx.assets.DisposableContainer
@@ -49,7 +49,7 @@ class ProgressBar(barWidth: Float, barHeight: Float) :
     val texture = run {
         // Create loading segment part, use Pixmap to generate the texture
         val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888).apply {
-            setColor(Color.WHITE)
+            setColor(Palette.text)
             fill()
         }
         Texture(pixmap).alsoRegister().also { pixmap.dispose() }

@@ -19,6 +19,7 @@ import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralInputProcessor
+import fr.mwet.snake.save.metadata.BestScore
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.serialization.FileTextStore
 import fr.mwet.snake.save.serialization.JsonStore
@@ -28,6 +29,7 @@ import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.screens.GameScreen
 import fr.mwet.snake.screens.LoadingScreen
 import fr.mwet.snake.screens.MainMenuScreen
+import fr.mwet.snake.ui.GameUiStyles
 import fr.mwet.snake.utils.VectorPool
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
@@ -58,6 +60,7 @@ object DI : Context() {
 
         val metadata = withBindSingleton { metadataRepository.load() }
         val highScores = withBindSingleton { metadata.highScores }
+        val bestScore = withBindSingleton { BestScore(metadataRepository, metadata) }
 
         // Assets
         val assetManager = withBindSingleton<AssetManager> { AssetManager() }
@@ -122,6 +125,10 @@ object DI : Context() {
         val gameEventBus = inject<GameEventBus>()
         val menuEventBus = inject<MenuEventBus>()
 
+        // UI
+        val gameUiStyles = withBindSingleton { GameUiStyles(fontHandler, textureHandler) }
+        val bestScore = inject<BestScore>()
+
         // Game World
         val gameWorld = withBindSingleton<GameWorld> { GameWorld(gameEventBus) }
         bindSingleton<GameInputProcessor> {
@@ -146,6 +153,8 @@ object DI : Context() {
                 gameViewport = gameViewport,
                 gameCamera = camera,
                 gameWorld = gameWorld,
+                styles = gameUiStyles,
+                bestScore = bestScore,
             )
         }
 

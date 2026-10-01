@@ -1,7 +1,6 @@
 package fr.mwet.snake.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color.WHITE
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation.elasticOut
@@ -200,7 +199,7 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
 }
 
 private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
-    val title = Label.LabelStyle(fontHandler.titleFont, WHITE)
+    val title = Label.LabelStyle(fontHandler.titleFont, Palette.text)
 
     val playButton = TextButton.TextButtonStyle().apply {
         up = textureHandler.rectangleWithBorderTexture(
@@ -208,7 +207,7 @@ private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
             height = 96,
             border = 4,
             fill = Palette.background,
-            borderColor = WHITE,
+            borderColor = Palette.border,
         ).toDrawable()
 
         down = textureHandler.rectangleWithBorderTexture(
@@ -216,11 +215,11 @@ private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
             height = 96,
             border = 4,
             fill = Palette.accent,
-            borderColor = WHITE,
+            borderColor = Palette.border,
         ).toDrawable()
 
         font = fontHandler.buttonFont
-        fontColor = WHITE
-        downFontColor = WHITE
+        fontColor = Palette.text
+        downFontColor = Palette.text
     }
 }

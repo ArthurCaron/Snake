@@ -17,6 +17,8 @@ import fr.mwet.snake.render.DisintegratingSnakeRenderer
 import fr.mwet.snake.render.FoodRenderer
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.render.SnakeRenderer
+import fr.mwet.snake.save.metadata.BestScore
+import fr.mwet.snake.ui.GameUiStyles
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
@@ -34,6 +36,8 @@ class GameScreen(
     private val gameViewport: GameViewport,
     private val gameCamera: OrthographicCamera,
     private val gameWorld: GameWorld,
+    styles: GameUiStyles,
+    private val bestScore: BestScore,
 ) : GameEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
     private val stageViewport = StageViewport().also {
         Game.addViewport(it)
@@ -45,6 +49,13 @@ class GameScreen(
     val foodRenderer = FoodRenderer(textureHandler, gameWorld.food)
     val snakeRenderer = SnakeRenderer(textureHandler, gameWorld.snake)
     val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(textureHandler, gameWorld.snake)
+    private val hud = GameHud(styles)
+    private var gameState: GameState? = null
+
+    init {
+        stage.addActor(hud.actor)
+    }
+
     val lostTask = object : Timer.Task() {
         override fun run() {
             Game.setScreen<MainMenuScreen>()
@@ -54,8 +65,8 @@ class GameScreen(
     override fun show() {
         DI.registerGameInputProcessor()
         DI.registerInputProcessor(stage)
-        stage.clear()
         gameWorld.newGame()
+        gameState = null
         foodRenderer.reset()
         snakeRenderer.reset()
         disintegratingSnakeRenderer.reset()
@@ -69,6 +80,8 @@ class GameScreen(
 
     override fun render(delta: Float) {
         gameWorld.update(delta)
+        if (gameWorld.state != gameState) onStateChanged(gameWorld.state)
+        hud.show(gameWorld.score, bestScore.value)
 
         gameViewport.apply(true)
         batch.use(gameCamera) {
@@ -80,6 +93,11 @@ class GameScreen(
         stageViewport.apply()
         stage.act(delta)
         stage.draw()
+    }
+
+    private fun onStateChanged(state: GameState) {
+        gameState = state
+        if (gameWorld.isOver) bestScore.submit(gameWorld.score)
     }
 
     override fun pause() {
