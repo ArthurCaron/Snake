@@ -96,7 +96,7 @@ class SegmentPool {
     }
 }
 
-data class Segment(var position: Vector2) {
+class Segment(var position: Vector2) {
     var next: Segment? = null
     var previous: Segment? = null
     var stayStill: Boolean = false
