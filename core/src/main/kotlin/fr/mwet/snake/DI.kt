@@ -142,6 +142,7 @@ object DI : Context() {
         bindSingleton<SwipeInputProcessor> { SwipeInputProcessor(gameCommandContext) }
 
         // Screens
+        val audioSettings = inject<AudioSettings>()
         val mainMenuScreen = withBindSingleton {
             MainMenuScreen(
                 menuEventBus = menuEventBus,
@@ -151,6 +152,7 @@ object DI : Context() {
                 gameViewport = gameViewport,
                 gameCamera = camera,
                 bestScore = bestScore,
+                audioSettings = audioSettings,
             )
         }
         val gameScreen = withBindSingleton {

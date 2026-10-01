@@ -44,6 +44,7 @@ class MainMenuScreen(
     private val gameViewport: GameViewport,
     private val gameCamera: OrthographicCamera,
     private val bestScore: BestScore,
+    private val audioSettings: AudioSettings,
 ) : MenuEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
     private val stageViewport = StageViewport().also {
         Game.addViewport(it)
@@ -54,6 +55,22 @@ class MainMenuScreen(
     private val styles = Styles(fontHandler, textureHandler)
     private val mainMenuTitle = MainMenuTitle(styles)
     private val playButton = PlayButton(styles, menuEventBus)
+    private val soundButton = TextButton("", styles.smallButton).apply {
+        pad(8f, 24f, 8f, 24f)
+        onClick {
+            audioSettings.toggleSound()
+            refreshAudioButtons()
+            menuEventBus.emit(MenuEvent.SoundToggled)
+        }
+    }
+    private val musicButton = TextButton("", styles.smallButton).apply {
+        pad(8f, 24f, 8f, 24f)
+        onClick {
+            audioSettings.toggleMusic()
+            refreshAudioButtons()
+            menuEventBus.emit(MenuEvent.MusicToggled)
+        }
+    }
     private val bestScoreLabel = Label("", styles.info)
 
     override fun show() {
@@ -62,12 +79,8 @@ class MainMenuScreen(
 
         mainMenuTitle.startAnimation()
         playButton.startAnimation()
+        refreshAudioButtons()
         updateBestScoreLabel()
-    }
-
-    private fun updateBestScoreLabel() {
-        bestScoreLabel.setText(I18N.best(bestScore.value))
-        bestScoreLabel.pack()
     }
 
     override fun hide() {
@@ -87,10 +100,13 @@ class MainMenuScreen(
         stage.clear()
         stage.addActor(mainMenuTitle.actor)
         stage.addActor(playButton.actor)
+        stage.addActor(soundButton)
+        stage.addActor(musicButton)
         stage.addActor(bestScoreLabel)
 
         mainMenuTitle.resetPosition(stageWidth, stageHeight, boardWidth)
         playButton.resetPosition(stageWidth, stageHeight)
+        positionAudioButtons()
         bestScoreLabel.setPosition(
             (stageWidth - bestScoreLabel.width) * 0.5f,
             playButton.actor.y - bestScoreLabel.height - 32f,
@@ -113,6 +129,30 @@ class MainMenuScreen(
             MenuEvent.PlayGameClicked -> playButton.startGame()
             MenuEvent.SoundToggled, MenuEvent.MusicToggled -> {}
         }
+    }
+
+    private fun refreshAudioButtons() {
+        soundButton.setText(if (audioSettings.soundOn) I18N.soundOn() else I18N.soundOff())
+        soundButton.pack()
+        musicButton.setText(if (audioSettings.musicOn) I18N.musicOn() else I18N.musicOff())
+        musicButton.pack()
+        positionAudioButtons()
+    }
+
+    private fun updateBestScoreLabel() {
+        bestScoreLabel.setText(I18N.best(bestScore.value))
+        bestScoreLabel.pack()
+    }
+
+    private fun positionAudioButtons() {
+        soundButton.setPosition(
+            stageViewport.worldWidth - soundButton.width - 24f,
+            stageViewport.worldHeight - soundButton.height - 24f,
+        )
+        musicButton.setPosition(
+            stageViewport.worldWidth - musicButton.width - 24f,
+            stageViewport.worldHeight - musicButton.height - 24f,
+        )
     }
 }
 
@@ -242,5 +282,9 @@ private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
         font = fontHandler.buttonFont
         fontColor = Palette.text
         downFontColor = Palette.text
+    }
+
+    val smallButton = TextButton.TextButtonStyle(playButton).apply {
+        font = fontHandler.uiFont
     }
 }
