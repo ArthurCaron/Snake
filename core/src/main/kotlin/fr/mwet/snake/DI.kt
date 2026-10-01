@@ -28,7 +28,6 @@ import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.screens.GameScreen
 import fr.mwet.snake.screens.LoadingScreen
 import fr.mwet.snake.screens.MainMenuScreen
-import fr.mwet.snake.screens.SettingsScreen
 import fr.mwet.snake.utils.VectorPool
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
@@ -141,7 +140,6 @@ object DI : Context() {
                 gameCamera = camera,
             )
         }
-        val settingsScreen = withBindSingleton { SettingsScreen() }
         val gameScreen = withBindSingleton {
             GameScreen(
                 textureHandler = textureHandler,
@@ -156,7 +154,6 @@ object DI : Context() {
         gameEventBus.listen(gameScreen)
 
         Game.addScreen(mainMenuScreen)
-        Game.addScreen(settingsScreen)
         Game.addScreen(gameScreen)
     }
 
