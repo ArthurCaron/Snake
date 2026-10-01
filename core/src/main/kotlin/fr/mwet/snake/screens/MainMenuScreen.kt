@@ -16,6 +16,7 @@ import fr.mwet.snake.Game
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.FontHandler
+import fr.mwet.snake.assets.I18N
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.events.MenuEvent
@@ -138,7 +139,7 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
     private var clicked = false
     private var hoverAction: Action? = null
 
-    val actor = TextButton("Play", styles.playButton).apply {
+    val actor = TextButton(I18N.play(), styles.playButton).apply {
         setOrigin(Align.center)
 
         val replaceHoverAction = { action: Action ->
