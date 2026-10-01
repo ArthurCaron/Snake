@@ -2,6 +2,7 @@ package fr.mwet.snake
 
 import com.badlogic.gdx.Application.ApplicationType.WebGL
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.assets.AssetManager
@@ -80,6 +81,7 @@ object DI : Context() {
 
         // Input Handlers
         bindSingleton<InputMultiplexer> {
+            Gdx.input.setCatchKey(Input.Keys.BACK, true)
             InputMultiplexer().also { Gdx.input.inputProcessor = it }
         }
         bindSingleton<GeneralInputProcessor> {
