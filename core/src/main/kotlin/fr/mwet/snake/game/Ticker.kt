@@ -1,12 +1,17 @@
 package fr.mwet.snake.game
 
-class Ticker {
-    private val ticksPerSecond = 5f
-    private val secondsPerTick = 1f / ticksPerSecond
+class Ticker(private val initialTicksPerSecond: Float) {
+    private var ticksPerSecond = initialTicksPerSecond
+    private val secondsPerTick get() = 1f / ticksPerSecond
     private var secondsSinceLastTick: Float = 0f
 
     fun reset() {
+        ticksPerSecond = initialTicksPerSecond
         secondsSinceLastTick = 0f
+    }
+
+    fun speedUp(by: Float, upTo: Float) {
+        ticksPerSecond = minOf(ticksPerSecond + by, upTo)
     }
 
     fun update(delta: Float): UpdateResult {

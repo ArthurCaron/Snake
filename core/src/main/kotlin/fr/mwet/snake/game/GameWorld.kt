@@ -8,8 +8,12 @@ import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 
+private const val START_TICKS_PER_SECOND = 5f
+private const val TICKS_PER_SECOND_GAINED_PER_FOOD = 0.15f
+private const val MAX_TICKS_PER_SECOND = 12f
+
 class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
-    val ticker = Ticker()
+    val ticker = Ticker(START_TICKS_PER_SECOND)
     val cells = Cells()
     val snake = Snake()
     val food = Food()
@@ -41,6 +45,7 @@ class GameWorld(private val gameEventBus: GameEventBus) : GameEventListener {
 
         if (willEatFood) {
             gameEventBus.emit(FoodEaten)
+            ticker.speedUp(TICKS_PER_SECOND_GAINED_PER_FOOD, MAX_TICKS_PER_SECOND)
             resetFood()
         }
     }
