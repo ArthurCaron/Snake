@@ -19,7 +19,6 @@ import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralInputProcessor
-import fr.mwet.snake.save.game.GameSaveRepository
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.serialization.FileTextStore
 import fr.mwet.snake.save.serialization.JsonStore
@@ -54,7 +53,6 @@ object DI : Context() {
         }
         val settingsRepository = withBindSingleton { SettingsRepository(jsonStore) }
         val metadataRepository = withBindSingleton { MetadataRepository(jsonStore) }
-        val gameSaveRepository = withBindSingleton { GameSaveRepository(jsonStore) }
 
         val settings = withBindSingleton { settingsRepository.load() }
         val keymapping = withBindSingleton<Keymappings> { settings.keymappings }

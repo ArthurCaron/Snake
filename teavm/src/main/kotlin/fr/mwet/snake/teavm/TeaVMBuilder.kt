@@ -23,7 +23,6 @@ object TeaVMBuilder {
         listOf(
             "fr.mwet.snake.save.settings.serializable",
             "fr.mwet.snake.save.metadata.serializable",
-            "fr.mwet.snake.save.game.serializable",
         ).forEach(TeaReflectionSupplier::addReflectionClass)
         // This one does the whole folder
 //        TeaReflectionSupplier.addReflectionClass("fr.mwet.snake.save")
