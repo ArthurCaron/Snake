@@ -1,7 +1,6 @@
 package fr.mwet.snake.game
 
 import com.badlogic.gdx.math.Vector2
-import fr.mwet.snake.DI
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import fr.mwet.snake.utils.doesNotContain
@@ -10,7 +9,7 @@ class Cells {
     private val allPositions: List<Cell> = buildList {
         (0..<WORLD_WIDTH.toInt()).forEach { width ->
             (0..<WORLD_HEIGHT.toInt()).forEach { height ->
-                add(Cell(DI.vectorPool.obtain(width, height)))
+                add(Cell(Vector2(width.toFloat(), height.toFloat())))
             }
         }
     }

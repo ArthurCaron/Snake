@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.assets.AssetHandler
@@ -46,9 +47,9 @@ class LoadingScreen(
 
 class ProgressBar(barWidth: Float, barHeight: Float) :
     DisposableRegistry by DisposableContainer() {
-    private val position = DI.vectorPool.obtain((WORLD_WIDTH - barWidth) * 0.5f, (WORLD_HEIGHT - barHeight) * 0.5f)
-    private val fullSize = DI.vectorPool.obtain(barWidth, barHeight)
-    private var size = DI.vectorPool.obtain(0, 0)
+    private val position = Vector2((WORLD_WIDTH - barWidth) * 0.5f, (WORLD_HEIGHT - barHeight) * 0.5f)
+    private val fullSize = Vector2(barWidth, barHeight)
+    private val size = Vector2()
 
     val texture = run {
         // Create loading segment part, use Pixmap to generate the texture
@@ -69,8 +70,8 @@ class ProgressBar(barWidth: Float, barHeight: Float) :
 }
 
 class LoadingText(textWidth: Float, textHeight: Float) : DisposableRegistry by DisposableContainer() {
-    private val position = DI.vectorPool.obtain((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f)
-    private val size = DI.vectorPool.obtain(textWidth, textHeight)
+    private val position = Vector2((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f)
+    private val size = Vector2(textWidth, textHeight)
 
     val texture = Texture(Gdx.files.internal("LoadingAssets.png")).alsoRegister().apply {
         setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)

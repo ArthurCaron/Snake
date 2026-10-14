@@ -8,12 +8,12 @@ import fr.mwet.snake.game.Segment
 import fr.mwet.snake.game.Snake
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
-import fr.mwet.snake.utils.copyVector
-import fr.mwet.snake.utils.free
+import fr.mwet.snake.utils.VectorPool
 import kotlin.random.Random
 
 class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Snake) {
     private var eTime = 0f
+    private val vectors = VectorPool()
 
     private val snekHeadAll = textureHandler.snekHeadAll
     private val snakeBody = textureHandler.snekBodyStraight
@@ -21,13 +21,13 @@ class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Sna
     private val bodyParts = mutableListOf<DisintegratingSegment>()
 
     fun disintegrate() {
-        bodyParts.add(DisintegratingSegment(snake.head.position.copyVector(), snekHeadAll))
-        bodyParts.add(DisintegratingSegment(snake.tail.position.copyVector(), snakeTail))
+        bodyParts.add(DisintegratingSegment(vectors.copy(snake.head.position), snekHeadAll))
+        bodyParts.add(DisintegratingSegment(vectors.copy(snake.tail.position), snakeTail))
 
         var segment: Segment? = snake.head.next
         while (segment != null) {
             if (segment != snake.tail) {
-                bodyParts.add(DisintegratingSegment(segment.position.copyVector(), snakeBody))
+                bodyParts.add(DisintegratingSegment(vectors.copy(segment.position), snakeBody))
             }
             segment = segment.next
         }
@@ -57,7 +57,7 @@ class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Sna
 
     fun reset() {
         eTime = 0f
-        bodyParts.forEach { it.position.free() }
+        bodyParts.forEach { vectors.free(it.position) }
         bodyParts.clear()
     }
 }
