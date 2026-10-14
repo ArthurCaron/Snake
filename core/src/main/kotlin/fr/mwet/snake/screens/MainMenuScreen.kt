@@ -9,8 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import fr.mwet.snake.DI
-import fr.mwet.snake.Game
+import fr.mwet.snake.Navigator
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.FontHandler
@@ -21,6 +20,8 @@ import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
+import fr.mwet.snake.inputs.GeneralInputProcessor
+import fr.mwet.snake.inputs.InputRouter
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.settings.AudioSettings
@@ -46,16 +47,17 @@ class MainMenuScreen(
     private val gameCamera: OrthographicCamera,
     private val metadataRepository: MetadataRepository,
     private val audioSettings: AudioSettings,
+    private val input: InputRouter,
+    private val menuInput: GeneralInputProcessor,
+    navigator: Navigator,
 ) : MenuEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val stageViewport = StageViewport().also {
-        Game.addViewport(it)
-    }
+    private val stageViewport = StageViewport()
     private val stage = stage(batch, stageViewport)
     private val backgroundTexture =
         textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = Palette.background)
     private val styles = Styles(fontHandler, textureHandler)
     private val mainMenuTitle = MainMenuTitle(styles)
-    private val playButton = PlayButton(styles, menuEventBus)
+    private val playButton = PlayButton(styles, menuEventBus, navigator)
     private val soundButton = TextButton("", styles.smallButton).apply {
         pad(8f, 24f, 8f, 24f)
         onClick {
@@ -75,8 +77,7 @@ class MainMenuScreen(
     private val bestScoreLabel = Label("", styles.info)
 
     override fun show() {
-        DI.registerGeneralInputProcessor()
-        DI.registerInputProcessor(stage)
+        input.add(menuInput, stage)
 
         mainMenuTitle.startAnimation()
         playButton.startAnimation()
@@ -85,14 +86,14 @@ class MainMenuScreen(
     }
 
     override fun hide() {
-        DI.unRegisterGeneralInputProcessor()
-        DI.unRegisterInputProcessor(stage)
+        input.remove(menuInput, stage)
 
         mainMenuTitle.resetAnimation()
         playButton.resetAnimation()
     }
 
     override fun resize(width: Int, height: Int) {
+        gameViewport.update(width, height, true)
         stageViewport.update(width, height, true)
         val stageWidth = stageViewport.worldWidth
         val stageHeight = stageViewport.worldHeight
@@ -195,7 +196,7 @@ private class MainMenuTitle(styles: Styles) {
     }
 }
 
-private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
+private class PlayButton(styles: Styles, menuEventBus: MenuEventBus, private val navigator: Navigator) {
     private var clicked = false
     private var hoverAction: Action? = null
 
@@ -224,7 +225,7 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
         actor.addAction(
             sequence(
                 delay(0.3f),
-                Actions.run { Game.setScreen<GameScreen>() },
+                Actions.run { navigator.goToGame() },
             ),
         )
     }

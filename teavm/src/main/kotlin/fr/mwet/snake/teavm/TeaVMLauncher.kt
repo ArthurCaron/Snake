@@ -5,7 +5,7 @@ package fr.mwet.snake.teavm
 import com.github.xpenatan.gdx.backends.teavm.TeaApplicationConfiguration
 import com.github.xpenatan.gdx.backends.teavm.TeaApplication
 import com.github.xpenatan.gdx.backends.teavm.TeaAssetPreloadListener
-import fr.mwet.snake.Main
+import fr.mwet.snake.SnakeGame
 
 /** Launches the TeaVM/HTML application. */
 fun main() {
@@ -27,5 +27,5 @@ fun main() {
             assetLoader.loadScript("freetype.js")
         }
     }
-    TeaApplication(Main(), config)
+    TeaApplication(SnakeGame(), config)
 }

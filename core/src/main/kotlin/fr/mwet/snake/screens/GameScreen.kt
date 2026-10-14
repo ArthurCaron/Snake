@@ -2,8 +2,7 @@ package fr.mwet.snake.screens
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.DI
-import fr.mwet.snake.Game
+import fr.mwet.snake.Navigator
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.TextureHandler
@@ -12,6 +11,9 @@ import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
+import fr.mwet.snake.inputs.GameInputProcessor
+import fr.mwet.snake.inputs.InputRouter
+import fr.mwet.snake.inputs.SwipeInputProcessor
 import fr.mwet.snake.render.DisintegratingSnakeRenderer
 import fr.mwet.snake.render.FoodRenderer
 import fr.mwet.snake.render.Palette
@@ -38,10 +40,12 @@ class GameScreen(
     private val gameWorld: GameWorld,
     styles: GameUiStyles,
     private val metadataRepository: MetadataRepository,
+    private val input: InputRouter,
+    private val gameInput: GameInputProcessor,
+    private val swipeInput: SwipeInputProcessor,
+    private val navigator: Navigator,
 ) : GameEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
-    private val stageViewport = StageViewport().also {
-        Game.addViewport(it)
-    }
+    private val stageViewport = StageViewport()
     private val stage = stage(batch, stageViewport)
     private val backgroundTexture =
         textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = Palette.background)
@@ -56,13 +60,13 @@ class GameScreen(
         onResume = { gameWorld.resume() },
         onMainMenu = {
             metadataRepository.submitHighScore(gameWorld.score)
-            Game.setScreen<MainMenuScreen>()
+            navigator.goToMainMenu()
         },
     )
     private val endOverlay = EndOverlay(
         styles,
         onPlayAgain = { startNewGame() },
-        onMainMenu = { Game.setScreen<MainMenuScreen>() },
+        onMainMenu = { navigator.goToMainMenu() },
     )
 
     private val hud = GameHud(styles, onPause = { gameWorld.pause() })
@@ -76,14 +80,12 @@ class GameScreen(
     }
 
     override fun show() {
-        DI.registerGameInputProcessor()
-        DI.registerInputProcessor(stage)
+        input.add(gameInput, swipeInput, stage)
         startNewGame()
     }
 
     override fun hide() {
-        DI.unRegisterGameInputProcessor()
-        DI.unRegisterInputProcessor(stage)
+        input.remove(gameInput, swipeInput, stage)
         endOverlay.hide()
     }
 
@@ -133,6 +135,11 @@ class GameScreen(
         endOverlay.show(won, gameWorld.score, metadataRepository.metadata.highScore.score, isNewHighScore, delay)
     }
 
+    override fun resize(width: Int, height: Int) {
+        gameViewport.update(width, height, true)
+        stageViewport.update(width, height, true)
+    }
+
     override fun pause() {
         gameWorld.pause()
     }
@@ -159,7 +166,7 @@ class GameScreen(
     private fun back() {
         when (gameWorld.state) {
             GameState.Ready, GameState.Playing -> gameWorld.pause()
-            GameState.Paused, GameState.Lost, GameState.Won -> Game.setScreen<MainMenuScreen>()
+            GameState.Paused, GameState.Lost, GameState.Won -> navigator.goToMainMenu()
         }
     }
 
