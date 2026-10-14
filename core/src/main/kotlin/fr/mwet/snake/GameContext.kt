@@ -6,8 +6,8 @@ import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.SwipeInputProcessor
-import fr.mwet.snake.screens.GameScreen
-import fr.mwet.snake.screens.MainMenuScreen
+import fr.mwet.snake.screens.game.GameScreen
+import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.ui.GameUiStyles
 
 class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator) {

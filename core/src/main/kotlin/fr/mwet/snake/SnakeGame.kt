@@ -1,9 +1,9 @@
 package fr.mwet.snake
 
 import fr.mwet.snake.events.MenuEvent.LoadingFinished
-import fr.mwet.snake.screens.GameScreen
-import fr.mwet.snake.screens.LoadingScreen
-import fr.mwet.snake.screens.MainMenuScreen
+import fr.mwet.snake.screens.game.GameScreen
+import fr.mwet.snake.screens.loading.LoadingScreen
+import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.utils.SplashWorker
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
