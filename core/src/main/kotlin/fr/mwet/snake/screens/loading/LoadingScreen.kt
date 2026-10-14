@@ -1,4 +1,4 @@
-package fr.mwet.snake.screens
+package fr.mwet.snake.screens.loading
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Pixmap

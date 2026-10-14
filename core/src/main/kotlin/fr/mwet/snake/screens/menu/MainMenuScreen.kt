@@ -1,4 +1,4 @@
-package fr.mwet.snake.screens
+package fr.mwet.snake.screens.menu
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
