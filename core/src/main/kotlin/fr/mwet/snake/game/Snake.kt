@@ -1,17 +1,15 @@
 package fr.mwet.snake.game
 
 import com.badlogic.gdx.math.Vector2
-import fr.mwet.snake.DI
 import fr.mwet.snake.inputs.TargetActor
 import fr.mwet.snake.utils.Direction
 import fr.mwet.snake.utils.collidesWith
-import fr.mwet.snake.utils.copyVector
 import fr.mwet.snake.utils.move
 import ktx.assets.pool
 
 private val initialDirection = Direction.UP
-private val initialTailPosition = DI.vectorPool.obtain(4f, 3f)
-private val initialHeadPosition = DI.vectorPool.obtain(
+private val initialTailPosition = Vector2(4f, 3f)
+private val initialHeadPosition = Vector2(
     initialTailPosition.x + initialDirection.directionX,
     initialTailPosition.y + initialDirection.directionY
 )
@@ -19,12 +17,12 @@ private const val MAX_PENDING_DIRECTIONS = 2
 
 class Snake : TargetActor {
     private val segmentPool = SegmentPool()
-    val head = segmentPool.obtain(initialHeadPosition.copyVector())
-    val tail = segmentPool.obtain(initialTailPosition.copyVector()).apply { linkPrevious(head) }
+    val head = segmentPool.obtain(initialHeadPosition)
+    val tail = segmentPool.obtain(initialTailPosition).apply { linkPrevious(head) }
     var currentDirection = initialDirection
     private val pendingDirections = ArrayDeque<Direction>(MAX_PENDING_DIRECTIONS)
     val futureDirection: Direction get() = pendingDirections.firstOrNull() ?: currentDirection
-    var nextHeadPosition = DI.vectorPool.obtain(-1, -1)
+    val nextHeadPosition = Vector2(-1f, -1f)
 
     fun reset() {
         head.position.move(initialHeadPosition)
@@ -52,7 +50,7 @@ class Snake : TargetActor {
     fun move(eatFood: Boolean) {
         if (eatFood) {
             tail.stayStill = true
-            val newBodyPart = segmentPool.obtain(tail.position.copyVector())
+            val newBodyPart = segmentPool.obtain(tail.position)
             tail.previous?.let { newBodyPart.linkPrevious(it) }
             newBodyPart.linkNext(tail)
         }
@@ -88,7 +86,7 @@ class Snake : TargetActor {
 }
 
 class SegmentPool {
-    private val segmentPool = pool { Segment(DI.vectorPool.obtain(-1, -1)) }
+    private val segmentPool = pool { Segment(Vector2(-1f, -1f)) }
 
     fun obtain(position: Vector2): Segment = segmentPool.obtain().apply { move(position) }
     fun free(segment: Segment) {

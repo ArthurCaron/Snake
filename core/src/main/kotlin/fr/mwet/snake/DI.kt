@@ -33,15 +33,12 @@ import fr.mwet.snake.screens.GameScreen
 import fr.mwet.snake.screens.LoadingScreen
 import fr.mwet.snake.screens.MainMenuScreen
 import fr.mwet.snake.ui.GameUiStyles
-import fr.mwet.snake.utils.VectorPool
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.inject.Context
 import ktx.inject.register
 
 object DI : Context() {
-    val vectorPool = VectorPool()
-
     fun initBeforeAssetsAreLoaded() = register {
         // Event Bus
         val gameEventBus = withBindSingleton<GameEventBus> { GameEventBusImpl() }
