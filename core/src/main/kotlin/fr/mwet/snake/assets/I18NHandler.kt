@@ -11,12 +11,8 @@ import ktx.i18n.BundleLine
 
 private const val I18N_ROOT = "i18n/translations"
 
-class I18NHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer(), AssetsLoadedListener {
-    private val t: I18NBundle by assetManager.loadAsset(AssetDescriptor(I18N_ROOT, I18NBundle::class.java))
-
-    override fun onAssetsLoaded() {
-        I18N.i18nBundle = t
-    }
+class I18NHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
+    val t: I18NBundle by assetManager.loadAsset(AssetDescriptor(I18N_ROOT, I18NBundle::class.java))
 }
 
 enum class I18N : BundleLine {

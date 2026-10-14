@@ -1,17 +1,14 @@
 package fr.mwet.snake.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import fr.mwet.snake.DI
-import fr.mwet.snake.Game
-import fr.mwet.snake.assets.AssetHandler
-import fr.mwet.snake.assets.Progress
-import fr.mwet.snake.events.MenuEvent.LoadingFinished
-import fr.mwet.snake.events.MenuEventBus
+import fr.mwet.snake.AssetLoading
+import fr.mwet.snake.GameViewport
+import fr.mwet.snake.LoadedAssets
+import fr.mwet.snake.Progress
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.utils.*
 import ktx.app.KtxScreen
@@ -22,26 +19,30 @@ import ktx.graphics.use
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class LoadingScreen(
-    private val assetHandler: AssetHandler,
+    private val assetLoading: AssetLoading,
     private val batch: SpriteBatch,
-    private val gameCamera: OrthographicCamera,
-    private val menuEventBus: MenuEventBus,
+    private val gameViewport: GameViewport,
+    private val onLoaded: (LoadedAssets) -> Unit,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
     private val progressBar = ProgressBar(barWidth = 6f, barHeight = 0.5f)
     private val loadingText = LoadingText(textWidth = 3f, textHeight = 3f * 16 / 200f)
 
     override fun render(delta: Float) {
-        val progress = assetHandler.loadAssets()
-        if (progress == Progress(1f)) {
-            DI.finishInitAfterAssetsAreLoaded()
-            menuEventBus.emit(LoadingFinished)
-            Game.setScreen<MainMenuScreen>()
-        } else {
-            batch.use(gameCamera) {
-                progressBar.render(batch, progress)
-                loadingText.render(batch)
-            }
+        val assets = assetLoading.update()
+        if (assets != null) {
+            onLoaded(assets)
+            return
         }
+
+        gameViewport.apply()
+        batch.use(gameViewport.camera) {
+            progressBar.render(it, assetLoading.progress)
+            loadingText.render(it)
+        }
+    }
+
+    override fun resize(width: Int, height: Int) {
+        gameViewport.update(width, height, true)
     }
 }
 
