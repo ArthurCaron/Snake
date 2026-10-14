@@ -32,12 +32,9 @@ import ktx.actors.onEnter
 import ktx.actors.onExit
 import ktx.actors.stage
 import ktx.app.KtxScreen
-import ktx.assets.DisposableContainer
-import ktx.assets.DisposableRegistry
 import ktx.graphics.use
 
 
-@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class MainMenuScreen(
     menuEventBus: MenuEventBus,
     fontHandler: FontHandler,
@@ -50,7 +47,7 @@ class MainMenuScreen(
     private val input: InputRouter,
     private val menuInput: GeneralInputProcessor,
     navigator: Navigator,
-) : MenuEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
+) : MenuEventListener, KtxScreen {
     private val stageViewport = StageViewport()
     private val stage = stage(batch, stageViewport)
     private val backgroundTexture =
@@ -124,6 +121,10 @@ class MainMenuScreen(
         stageViewport.apply(true)
         stage.act(delta)
         stage.draw()
+    }
+
+    override fun dispose() {
+        stage.dispose()
     }
 
     override fun onEvent(event: MenuEvent) {

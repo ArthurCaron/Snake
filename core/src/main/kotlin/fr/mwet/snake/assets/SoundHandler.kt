@@ -4,12 +4,10 @@ import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Sound
 import fr.mwet.snake.generated.assets.SoundAssets
-import ktx.assets.DisposableContainer
-import ktx.assets.DisposableRegistry
 import ktx.assets.getValue
 import ktx.assets.loadAsset
 
-class SoundHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
+class SoundHandler(assetManager: AssetManager) {
     val buttonPressedSound: Sound by assetManager.loadAsset(AssetDescriptor(SoundAssets.ButtonPressed, Sound::class.java))
     val moveSound: Sound by assetManager.loadAsset(AssetDescriptor(SoundAssets.SnakeMove, Sound::class.java))
     val eatSound: Sound by assetManager.loadAsset(AssetDescriptor(SoundAssets.SnakeEat, Sound::class.java))

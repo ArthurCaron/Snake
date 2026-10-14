@@ -3,15 +3,13 @@ package fr.mwet.snake.assets
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.utils.I18NBundle
-import ktx.assets.DisposableContainer
-import ktx.assets.DisposableRegistry
 import ktx.assets.getValue
 import ktx.assets.loadAsset
 import ktx.i18n.BundleLine
 
 private const val I18N_ROOT = "i18n/translations"
 
-class I18NHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
+class I18NHandler(assetManager: AssetManager) {
     val t: I18NBundle by assetManager.loadAsset(AssetDescriptor(I18N_ROOT, I18NBundle::class.java))
 }
 

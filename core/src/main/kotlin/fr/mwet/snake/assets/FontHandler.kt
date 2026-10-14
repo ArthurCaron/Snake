@@ -11,8 +11,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
 import fr.mwet.snake.generated.assets.FontAssets
 import fr.mwet.snake.render.Palette
-import ktx.assets.DisposableContainer
-import ktx.assets.DisposableRegistry
 import ktx.assets.getValue
 import ktx.assets.loadAsset
 
@@ -25,7 +23,7 @@ private const val BUTTON_FONT_ASSET = "generated-fonts/button-fredoka-60.ttf"
 
 private const val FRENCH_CHARS = "ÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸàâäçéèêëîïôöùûüÿœŒæÆ"
 
-class FontHandler(assetManager: AssetManager) : DisposableRegistry by DisposableContainer() {
+class FontHandler(assetManager: AssetManager) {
     private val characters = FreeTypeFontGenerator.DEFAULT_CHARS + FRENCH_CHARS
 
     val titleFont: BitmapFont by assetManager.loadAsset(

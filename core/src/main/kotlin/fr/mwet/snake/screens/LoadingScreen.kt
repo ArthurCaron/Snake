@@ -12,18 +12,16 @@ import fr.mwet.snake.Progress
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.utils.*
 import ktx.app.KtxScreen
-import ktx.assets.DisposableContainer
-import ktx.assets.DisposableRegistry
+import com.badlogic.gdx.utils.Disposable
 import ktx.graphics.use
 
 
-@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class LoadingScreen(
     private val assetLoading: AssetLoading,
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
     private val onLoaded: (LoadedAssets) -> Unit,
-) : KtxScreen, DisposableRegistry by DisposableContainer() {
+) : KtxScreen {
     private val progressBar = ProgressBar(barWidth = 6f, barHeight = 0.5f)
     private val loadingText = LoadingText(textWidth = 3f, textHeight = 3f * 16 / 200f)
 
@@ -44,10 +42,14 @@ class LoadingScreen(
     override fun resize(width: Int, height: Int) {
         gameViewport.update(width, height, true)
     }
+
+    override fun dispose() {
+        progressBar.dispose()
+        loadingText.dispose()
+    }
 }
 
-class ProgressBar(barWidth: Float, barHeight: Float) :
-    DisposableRegistry by DisposableContainer() {
+class ProgressBar(barWidth: Float, barHeight: Float) : Disposable {
     private val position = Vector2((WORLD_WIDTH - barWidth) * 0.5f, (WORLD_HEIGHT - barHeight) * 0.5f)
     private val fullSize = Vector2(barWidth, barHeight)
     private val size = Vector2()
@@ -58,7 +60,7 @@ class ProgressBar(barWidth: Float, barHeight: Float) :
             setColor(Palette.text)
             fill()
         }
-        Texture(pixmap).alsoRegister().also { pixmap.dispose() }
+        Texture(pixmap).also { pixmap.dispose() }
     }
 
     fun render(batch: SpriteBatch, progress: Progress) {
@@ -68,18 +70,26 @@ class ProgressBar(barWidth: Float, barHeight: Float) :
         batch.setColor(0.4f, 0.4f, 1f, 1f)
         batch.draw(texture, position, size.move(progress.value * fullSize.x, fullSize.y))
     }
+
+    override fun dispose() {
+        texture.dispose()
+    }
 }
 
-class LoadingText(textWidth: Float, textHeight: Float) : DisposableRegistry by DisposableContainer() {
+class LoadingText(textWidth: Float, textHeight: Float) : Disposable {
     private val position = Vector2((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f)
     private val size = Vector2(textWidth, textHeight)
 
-    val texture = Texture(Gdx.files.internal("LoadingAssets.png")).alsoRegister().apply {
+    val texture = Texture(Gdx.files.internal("LoadingAssets.png")).apply {
         setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
     }
 
     fun render(batch: SpriteBatch) {
         batch.resetColor()
         batch.draw(texture, position, size)
+    }
+
+    override fun dispose() {
+        texture.dispose()
     }
 }

@@ -25,13 +25,10 @@ import fr.mwet.snake.utils.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
 import ktx.actors.stage
 import ktx.app.KtxScreen
-import ktx.assets.DisposableContainer
-import ktx.assets.DisposableRegistry
 import ktx.graphics.use
 
 private const val LOST_OVERLAY_DELAY = 1f
 
-@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 class GameScreen(
     textureHandler: TextureHandler,
     private val batch: SpriteBatch,
@@ -44,7 +41,7 @@ class GameScreen(
     private val gameInput: GameInputProcessor,
     private val swipeInput: SwipeInputProcessor,
     private val navigator: Navigator,
-) : GameEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
+) : GameEventListener, KtxScreen {
     private val stageViewport = StageViewport()
     private val stage = stage(batch, stageViewport)
     private val backgroundTexture =
@@ -153,6 +150,10 @@ class GameScreen(
                 snakeRenderer.render(batch, delta)
             }
         }
+    }
+
+    override fun dispose() {
+        stage.dispose()
     }
 
     override fun onEvent(event: GameEvent) {
