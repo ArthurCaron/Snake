@@ -16,7 +16,7 @@ This is a Kotlin/libGDX/KTX Snake game. Prefer project-specific context from thi
 - `core/src/main/kotlin/fr/mwet/snake/save` for save/settings/metadata serialization.
 - `core/src/main/kotlin/fr/mwet/snake/inputs` and `core/src/main/kotlin/fr/mwet/snake/events` for commands and events.
 - `core/src/main/kotlin/fr/mwet/snake/assets` and `core/src/main/kotlin/fr/mwet/snake/render` for asset access and rendering.
-- `DI.kt`, `Game.kt`, and `Main.kt` when lifecycle, ownership, or dependency wiring matters.
+- `SnakeGame.kt` (composition root, screen navigation, lifecycle), then `Boot.kt`, `AssetLoading.kt` and `GameContext.kt` (the three initialization phases) when lifecycle, ownership, or dependency wiring matters.
 
 ## What To Skip By Default
 
