@@ -1,292 +1,72 @@
 package fr.mwet.snake.screens.menu
 
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.Interpolation.elasticOut
-import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.FontHandler
-import fr.mwet.snake.assets.I18N
 import fr.mwet.snake.assets.TextureHandler
-import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.InputRouter
-import fr.mwet.snake.render.Palette
+import fr.mwet.snake.render.Background
+import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.settings.SettingsRepository
+import fr.mwet.snake.ui.UiLayer
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
-import ktx.actors.onClick
-import ktx.actors.onEnter
-import ktx.actors.onExit
-import ktx.actors.stage
 import ktx.app.KtxScreen
-import ktx.graphics.use
 
 class MainMenuScreen(
     menuEventBus: MenuEventBus,
     fontHandler: FontHandler,
     textureHandler: TextureHandler,
-    private val batch: SpriteBatch,
-    private val gameViewport: GameViewport,
-    private val gameCamera: OrthographicCamera,
+    batch: SpriteBatch,
+    gameViewport: GameViewport,
     private val metadataRepository: MetadataRepository,
-    private val settingsRepository: SettingsRepository,
+    settingsRepository: SettingsRepository,
     private val input: InputRouter,
     private val menuInput: GeneralInputProcessor,
     navigator: Navigator,
 ) : MenuEventListener, KtxScreen {
-    private val stageViewport = StageViewport()
-    private val stage = stage(batch, stageViewport)
-    private val backgroundTexture =
-        textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = Palette.background)
-    private val styles = Styles(fontHandler, textureHandler)
-    private val mainMenuTitle = MainMenuTitle(styles)
-    private val playButton = PlayButton(styles, menuEventBus, navigator)
-    private val soundButton = TextButton("", styles.smallButton).apply {
-        pad(8f, 24f, 8f, 24f)
-        onClick {
-            settingsRepository.toggleSound()
-            refreshAudioButtons()
-            menuEventBus.emit(SoundToggled)
-        }
-    }
-    private val musicButton = TextButton("", styles.smallButton).apply {
-        pad(8f, 24f, 8f, 24f)
-        onClick {
-            settingsRepository.toggleMusic()
-            refreshAudioButtons()
-            menuEventBus.emit(MusicToggled)
-        }
-    }
-    private val bestScoreLabel = Label("", styles.info)
+    private val worldLayer = WorldLayer(batch, gameViewport)
+    private val uiLayer = UiLayer(batch)
+    private val background = Background(textureHandler)
+    private val ui = MainMenuUi(fontHandler, textureHandler, uiLayer.stage, menuEventBus, navigator, settingsRepository)
 
     override fun show() {
-        input.add(menuInput, stage)
-
-        mainMenuTitle.startAnimation()
-        playButton.startAnimation()
-        refreshAudioButtons()
-        updateBestScoreLabel()
+        input.add(menuInput, uiLayer.stage)
+        ui.onShow(metadataRepository.metadata.highScore.score)
     }
 
     override fun hide() {
-        input.remove(menuInput, stage)
-
-        mainMenuTitle.resetAnimation()
-        playButton.resetAnimation()
+        input.remove(menuInput, uiLayer.stage)
+        ui.onHide()
     }
 
     override fun resize(width: Int, height: Int) {
-        gameViewport.update(width, height, true)
-        stageViewport.update(width, height, true)
-        val stageWidth = stageViewport.worldWidth
-        val stageHeight = stageViewport.worldHeight
-        val boardWidth = minOf(width.toFloat(), height * WORLD_WIDTH / WORLD_HEIGHT) * stageViewport.unitsPerPixel
-
-        stage.clear()
-        stage.addActor(mainMenuTitle.actor)
-        stage.addActor(playButton.actor)
-        stage.addActor(soundButton)
-        stage.addActor(musicButton)
-        stage.addActor(bestScoreLabel)
-
-        mainMenuTitle.resetPosition(stageWidth, stageHeight, boardWidth)
-        playButton.resetPosition(stageWidth, stageHeight)
-        positionAudioButtons()
-        bestScoreLabel.setPosition(
-            (stageWidth - bestScoreLabel.width) * 0.5f,
-            playButton.actor.y - bestScoreLabel.height - 32f,
-        )
+        worldLayer.resize(width, height)
+        uiLayer.resize(width, height)
+        val boardWidth = minOf(width.toFloat(), height * WORLD_WIDTH / WORLD_HEIGHT) * uiLayer.unitsPerPixel
+        ui.layout(uiLayer.width, uiLayer.height, boardWidth)
     }
 
     override fun render(delta: Float) {
-        gameViewport.apply(true)
-        batch.use(gameCamera) {
-            it.draw(backgroundTexture, 0f, 0f)
-        }
-
-        stageViewport.apply(true)
-        stage.act(delta)
-        stage.draw()
+        worldLayer.render(background, delta)
+        uiLayer.render(delta)
     }
 
     override fun dispose() {
-        stage.dispose()
+        uiLayer.dispose()
     }
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            PlayGameClicked -> playButton.startGame()
+            PlayGameClicked -> ui.startGame()
             LoadingFinished, SoundToggled, MusicToggled -> {}
         }
-    }
-
-    private fun refreshAudioButtons() {
-        soundButton.setText(if (settingsRepository.soundOn) I18N.soundOn() else I18N.soundOff())
-        soundButton.pack()
-        musicButton.setText(if (settingsRepository.musicOn) I18N.musicOn() else I18N.musicOff())
-        musicButton.pack()
-        positionAudioButtons()
-    }
-
-    private fun updateBestScoreLabel() {
-        bestScoreLabel.setText(I18N.best(metadataRepository.metadata.highScore.score))
-        bestScoreLabel.pack()
-    }
-
-    private fun positionAudioButtons() {
-        soundButton.setPosition(
-            stageViewport.worldWidth - soundButton.width - 24f,
-            stageViewport.worldHeight - soundButton.height - 24f,
-        )
-        musicButton.setPosition(
-            stageViewport.worldWidth - musicButton.width - 24f,
-            soundButton.y - musicButton.height - 24f,
-        )
-    }
-}
-
-private class MainMenuTitle(styles: Styles) {
-    val actor = Label("Snek", styles.title).apply {
-        setAlignment(Align.center)
-        setOrigin(Align.center)
-    }
-
-    fun resetPosition(stageWidth: Float, stageHeight: Float, boardWidth: Float) {
-        actor.setFontScale(1f)
-        actor.pack()
-
-        val targetWidth = boardWidth * 0.70f
-        if (actor.width > 0f) {
-            actor.setFontScale(targetWidth / actor.width)
-        }
-
-        actor.pack()
-        actor.setOrigin(Align.center)
-        actor.setPosition(
-            (stageWidth - actor.width) * 0.5f,
-            (stageHeight - actor.height) * 0.75f,
-        )
-    }
-
-    fun startAnimation() {
-//        actor.setScale(0.001f)
-//        actor.addAction(
-//            sequence(
-//                delay(0.5f),
-//                scaleTo(1f, 1f, 1.25f, elasticOut),
-//            )
-//        )
-    }
-
-    fun resetAnimation() {
-        actor.clearActions()
-    }
-}
-
-private class PlayButton(styles: Styles, menuEventBus: MenuEventBus, private val navigator: Navigator) {
-    private var clicked = false
-    private var hoverAction: Action? = null
-
-    val actor = TextButton(I18N.play(), styles.playButton).apply {
-        setOrigin(Align.center)
-
-        val replaceHoverAction = { action: Action ->
-            hoverAction?.let { removeAction(it) }
-            hoverAction = action
-            addAction(action)
-        }
-
-        onClick { menuEventBus.emit(PlayGameClicked) }
-        onEnter { replaceHoverAction(scaleTo(1.25f, 1.25f, 0.3f, elasticOut)) }
-        onExit {
-            if (clicked.not()) {
-                replaceHoverAction(scaleTo(1f, 1f, 0.5f, elasticOut))
-            }
-        }
-    }
-
-    fun startGame() {
-        if (clicked) return
-        clicked = true
-
-        actor.addAction(
-            sequence(
-                delay(0.3f),
-                Actions.run { navigator.goToGame() },
-            ),
-        )
-    }
-
-    fun resetPosition(stageWidth: Float, stageHeight: Float) {
-        actor.setPosition(
-            (stageWidth - actor.width) * 0.5f,
-            (stageHeight - actor.height) * 0.25f
-        )
-    }
-
-    fun startAnimation() {
-//        actor.setColor(1f, 1f, 1f, 0f)
-//        actor.addAction(
-//            parallel(
-//                delay(0.75f, fadeIn(0.35f)), forever(
-//                    sequence(
-//                        moveBy(0f, 5f, 1f, linear),
-//                        moveBy(0f, -5f, 1f, linear)
-//                    )
-//                )
-//            )
-//        )
-    }
-
-    fun resetAnimation() {
-        actor.clearActions()
-        clicked = false
-        hoverAction = null
-        actor.setScale(1f)
-        actor.setColor(1f, 1f, 1f, 1f)
-    }
-}
-
-private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
-    val title = Label.LabelStyle(fontHandler.titleFont, Palette.text)
-    val info = Label.LabelStyle(fontHandler.uiFont, Palette.text)
-
-    val playButton = TextButton.TextButtonStyle().apply {
-        up = textureHandler.rectangleWithBorderTexture(
-            width = 256,
-            height = 96,
-            border = 4,
-            fill = Palette.background,
-            borderColor = Palette.border,
-        ).toDrawable()
-
-        down = textureHandler.rectangleWithBorderTexture(
-            width = 256,
-            height = 96,
-            border = 4,
-            fill = Palette.accent,
-            borderColor = Palette.border,
-        ).toDrawable()
-
-        font = fontHandler.buttonFont
-        fontColor = Palette.text
-        downFontColor = Palette.text
-    }
-
-    val smallButton = TextButton.TextButtonStyle(playButton).apply {
-        font = fontHandler.uiFont
     }
 }
