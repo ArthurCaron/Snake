@@ -30,8 +30,7 @@ class Boot : DisposableRegistry by DisposableContainer() {
 
     val input = InputRouter()
     val batch = SpriteBatch().alsoRegister()
-    val camera = OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT)
-    val gameViewport = GameViewport(camera)
+    val gameViewport = GameViewport(OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT))
 
     val assetLoading = AssetLoading().alsoRegister()
 }

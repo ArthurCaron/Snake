@@ -1,4 +1,4 @@
-package fr.mwet.snake.screens.game
+package fr.mwet.snake.screens.game.overlays
 
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Label

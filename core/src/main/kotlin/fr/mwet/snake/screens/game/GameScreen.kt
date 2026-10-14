@@ -1,10 +1,8 @@
 package fr.mwet.snake.screens.game
 
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.Navigator
 import fr.mwet.snake.GameViewport
-import fr.mwet.snake.StageViewport
+import fr.mwet.snake.Navigator
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEvent.*
@@ -14,146 +12,61 @@ import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.InputRouter
 import fr.mwet.snake.inputs.SwipeInputProcessor
-import fr.mwet.snake.render.DisintegratingSnakeRenderer
-import fr.mwet.snake.render.FoodRenderer
-import fr.mwet.snake.render.Palette
-import fr.mwet.snake.render.SnakeRenderer
+import fr.mwet.snake.render.BoardRenderer
+import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.ui.GameUiStyles
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
-import fr.mwet.snake.utils.resetColor
-import ktx.actors.stage
+import fr.mwet.snake.ui.UiLayer
 import ktx.app.KtxScreen
-import ktx.graphics.use
-
-private const val LOST_OVERLAY_DELAY = 1f
 
 class GameScreen(
     textureHandler: TextureHandler,
-    private val batch: SpriteBatch,
-    private val gameViewport: GameViewport,
-    private val gameCamera: OrthographicCamera,
-    private val gameWorld: GameWorld,
+    batch: SpriteBatch,
+    gameViewport: GameViewport,
+    private val world: GameWorld,
     styles: GameUiStyles,
     private val metadataRepository: MetadataRepository,
     private val input: InputRouter,
     private val gameInput: GameInputProcessor,
     private val swipeInput: SwipeInputProcessor,
     private val navigator: Navigator,
-) : GameEventListener, KtxScreen {
-    private val stageViewport = StageViewport()
-    private val stage = stage(batch, stageViewport)
-    private val backgroundTexture =
-        textureHandler.rectangleWithBorderTexture(width = WORLD_WIDTH, height = WORLD_HEIGHT, fill = Palette.background)
-    private val gridCellTexture = textureHandler.gridCell
-    val foodRenderer = FoodRenderer(textureHandler, gameWorld.food)
-    val snakeRenderer = SnakeRenderer(textureHandler, gameWorld.snake)
-    val disintegratingSnakeRenderer = DisintegratingSnakeRenderer(textureHandler, gameWorld.snake)
-
-    private val readyPrompt = ReadyPrompt(styles, onStart = { gameWorld.start() })
-    private val pauseOverlay = PauseOverlay(
-        styles,
-        onResume = { gameWorld.resume() },
-        onMainMenu = {
-            metadataRepository.submitHighScore(gameWorld.score)
-            navigator.goToMainMenu()
-        },
-    )
-    private val endOverlay = EndOverlay(
-        styles,
-        onPlayAgain = { startNewGame() },
-        onMainMenu = { navigator.goToMainMenu() },
-    )
-
-    private val hud = GameHud(styles, onPause = { gameWorld.pause() })
+) : KtxScreen, GameEventListener {
+    private val worldLayer = WorldLayer(batch, gameViewport)
+    private val uiLayer = UiLayer(batch)
+    private val board = BoardRenderer(textureHandler, world)
+    private val ui = GameUi(styles, uiLayer.stage, UiActions())
     private var gameState: GameState? = null
 
-    init {
-        stage.addActor(readyPrompt.actor)
-        stage.addActor(pauseOverlay.actor)
-        stage.addActor(endOverlay.actor)
-        stage.addActor(hud.actor)
-    }
-
     override fun show() {
-        input.add(gameInput, swipeInput, stage)
+        input.add(gameInput, swipeInput, uiLayer.stage)
         startNewGame()
     }
 
     override fun hide() {
-        input.remove(gameInput, swipeInput, stage)
-        endOverlay.hide()
-    }
-
-    private fun startNewGame() {
-        gameWorld.newGame()
-        gameState = null
-        foodRenderer.reset()
-        snakeRenderer.reset()
-        disintegratingSnakeRenderer.reset()
+        input.remove(gameInput, swipeInput, uiLayer.stage)
+        ui.onHide()
     }
 
     override fun render(delta: Float) {
-        gameWorld.update(delta)
-        if (gameWorld.state != gameState) onStateChanged(gameWorld.state)
-        hud.show(gameWorld.score, metadataRepository.metadata.highScore.score)
+        world.update(delta)
+        if (world.state != gameState) onStateChanged(world.state)
+        ui.showScore(world.score, metadataRepository.metadata.highScore.score)
 
-        gameViewport.apply(true)
-        batch.use(gameCamera) {
-            it.draw(backgroundTexture, 0f, 0f)
-            drawGridMap(it)
-            render(it, delta)
-        }
-
-        stageViewport.apply()
-        stage.act(delta)
-        stage.draw()
-    }
-
-    private fun onStateChanged(state: GameState) {
-        gameState = state
-        readyPrompt.actor.isVisible = state == GameState.Ready
-        pauseOverlay.actor.isVisible = state == GameState.Paused
-        hud.showPauseButton(state == GameState.Ready || state == GameState.Playing)
-        when (state) {
-            GameState.Lost -> {
-                disintegratingSnakeRenderer.disintegrate()
-                showEndOverlay(won = false, delay = LOST_OVERLAY_DELAY)
-            }
-
-            GameState.Won -> showEndOverlay(won = true, delay = 0f)
-            GameState.Ready, GameState.Playing, GameState.Paused -> endOverlay.hide()
-        }
-    }
-
-    private fun showEndOverlay(won: Boolean, delay: Float) {
-        val isNewHighScore = metadataRepository.submitHighScore(gameWorld.score)
-        endOverlay.show(won, gameWorld.score, metadataRepository.metadata.highScore.score, isNewHighScore, delay)
+        worldLayer.render(board, delta)
+        uiLayer.render(delta)
     }
 
     override fun resize(width: Int, height: Int) {
-        gameViewport.update(width, height, true)
-        stageViewport.update(width, height, true)
+        worldLayer.resize(width, height)
+        uiLayer.resize(width, height)
     }
 
     override fun pause() {
-        gameWorld.pause()
-    }
-
-    fun render(batch: SpriteBatch, delta: Float) {
-        when (gameWorld.state) {
-            GameState.Lost -> disintegratingSnakeRenderer.render(batch, delta)
-            GameState.Won -> snakeRenderer.render(batch, delta)
-            GameState.Ready, GameState.Playing, GameState.Paused -> {
-                foodRenderer.render(batch, delta)
-                snakeRenderer.render(batch, delta)
-            }
-        }
+        world.pause()
     }
 
     override fun dispose() {
-        stage.dispose()
+        uiLayer.dispose()
     }
 
     override fun onEvent(event: GameEvent) {
@@ -164,24 +77,51 @@ class GameScreen(
         }
     }
 
+    private fun startNewGame() {
+        world.newGame()
+        board.reset()
+        gameState = null
+    }
+
+    private fun onStateChanged(state: GameState) {
+        gameState = state
+        when (state) {
+            GameState.Lost -> {
+                board.disintegrate()
+                setEndGameResult()
+            }
+            GameState.Won -> setEndGameResult()
+            GameState.Ready, GameState.Playing, GameState.Paused -> {}
+        }
+        ui.showState(state)
+    }
+
+    private fun setEndGameResult() {
+        val isNewHighScore = metadataRepository.submitHighScore(world.score)
+        ui.setEndGameResult(world.score, metadataRepository.metadata.highScore.score, isNewHighScore)
+    }
+
     private fun back() {
-        when (gameWorld.state) {
-            GameState.Ready, GameState.Playing -> gameWorld.pause()
-            GameState.Paused, GameState.Lost, GameState.Won -> navigator.goToMainMenu()
+        when (world.state) {
+            GameState.Ready, GameState.Playing -> world.pause()
+            GameState.Paused, GameState.Lost, GameState.Won -> returnToMainMenu()
         }
     }
 
     private fun togglePause() {
-        if (gameWorld.state == GameState.Paused) gameWorld.resume() else gameWorld.pause()
+        if (world.state == GameState.Paused) world.resume() else world.pause()
     }
 
-    private fun drawGridMap(batch: SpriteBatch) {
-        batch.setColor(1f, 1f, 1f, 0.05f)
-        (0..<WORLD_WIDTH.toInt()).forEach { x ->
-            (0..<WORLD_HEIGHT.toInt()).forEach { y ->
-                batch.draw(gridCellTexture, x.toFloat(), y.toFloat(), 1f, 1f)
-            }
-        }
-        batch.resetColor()
+    private fun returnToMainMenu() {
+        metadataRepository.submitHighScore(world.score)
+        navigator.goToMainMenu()
+    }
+
+    private inner class UiActions : GameUiActions {
+        override fun start() = world.start()
+        override fun pause() = world.pause()
+        override fun resume() = world.resume()
+        override fun playAgain() = startNewGame()
+        override fun mainMenu() = returnToMainMenu()
     }
 }
