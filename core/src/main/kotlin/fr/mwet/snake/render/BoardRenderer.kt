@@ -1,6 +1,7 @@
 package fr.mwet.snake.render
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
@@ -19,18 +20,21 @@ class BoardRenderer(
     private val food = FoodRenderer(textureHandler, world.food)
     private val snake = SnakeRenderer(textureHandler, world.snake, world.food)
     private val disintegratingSnake = DisintegratingSnakeRenderer(textureHandler, world.snake)
+    private val lastFood = Vector2()
 
     fun reset() {
         food.reset()
         snake.reset()
         disintegratingSnake.reset()
+        lastFood.set(world.food.position)
     }
 
     fun disintegrate() {
-        disintegratingSnake.disintegrate()
+        disintegratingSnake.disintegrate(snake.colors.at(0))
     }
 
     override fun draw(batch: SpriteBatch, delta: Float) {
+        if (world.food.position != lastFood) onFoodEaten()
         background.draw(batch, delta)
         drawGrid(batch)
         when (world.state) {
@@ -41,6 +45,12 @@ class BoardRenderer(
                 snake.render(batch, delta)
             }
         }
+    }
+
+    private fun onFoodEaten() {
+        lastFood.set(world.food.position)
+        if (Palette.snakeTakesFruitColor) snake.colors.change(food.color)
+        food.nextColor()
     }
 
     private fun drawGrid(batch: SpriteBatch) {

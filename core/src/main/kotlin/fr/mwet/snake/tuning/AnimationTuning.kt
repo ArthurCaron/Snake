@@ -12,4 +12,6 @@ object AnimationTuning {
     const val END_OVERLAY_FADE_IN_DURATION = 0.3f
     const val FOOD_GLOW_PULSE = 0.08f
     const val FOOD_GLOW_PULSE_SPEED = 4f
+    const val SNAKE_COLOR_SEGMENT_DELAY = 0.04f
+    const val SNAKE_COLOR_FADE_SECONDS = 0.25f
 }

@@ -59,22 +59,63 @@ def turn_angle(first, second):
     return 270
 
 
-def segments(cells, sprites):
+VECTORS = {"RIGHT": (1, 0), "LEFT": (-1, 0), "UP": (0, 1), "DOWN": (0, -1)}
+MARK_SIZE = 40 / 64
+TURN_MARK_OFFSET = 9.37 / 64
+TAIL_MARK_OFFSET = 18 / 64
+HEAD_MARK_OFFSET = 7.5 / 64
+
+
+def segments(cells):
     result = []
     for i, cell in enumerate(cells):
         if i == 0:
-            result.append((cell, sprites["snakeHead"], ANGLES[direction(cells[1], cell)]))
+            facing = direction(cells[1], cell)
+            result.append(dict(cell=cell, name="snakeHead", angle=ANGLES[facing], head=facing))
         elif i == len(cells) - 1:
-            result.append((cell, sprites["snakeTail"], ANGLES[direction(cell, cells[i - 1])]))
+            toward_head = direction(cell, cells[i - 1])
+            result.append(dict(cell=cell, name="snakeTail", angle=ANGLES[toward_head], head=toward_head))
         else:
             toward_head = direction(cell, cells[i - 1])
             toward_tail = direction(cell, cells[i + 1])
             opposite = {toward_head, toward_tail} in ({"LEFT", "RIGHT"}, {"UP", "DOWN"})
             if opposite:
-                result.append((cell, sprites["snakeBodyStraight"], ANGLES[direction(cell, cells[i - 1])]))
+                result.append(dict(cell=cell, name="snakeBodyStraight", angle=ANGLES[toward_head], head=toward_head, tail=toward_tail))
             else:
-                result.append((cell, sprites["snakeBodyTurn"], turn_angle(toward_head, toward_tail)))
+                result.append(dict(cell=cell, name="snakeBodyTurn", angle=turn_angle(toward_head, toward_tail), head=toward_head,
+                                   tail=toward_tail))
     return result
+
+
+def mark_placement(part):
+    x, y = part["cell"][0] + 0.5, part["cell"][1] + 0.5
+    hx, hy = VECTORS[part["head"]]
+    if part["name"] == "snakeHead":
+        return x - hx * HEAD_MARK_OFFSET, y - hy * HEAD_MARK_OFFSET, math.degrees(math.atan2(hy, hx)), 1.0
+    if part["name"] == "snakeTail":
+        return x + hx * TAIL_MARK_OFFSET, y + hy * TAIL_MARK_OFFSET, math.degrees(math.atan2(hy, hx)), 0.85
+    tx, ty = VECTORS[part["tail"]]
+    angle = math.degrees(math.atan2(hy - ty, hx - tx))
+    if part["name"] == "snakeBodyTurn":
+        return x + (hx + tx) * TURN_MARK_OFFSET, y + (hy + ty) * TURN_MARK_OFFSET, angle, 1.0
+    return x, y, angle, 1.0
+
+
+def draw_at(c, image, x, y, angle, size, paint=None):
+    sx, sy = x * CELL_PX, BOARD_Y + (ROWS - y) * CELL_PX
+    half = size * CELL_PX / 2
+    c.save()
+    c.translate(sx, sy)
+    c.rotate(-angle)
+    c.drawImageRect(image, skia.Rect(-half, -half, half, half), SAMPLING, paint)
+    c.restore()
+
+
+def multiply_paint(color_hex):
+    r, g, b = int(color_hex[1:3], 16), int(color_hex[3:5], 16), int(color_hex[5:7], 16)
+    paint = skia.Paint(AntiAlias=True)
+    paint.setColorFilter(skia.ColorFilters.Blend(skia.Color(r, g, b, 255), skia.BlendMode.kModulate))
+    return paint
 
 
 def cell_rect(x, y):
@@ -100,8 +141,11 @@ def tint_paint(color_hex, alpha):
     return paint
 
 
-def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False):
+def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False, snake_color=None, fruit_color=None):
     images = {k: v.image() for k, v in sprites.items()}
+    palette = kotlin_palette(p)
+    snake_color = snake_color or palette["snake"]
+    fruit_color = fruit_color or palette["fruits"][0]
     tile_fill(c, tile.image(), 0, BOARD_Y, PHONE_W, BOARD_H, CELL_PX * 8 / tile.width)
     grid = images["gridCell"]
     paint = skia.Paint(AntiAlias=True, Alpha=int(0.10 * 255))
@@ -109,31 +153,41 @@ def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False):
         for y in range(ROWS):
             draw_sprite(c, grid, x, y, paint=paint)
     c.drawImageRect(images["boardFrame"], skia.Rect(0, BOARD_Y, PHONE_W, BOARD_Y + BOARD_H), SAMPLING)
-    lights = kotlin_palette(p)
     if fruit_cell:
-        draw_light(c, images["glow"], fruit_cell, FRUIT_GLOW, lights["fruitGlow"])
-        draw_sprite(c, images["fruitBob_0"], *fruit_cell)
-    parts = segments(cells, images)
-    if not dead:
-        for cell, _, _ in parts:
-            draw_light(c, images["glow"], cell, SNAKE_GLOW, lights["snakeGlow"])
+        draw_light(c, images["glow"], fruit_cell, FRUIT_GLOW, fruit_color, palette["fruitGlow"])
+        draw_sprite(c, images["fruitBob_0"], *fruit_cell, paint=multiply_paint(fruit_color))
+        draw_sprite(c, images["fruitBobDetail_0"], *fruit_cell)
+    parts = segments(cells)
+    if dead:
+        parts[0]["name"] = "snakeHeadDead"
+    else:
+        for part in parts:
+            draw_light(c, images["glow"], part["cell"], SNAKE_GLOW, snake_color, palette["snakeGlow"])
     shadow = tint_paint(shade(p), 0.28)
-    for cell, image, angle in parts:
-        draw_sprite(c, image, *cell, angle, offset=(0.07, -0.09), paint=shadow)
-    for cell, image, angle in parts:
-        if dead and image is images["snakeHead"]:
-            image = images["snakeHeadDead"]
-        draw_sprite(c, image, *cell, angle)
+    for part in parts:
+        draw_sprite(c, images[part["name"]], *part["cell"], part["angle"], offset=(0.07, -0.09), paint=shadow)
+    body = multiply_paint(snake_color)
+    for part in parts:
+        draw_sprite(c, images[part["name"]], *part["cell"], part["angle"], paint=body)
+    if not dead:
+        marks = multiply_paint(palette["marks"])
+        shape = images["mark" + palette["markShape"].capitalize()]
+        for part in parts:
+            x, y, angle, scale = mark_placement(part)
+            image = images["snakeHeadMark"] if part["name"] == "snakeHead" else shape
+            draw_at(c, image, x, y, angle, MARK_SIZE * scale, marks)
+    for part in parts:
+        draw_sprite(c, images[part["name"] + "Detail"], *part["cell"], part["angle"])
     if not dead and fruit_cell:
-        head, _, angle = parts[0]
-        draw_pupils(c, images["snakePupil"], head, angle, fruit_cell)
+        draw_pupils(c, images["snakePupil"], parts[0]["cell"], parts[0]["angle"], fruit_cell)
 
 
-def draw_light(c, image, cell, size, color_hex):
-    h = color_hex.lstrip("#")
-    r, g, b, a = (int(h[i:i + 2], 16) for i in (0, 2, 4, 6))
-    if a == 0:
+def draw_light(c, image, cell, size, color_hex, alpha):
+    if alpha <= 0:
         return
+    h = color_hex.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    a = int(alpha * 255)
     paint = skia.Paint(AntiAlias=True, BlendMode=skia.BlendMode.kPlus)
     paint.setColorFilter(skia.ColorFilters.Blend(skia.Color(r, g, b, a), skia.BlendMode.kSrcIn))
     rect = cell_rect(*cell)
@@ -243,7 +297,10 @@ def dim(c, p, alpha):
 def menu_screen(p, sprites, tile, logo_cv, skin):
     cv = phone(p, tile)
     c = cv.c
-    draw_board(c, p, sprites, tile, DEMO_SNAKE, (13, 12))
+    palette = kotlin_palette(p)
+    fruits = palette["fruits"]
+    snake = fruits[2 % len(fruits)] if palette["snakeTakesFruitColor"] else None
+    draw_board(c, p, sprites, tile, DEMO_SNAKE, (13, 12), snake_color=snake, fruit_color=fruits[3 % len(fruits)])
     dim(c, p, 0.35)
     logo_w = PHONE_W * 0.78
     logo_h = logo_w * logo_cv.height / logo_cv.width
@@ -270,7 +327,10 @@ def game_screen(p, sprites, tile, skin):
 def panel_screen(p, sprites, tile, skin):
     cv = phone(p, tile)
     c = cv.c
-    draw_board(c, p, sprites, tile, GAME_SNAKE, None, dead=True)
+    palette = kotlin_palette(p)
+    fruits = palette["fruits"]
+    snake = fruits[3 % len(fruits)] if palette["snakeTakesFruitColor"] else None
+    draw_board(c, p, sprites, tile, GAME_SNAKE, None, dead=True, snake_color=snake)
     dim(c, p, 0.55)
     r = skia.Rect(PHONE_W * 0.14, 300, PHONE_W * 0.86, 690)
     nine(c, skin["panel"], r)
@@ -317,4 +377,30 @@ def overview(folder, names):
         phone_left = gap + int(PHONE_W) + gap
         result.paste(sheet.crop((phone_left, header, phone_left + int(PHONE_W), header + PHONE_H)), (x, y + header))
     return result
+
+
+MARK_SNAKE = [(9, 10), (8, 10), (7, 10), (6, 10), (6, 9), (7, 9), (8, 9), (9, 9), (10, 9)]
+
+
+def marks_sheet(styles_folder, names):
+    from generate import MARK_SHAPES, PALETTES
+    crop_top, crop_bottom = BOARD_Y + (ROWS - 12) * CELL_PX, BOARD_Y + (ROWS - 7) * CELL_PX
+    crop_left, crop_right = 4 * CELL_PX, 13 * CELL_PX
+    width, height = int(crop_right - crop_left), int(crop_bottom - crop_top)
+    gap = 16
+    sheet = Image.new("RGBA", (gap + len(MARK_SHAPES) * (width + gap), len(names) * (height + gap + 40) + gap), (30, 26, 28, 255))
+    for row, name in enumerate(names):
+        folder = styles_folder / name / "textures/game/skin"
+        sprites = {path.stem: FileSprite(path) for path in folder.glob("*.png") if not path.stem.endswith(".9")}
+        for column, shape in enumerate(MARK_SHAPES):
+            p = dict(PALETTES[name], mark_shape=shape)
+            cv = phone(p, sprites["ground"])
+            draw_board(cv.c, p, sprites, sprites["ground"], MARK_SNAKE, (12, 10))
+            x = gap + column * (width + gap)
+            y = gap + row * (height + gap + 40)
+            label = Canvas(width, 40)
+            outlined_text(label.c, f"{name} - {shape}", 4, 30, 20, PALETTES["desert"])
+            sheet.alpha_composite(label.pil(), (x, y))
+            sheet.paste(cv.pil().crop((int(crop_left), int(crop_top), int(crop_right), int(crop_bottom))), (x, y + 40))
+    return sheet
 

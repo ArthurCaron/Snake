@@ -34,9 +34,54 @@ def rgb(hex_color):
     return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
 
 
+CLEAR = "clear"
+
+
 def col(hex_color, alpha=1.0):
+    if hex_color == CLEAR:
+        return skia.ColorTRANSPARENT
     r, g, b = rgb(hex_color)
+    h = hex_color.lstrip("#")
+    if len(h) == 8:
+        alpha *= int(h[6:8], 16) / 255
     return skia.Color(r, g, b, int(round(alpha * 255)))
+
+
+def luminance(hex_color):
+    r, g, b = rgb(hex_color)
+    return (0.299 * r + 0.587 * g + 0.114 * b) / 255
+
+
+def gray(hex_color, tint):
+    value = int(min(1.0, luminance(hex_color) / max(luminance(tint), 1e-3)) * 255)
+    return "#%02x%02x%02x" % (value, value, value)
+
+
+def tint(p, part):
+    return p.get(f"{part}_tint", p[part])
+
+
+TINTED_KEYS = dict(snake=("snake", "snake_dark"), fruit=("fruit", "fruit_dark"))
+FIXED_KEYS = dict(snake=("eye", "pupil", "tongue", "snake_light"), fruit=("seed", "leaf", "leaf_dark", "fruit_shadow", "fruit_light"))
+HIGHLIGHTS = dict(snake=("snake_light", "#ffffff80"), fruit=("fruit_light", "#ffffffc0"))
+
+
+def layer(p, part, kind):
+    q = dict(p, tongue=p.get("tongue", "#e0475a"), fruit_shadow=p.get("fruit_shadow", shade(p)))
+    color = tint(p, part)
+    for key in TINTED_KEYS[part]:
+        q[key] = gray(p[key], color) if kind == "base" else CLEAR
+    if kind == "base":
+        for key in FIXED_KEYS[part]:
+            q[key] = CLEAR
+    else:
+        key, highlight = HIGHLIGHTS[part]
+        q[key] = highlight
+    if p.get("tint_outline"):
+        q["outline"] = "#ffffff" if kind == "base" else CLEAR
+    elif kind == "base":
+        q["outline"] = CLEAR
+    return q
 
 
 def with_line(p, group):
@@ -52,19 +97,25 @@ def surround(p):
     return "#%02x%02x%02x" % tuple(int(v + (255 - v) * 0.35) for v in (r, g, b))
 
 
+def erasing(paint):
+    if skia.ColorGetA(paint.getColor()) == 0:
+        paint.setBlendMode(skia.BlendMode.kClear)
+    return paint
+
+
 def fill(color):
-    return skia.Paint(AntiAlias=True, Color=color)
+    return erasing(skia.Paint(AntiAlias=True, Color=color))
 
 
 def stroke(color, width):
-    return skia.Paint(
+    return erasing(skia.Paint(
         AntiAlias=True,
         Color=color,
         Style=skia.Paint.kStroke_Style,
         StrokeWidth=width,
         StrokeJoin=skia.Paint.kRound_Join,
         StrokeCap=skia.Paint.kRound_Cap,
-    )
+    ))
 
 
 def union(*paths):
@@ -129,16 +180,6 @@ def diamond(cx, cy, rx, ry):
     return path
 
 
-def spine_mark(c, p, cx, cy, scale=1.0):
-    mark = diamond(cx, cy, 11 * scale, 11 * scale)
-    c.drawPath(mark, stroke(col(p["outline"], 0.9), 7 * scale))
-    c.drawPath(mark, stroke(col(p["snake_pattern"]), 3.5 * scale))
-    c.drawPath(mark, fill(col(p["snake_pattern"])))
-    inner = diamond(cx, cy, 5.5 * scale, 5.5 * scale)
-    c.drawPath(inner, stroke(col(p["snake_dark"]), 2.5 * scale))
-    c.drawPath(inner, fill(col(p["snake_dark"])))
-
-
 def body_highlight(c, p, path):
     c.save()
     c.clipPath(path, doAntiAlias=True)
@@ -165,7 +206,6 @@ def snake_body_straight(p):
     outlined(c, path, p["snake"], p)
     body_highlight(c, p, path)
     side_stripes(c, p, path, straight_stripes())
-    spine_mark(c, p, MID, MID)
     return cv
 
 
@@ -185,13 +225,6 @@ def snake_body_turn(p):
         arc.addCircle(CELL, CELL, radius)
         c.drawPath(arc, stroke(col(p["snake_light"], 0.6), 2.5))
     c.restore()
-    c.save()
-    c.translate(CELL, CELL)
-    c.rotate(-135)
-    c.translate(MID, 0)
-    c.rotate(90)
-    spine_mark(c, p, 0, 0)
-    c.restore()
     return cv
 
 
@@ -208,9 +241,62 @@ def snake_tail(p):
     outlined(c, path, p["snake"], p)
     body_highlight(c, p, path)
     side_stripes(c, p, path, straight_stripes(right=30))
-    spine_mark(c, p, 14, MID, 0.85)
-    c.drawPath(circle(38, MID, 3.6), stroke(col(p["outline"], 0.9), 2.5))
-    c.drawPath(circle(38, MID, 3.6), fill(col(p["snake_pattern"])))
+    return cv
+
+
+MARK_SPRITE = 40
+MARK_SHAPES = ("diamond", "circle", "square", "star", "chevron", "heart")
+
+
+def chevron(r):
+    path = skia.Path()
+    path.moveTo(r * 0.8, 0)
+    path.lineTo(-r * 0.3, -r)
+    path.lineTo(-r * 0.8, -r * 0.65)
+    path.lineTo(0, 0)
+    path.lineTo(-r * 0.8, r * 0.65)
+    path.lineTo(-r * 0.3, r)
+    path.close()
+    return path
+
+
+def mark_path(shape, r=11.0):
+    if shape == "diamond":
+        return diamond(0, 0, r, r)
+    if shape == "circle":
+        return circle(0, 0, r * 0.82)
+    if shape == "square":
+        return rect(-r * 0.72, -r * 0.72, r * 0.72, r * 0.72, 3)
+    if shape == "chevron":
+        return chevron(r)
+    path = skia.Path()
+    if shape == "star":
+        for i in range(10):
+            radius = r * 1.05 if i % 2 == 0 else r * 0.45
+            angle = math.pi * i / 5
+            point = (math.cos(angle) * radius, math.sin(angle) * radius)
+            path.moveTo(*point) if i == 0 else path.lineTo(*point)
+        path.close()
+        return path
+    path.moveTo(r, 0)
+    path.cubicTo(r * 0.2, -r * 0.55, -r * 0.2, -r * 1.1, -r * 0.7, -r * 0.75)
+    path.cubicTo(-r * 1.15, -r * 0.4, -r * 0.95, 0, -r * 0.55, 0)
+    path.cubicTo(-r * 0.95, 0, -r * 1.15, r * 0.4, -r * 0.7, r * 0.75)
+    path.cubicTo(-r * 0.2, r * 1.1, r * 0.2, r * 0.55, r, 0)
+    path.close()
+    return path
+
+
+def mark_sprite(p, path):
+    cv = Canvas(MARK_SPRITE, MARK_SPRITE)
+    c = cv.c
+    c.translate(MARK_SPRITE / 2, MARK_SPRITE / 2)
+    if p.get("mark_style") == "tube":
+        c.drawPath(path, stroke(col("#ffffff"), 3.5))
+        return cv
+    c.drawPath(path, stroke(col(p.get("mark_outline", p["outline"]), 0.9), 7))
+    c.drawPath(path, stroke(col("#ffffff"), 3.5))
+    c.drawPath(path, fill(col("#ffffff")))
     return cv
 
 
@@ -242,7 +328,7 @@ def snake_head(p, dead=False, look=None):
         tongue.moveTo(5, MID)
         tongue.lineTo(1, MID + 4)
         c.drawPath(tongue, stroke(col(p["outline"]), 4.5))
-        c.drawPath(tongue, stroke(col("#e0475a"), 2))
+        c.drawPath(tongue, stroke(col(p["tongue"]), 2))
     path = head_shape(front)
     outlined(c, path, p["snake"], p)
     body_highlight(c, p, path)
@@ -251,16 +337,6 @@ def snake_head(p, dead=False, look=None):
     c.drawPath(rect(40, MID - 11, CELL + 12, MID - 8.5), fill(col(p["snake_light"], 0.6)))
     c.drawPath(rect(40, MID + 8.5, CELL + 12, MID + 11), fill(col(p["snake_light"], 0.6)))
     c.restore()
-    chevron = skia.Path()
-    chevron.moveTo(31, MID)
-    chevron.lineTo(43, MID - 10)
-    chevron.lineTo(48, MID - 6.5)
-    chevron.lineTo(39, MID)
-    chevron.lineTo(48, MID + 6.5)
-    chevron.lineTo(43, MID + 10)
-    chevron.close()
-    c.drawPath(chevron, stroke(col(p["outline"], 0.85), 2.5))
-    c.drawPath(chevron, fill(col(p["snake_pattern"])))
     for side in (-1, 1):
         ex, ey = front + EYE_FORWARD - 4, MID + side * EYE_SIDE
         if dead:
@@ -344,7 +420,7 @@ def fruit_sprite(p, squash=0.0, shadow=True):
     c = cv.c
     kind = p["fruit_kind"]
     if shadow:
-        c.drawPath(oval(MID - 20 - squash * 20, 53, MID + 20 + squash * 20, 63), fill(col(p["outline"], 0.25)))
+        c.drawPath(oval(MID - 20 - squash * 20, 53, MID + 20 + squash * 20, 63), fill(col(p.get("fruit_shadow", shade(p)), 0.25)))
     c.save()
     c.translate(MID, 58)
     c.scale(1 + squash, 1 - squash)
@@ -411,11 +487,6 @@ def tint_hex(hex_color, amount):
     target = 255 if amount > 0 else 0
     t = abs(amount)
     return "#%02x%02x%02x" % tuple(int(round(v + (target - v) * t)) for v in (r, g, b))
-
-
-def luminance(hex_color):
-    r, g, b = rgb(hex_color)
-    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
 
 
 def ground_line(p, alpha=1.0):
@@ -886,15 +957,8 @@ def generate(name, out):
     skin.mkdir(parents=True)
     snake, fruit, ui = with_line(p, "snake"), with_line(p, "fruit"), with_line(p, "ui")
     sprites = dict(
-        snakeHead=snake_head(snake),
-        snakeHeadDead=snake_head(snake, dead=True),
         snakePupil=snake_pupil(snake),
-        snakeBodyStraight=snake_body_straight(snake),
-        snakeBodyTurn=snake_body_turn(snake),
-        snakeTail=snake_tail(snake),
-        fruit=fruit_sprite(fruit, shadow=False),
-        fruitBob_0=fruit_sprite(fruit, 0.0),
-        fruitBob_1=fruit_sprite(fruit, 0.07),
+        snakeHeadMark=mark_sprite(snake, chevron(10)),
         gridCell=grid_cell(p),
         glow=light_glow(),
         iconPause=icon_pause(ui),
@@ -904,6 +968,19 @@ def generate(name, out):
         iconMusicOn=icon_music(p, True),
         iconMusicOff=icon_music(p, False),
     )
+    for shape in MARK_SHAPES:
+        sprites[f"mark{shape.capitalize()}"] = mark_sprite(snake, mark_path(shape))
+    for kind in ("base", "detail"):
+        suffix = "" if kind == "base" else "Detail"
+        snake_layer, fruit_layer = layer(snake, "snake", kind), layer(fruit, "fruit", kind)
+        sprites[f"snakeHead{suffix}"] = snake_head(snake_layer)
+        sprites[f"snakeHeadDead{suffix}"] = snake_head(snake_layer, dead=True)
+        sprites[f"snakeBodyStraight{suffix}"] = snake_body_straight(snake_layer)
+        sprites[f"snakeBodyTurn{suffix}"] = snake_body_turn(snake_layer)
+        sprites[f"snakeTail{suffix}"] = snake_tail(snake_layer)
+        sprites[f"fruit{suffix}"] = fruit_sprite(fruit_layer, shadow=False)
+        sprites[f"fruitBob{suffix}_0"] = fruit_sprite(fruit_layer, 0.0)
+        sprites[f"fruitBob{suffix}_1"] = fruit_sprite(fruit_layer, 0.07)
     for sprite_name, cv in sprites.items():
         save(cv, skin / f"{sprite_name}.png")
     tile = ground_tile(p)
@@ -1020,14 +1097,17 @@ def post_neon(out):
             glow(Image.open(path), 3, 1.5).save(path)
 
 
-LASER_GROUPS = dict(
+LASER_LAYERS = dict(
     snake=("snakeHead", "snakeHeadDead", "snakeBodyStraight", "snakeBodyTurn", "snakeTail"),
     fruit=("fruit", "fruitBob_0", "fruitBob_1"),
+)
+LASER_GROUPS = dict(
     ui=("button.9", "buttonDown.9", "buttonPrimary.9", "buttonPrimaryDown.9", "panel.9", "iconPause", "iconPlay",
         "iconSoundOn", "iconSoundOff", "iconMusicOn", "iconMusicOff"),
     logo=("logo",),
 )
-LASER_BLOOM = dict(snake=((2, 1.6), (5, 1.1)), fruit=((2, 1.6), (6, 1.2)), ui=((2, 1.8),), logo=((2, 1.0), (7, 0.6)))
+LASER_BLOOM = dict(snake=((2, 1.6), (5, 1.1)), fruit=((2, 1.6), (6, 1.2)), marks=((2, 1.4), (4, 0.8)), ui=((2, 1.8),),
+                   logo=((2, 1.0), (7, 0.6)))
 LASER_CORE = dict(snake=1.4, fruit=1.4, ui=1.4, logo=2.4)
 
 
@@ -1035,14 +1115,7 @@ def blur(channel, radius):
     return np.array(Image.fromarray(np.clip(channel, 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(radius))).astype(np.float32)
 
 
-def laser(img, line_hex, bloom, core_depth):
-    arr = np.array(img.convert("RGBA")).astype(np.float32)
-    line = np.array(rgb(line_hex), np.float32)
-    on_line = (np.abs(arr[..., :3] - line).sum(-1) < 70) & (arr[..., 3] > 128)
-    core = ndimage.distance_transform_edt(on_line) >= core_depth
-    arr[core, :3] = arr[core, :3] * 0.25 + 255 * 0.75
-    luminance = arr[..., :3] @ np.array([0.299, 0.587, 0.114], np.float32)
-    bright = (on_line | (luminance > 170)) & (arr[..., 3] > 128)
+def bloom_under(arr, bright, bloom):
     source = np.zeros_like(arr)
     source[bright] = arr[bright]
     source[..., :3] *= source[..., 3:4] / 255
@@ -1058,9 +1131,53 @@ def laser(img, line_hex, bloom, core_depth):
     return result
 
 
+def rgba(img):
+    return np.array(img.convert("RGBA")).astype(np.float32)
+
+
+def brightness(arr):
+    return arr[..., :3] @ np.array([0.299, 0.587, 0.114], np.float32)
+
+
+def laser(img, line_hex, bloom, core_depth):
+    arr = rgba(img)
+    line = np.array(rgb(line_hex), np.float32)
+    on_line = (np.abs(arr[..., :3] - line).sum(-1) < 70) & (arr[..., 3] > 128)
+    core = ndimage.distance_transform_edt(on_line) >= core_depth
+    arr[core, :3] = arr[core, :3] * 0.25 + 255 * 0.75
+    bright = (on_line | (brightness(arr) > 170)) & (arr[..., 3] > 128)
+    return bloom_under(arr, bright, bloom)
+
+
+def laser_layers(base_path, detail_path, bloom, core_depth):
+    base = rgba(Image.open(base_path))
+    line = (brightness(base) > 235) & (base[..., 3] > 128)
+    core = ndimage.distance_transform_edt(line) >= core_depth
+    detail = Image.open(detail_path).convert("RGBA")
+    glow_core = np.zeros(base.shape, np.uint8)
+    glow_core[core] = (255, 255, 255, 150)
+    core_image = Image.fromarray(glow_core)
+    core_image.alpha_composite(detail)
+    core_image.save(detail_path)
+    bloom_under(base, line, bloom).save(base_path)
+
+
+def detail_name(stem):
+    if "_" in stem:
+        name, index = stem.split("_")
+        return f"{name}Detail_{index}"
+    return f"{stem}Detail"
+
+
 def post_laser(out):
     p = PALETTES[out.name]
     skin = out / "textures/game/skin"
+    for group, stems in LASER_LAYERS.items():
+        for stem in stems:
+            laser_layers(skin / f"{stem}.png", skin / f"{detail_name(stem)}.png", LASER_BLOOM[group], LASER_CORE[group])
+    for path in list(skin.glob("mark*.png")) + [skin / "snakeHeadMark.png"]:
+        arr = rgba(Image.open(path))
+        bloom_under(arr, arr[..., 3] > 128, LASER_BLOOM["marks"]).save(path)
     for group, stems in LASER_GROUPS.items():
         color = p.get(f"line_{group}", p["outline"])
         for stem in stems:
@@ -1103,8 +1220,20 @@ PACK_JSON = """{
 """
 
 def kotlin_palette(p):
-    palette = dict(clear=p["clear"], outline=shade(p), text=p["text"], primary=p["primary_light"], surround=surround(p),
-                   snakeGlow=p.get("snake_glow", "#00000000"), fruitGlow=p.get("fruit_glow", "#00000000"))
+    palette = dict(
+        clear=p["clear"],
+        outline=shade(p),
+        text=p["text"],
+        primary=p["primary_light"],
+        surround=surround(p),
+        snake=tint(p, "snake"),
+        marks=p.get("mark_color", p["snake_pattern"]),
+        markShape=p.get("mark_shape", "diamond"),
+        fruits=p.get("fruit_colors", [tint(p, "fruit")]),
+        snakeTakesFruitColor=p.get("snake_takes_fruit_color", False),
+        snakeGlow=p.get("snake_glow", 0.0),
+        fruitGlow=p.get("fruit_glow", 0.0),
+    )
     palette.update(p.get("kotlin", {}))
     return palette
 
@@ -1138,6 +1267,7 @@ def main():
         print(f"{name}: {args.out / name}")
     import preview
     preview.overview(args.out / "previews", list(PALETTES)).save(args.out / "previews/all.png")
+    preview.marks_sheet(args.out, ["desert", "laser"]).save(args.out / "previews/marks.png")
     if args.install:
         install(args.install, args.out / args.install)
         print(f"installed {args.install}")

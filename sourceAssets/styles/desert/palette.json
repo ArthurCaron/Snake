@@ -4,6 +4,13 @@
   "text": "#fff3da",
   "primary": "#78d0c8",
   "surround": "#b28979",
-  "snakeGlow": "#00000000",
-  "fruitGlow": "#00000000"
+  "snake": "#3f9b92",
+  "marks": "#f5e2b0",
+  "markShape": "diamond",
+  "fruits": [
+    "#d8467b"
+  ],
+  "snakeTakesFruitColor": false,
+  "snakeGlow": 0.0,
+  "fruitGlow": 0.0
 }

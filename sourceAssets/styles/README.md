@@ -16,7 +16,7 @@ The game uses the style that is installed in `sourceAssets/textures/game/skin`. 
 | `laser` | Other style: white-hot cyan and pink laser lines, light pools on the floor. |
 | `laser-sunset` | Same as `laser`, orange snake and cyan fruit. |
 
-`previews/<style>.png` shows the menu, a game and the end screen of each style. `previews/all.png` puts every style side by side.
+`previews/<style>.png` shows the menu, a game and the end screen of each style. `previews/all.png` puts every style side by side. `previews/marks.png` shows the back marks.
 
 ## Try a style
 
@@ -39,3 +39,18 @@ Colors live in `tools/style-generator/palettes.py`. Add an entry to create a new
 ```
 
 Without a name, the script regenerates every style.
+
+## Colors and marks
+
+The snake and the fruit are drawn in two layers: a gray layer that the game tints, and a fixed layer (outline, eyes, leaves, laser cores).
+So colors and marks change without new images. Edit `Palette.kt` to try a value, or the palette in `palettes.py` to keep it:
+
+| `Palette.kt` | `palettes.py` | Effect |
+|---|---|---|
+| `snake` | `snake_tint` | Snake color at the start of a game. |
+| `marks` | `mark_color` | Color of the marks on the back, independent from the snake. |
+| `markShape` | `mark_shape` | `Diamond`, `Circle`, `Square`, `Star`, `Chevron` or `Heart`. |
+| `fruits` | `fruit_colors` | Fruit colors. Each new fruit takes another color from the list. |
+| `snakeTakesFruitColor` | `snake_takes_fruit_color` | The snake takes the color of the fruit it eats, from the head to the tail. |
+| `snakeGlow`, `fruitGlow` | `snake_glow`, `fruit_glow` | Strength of the light on the floor; `0` turns it off. |
+
