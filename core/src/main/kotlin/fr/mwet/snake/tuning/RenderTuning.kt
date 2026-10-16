@@ -14,5 +14,10 @@ object RenderTuning {
         const val EYE_SIDE = 14.5f / PIXELS_PER_CELL
         const val PUPIL_SIZE = 16f / PIXELS_PER_CELL
         const val PUPIL_TRAVEL = 3.6f / PIXELS_PER_CELL
+        const val GLOW_SIZE = 3.2f
+    }
+
+    object Food {
+        const val GLOW_SIZE = 4.5f
     }
 }

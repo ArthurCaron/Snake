@@ -1,0 +1,9 @@
+{
+  "clear": "#05030b",
+  "outline": "#05030b",
+  "text": "#ffffff",
+  "primary": "#ffa6e6",
+  "surround": "#5c5b60",
+  "snakeGlow": "#22f2ff70",
+  "fruitGlow": "#ff2b8acc"
+}

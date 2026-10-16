@@ -10,4 +10,6 @@ object AnimationTuning {
 
     const val LOST_OVERLAY_DELAY = 1f
     const val END_OVERLAY_FADE_IN_DURATION = 0.3f
+    const val FOOD_GLOW_PULSE = 0.08f
+    const val FOOD_GLOW_PULSE_SPEED = 4f
 }

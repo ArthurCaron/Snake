@@ -16,6 +16,7 @@ import fr.mwet.snake.utils.rotatedX
 import fr.mwet.snake.utils.rotatedY
 import fr.mwet.snake.tuning.RenderTuning.Snake.EYE_FORWARD
 import fr.mwet.snake.tuning.RenderTuning.Snake.EYE_SIDE
+import fr.mwet.snake.tuning.RenderTuning.Snake.GLOW_SIZE
 import fr.mwet.snake.tuning.RenderTuning.Snake.PUPIL_SIZE
 import fr.mwet.snake.tuning.RenderTuning.Snake.PUPIL_TRAVEL
 import fr.mwet.snake.tuning.RenderTuning.Snake.SHADOW_X
@@ -28,6 +29,8 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
     private val snekTail = textureHandler.game.skin.snakeTail
 
     private val pupil = textureHandler.game.skin.snakePupil
+
+    private val glow = textureHandler.game.skin.glow
 
     private class DirectionPair(val first: Direction, val second: Direction) {
         fun matches(first: Direction, second: Direction): Boolean =
@@ -46,11 +49,24 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
 
+        if (Palette.snakeGlow.a > 0f) drawGlow(batch)
         batch.color = Palette.snakeShadow
         drawSnake(batch, SHADOW_X, SHADOW_Y)
         batch.resetColor()
         drawSnake(batch, 0f, 0f)
         drawPupils(batch, snake.head, getAngleFromDirection(snake.currentDirection))
+    }
+
+    private fun drawGlow(batch: SpriteBatch) {
+        batch.color = Palette.snakeGlow
+        batch.additive {
+            var segment: Segment? = snake.head
+            while (segment != null) {
+                batch.draw(glow, segment.position.x + (1f - GLOW_SIZE) / 2, segment.position.y + (1f - GLOW_SIZE) / 2, GLOW_SIZE, GLOW_SIZE)
+                segment = segment.next
+            }
+        }
+        batch.resetColor()
     }
 
     private fun drawPupils(batch: SpriteBatch, head: Segment, angle: Float) {

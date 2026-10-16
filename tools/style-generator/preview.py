@@ -17,6 +17,9 @@ BOARD_Y = (PHONE_H - BOARD_H) / 2
 
 SAMPLING = skia.SamplingOptions(skia.FilterMode.kLinear, skia.MipmapMode.kLinear)
 
+SNAKE_GLOW = 3.2
+FRUIT_GLOW = 4.5
+
 ANGLES = {"UP": 270, "RIGHT": 180, "DOWN": 90, "LEFT": 0}
 
 DEMO_SNAKE = [(5, 9), (6, 9), (7, 9), (8, 9), (8, 10), (8, 11), (9, 11), (10, 11), (11, 11), (11, 10), (11, 9),
@@ -106,9 +109,14 @@ def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False):
         for y in range(ROWS):
             draw_sprite(c, grid, x, y, paint=paint)
     c.drawImageRect(images["boardFrame"], skia.Rect(0, BOARD_Y, PHONE_W, BOARD_Y + BOARD_H), SAMPLING)
+    lights = kotlin_palette(p)
     if fruit_cell:
+        draw_light(c, images["glow"], fruit_cell, FRUIT_GLOW, lights["fruitGlow"])
         draw_sprite(c, images["fruitBob_0"], *fruit_cell)
     parts = segments(cells, images)
+    if not dead:
+        for cell, _, _ in parts:
+            draw_light(c, images["glow"], cell, SNAKE_GLOW, lights["snakeGlow"])
     shadow = tint_paint(shade(p), 0.28)
     for cell, image, angle in parts:
         draw_sprite(c, image, *cell, angle, offset=(0.07, -0.09), paint=shadow)
@@ -119,6 +127,19 @@ def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False):
     if not dead and fruit_cell:
         head, _, angle = parts[0]
         draw_pupils(c, images["snakePupil"], head, angle, fruit_cell)
+
+
+def draw_light(c, image, cell, size, color_hex):
+    h = color_hex.lstrip("#")
+    r, g, b, a = (int(h[i:i + 2], 16) for i in (0, 2, 4, 6))
+    if a == 0:
+        return
+    paint = skia.Paint(AntiAlias=True, BlendMode=skia.BlendMode.kPlus)
+    paint.setColorFilter(skia.ColorFilters.Blend(skia.Color(r, g, b, a), skia.BlendMode.kSrcIn))
+    rect = cell_rect(*cell)
+    half = size * CELL_PX / 2
+    c.drawImageRect(image, skia.Rect(rect.centerX() - half, rect.centerY() - half, rect.centerX() + half, rect.centerY() + half),
+                    SAMPLING, paint)
 
 
 def draw_pupils(c, image, head, angle, fruit_cell):

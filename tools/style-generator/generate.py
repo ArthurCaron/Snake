@@ -39,6 +39,10 @@ def col(hex_color, alpha=1.0):
     return skia.Color(r, g, b, int(round(alpha * 255)))
 
 
+def with_line(p, group):
+    return dict(p, outline=p.get(f"line_{group}", p["outline"]))
+
+
 def shade(p):
     return p.get("shade", p["outline"])
 
@@ -371,6 +375,15 @@ def fruit_sprite(p, squash=0.0, shadow=True):
     return cv
 
 
+def light_glow(size=128):
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32) + 0.5
+    r = np.hypot(xx - size / 2, yy - size / 2) / (size / 2)
+    alpha = np.clip(1 - r, 0, 1) ** 2.2
+    image = np.full((size, size, 4), 255, np.uint8)
+    image[..., 3] = (alpha * 255).astype(np.uint8)
+    return Image.fromarray(image)
+
+
 def grid_cell(p):
     cv = Canvas(CELL, CELL)
     cv.c.drawPath(rect(2, 2, CELL - 2, CELL - 2, 12), stroke(col(p["outline"]), 2.5))
@@ -449,7 +462,7 @@ def ground_tile(p, seed):
     tile = small.convert("RGBA")
     cv = Canvas(tile.width, tile.height)
     cv.c.drawImage(skia.Image.fromarray(np.array(tile)), 0, 0)
-    decorate_ground(cv, p, random.Random(seed))
+    decorate_ground(cv, with_line(p, "decor"), random.Random(seed))
     return cv
 
 
@@ -864,21 +877,23 @@ def generate(name, out):
     if out.exists():
         shutil.rmtree(out)
     skin.mkdir(parents=True)
+    snake, fruit, ui = with_line(p, "snake"), with_line(p, "fruit"), with_line(p, "ui")
     sprites = dict(
-        snakeHead=snake_head(p),
-        snakeHeadDead=snake_head(p, dead=True),
-        snakePupil=snake_pupil(p),
-        snakeBodyStraight=snake_body_straight(p),
-        snakeBodyTurn=snake_body_turn(p),
-        snakeTail=snake_tail(p),
-        fruit=fruit_sprite(p, shadow=False),
-        fruitBob_0=fruit_sprite(p, 0.0),
-        fruitBob_1=fruit_sprite(p, 0.07),
+        snakeHead=snake_head(snake),
+        snakeHeadDead=snake_head(snake, dead=True),
+        snakePupil=snake_pupil(snake),
+        snakeBodyStraight=snake_body_straight(snake),
+        snakeBodyTurn=snake_body_turn(snake),
+        snakeTail=snake_tail(snake),
+        fruit=fruit_sprite(fruit, shadow=False),
+        fruitBob_0=fruit_sprite(fruit, 0.0),
+        fruitBob_1=fruit_sprite(fruit, 0.07),
         gridCell=grid_cell(p),
-        iconPause=icon_pause(p),
-        iconPlay=icon_play(p),
-        iconSoundOn=icon_sound(p, True),
-        iconSoundOff=icon_sound(p, False),
+        glow=light_glow(),
+        iconPause=icon_pause(ui),
+        iconPlay=icon_play(ui),
+        iconSoundOn=icon_sound(ui, True),
+        iconSoundOff=icon_sound(ui, False),
         iconMusicOn=icon_music(p, True),
         iconMusicOff=icon_music(p, False),
     )
@@ -887,19 +902,19 @@ def generate(name, out):
     tile = ground_tile(p, seed=11)
     save(tile, skin / "ground.png")
     save(board_frame(p), skin / "boardFrame.png")
-    logo_cv = logo(p)
+    logo_cv = logo(with_line(p, "logo"))
     save(logo_cv, skin / "logo.png")
-    save(button_image(p, p["button"], p["button_light"], p["button_dark"]), skin / "button.9.png")
-    save(button_image(p, p["button_dark"], p["button"], p["button_dark"], pressed=True), skin / "buttonDown.9.png")
-    save(button_image(p, p["primary"], p["primary_light"], p["primary_dark"]), skin / "buttonPrimary.9.png")
-    save(button_image(p, p["primary_dark"], p["primary"], p["primary_dark"], pressed=True), skin / "buttonPrimaryDown.9.png")
-    save(panel_image(p), skin / "panel.9.png")
+    save(button_image(ui, p["button"], p["button_light"], p["button_dark"]), skin / "button.9.png")
+    save(button_image(ui, p["button_dark"], p["button"], p["button_dark"], pressed=True), skin / "buttonDown.9.png")
+    save(button_image(ui, p["primary"], p["primary_light"], p["primary_dark"]), skin / "buttonPrimary.9.png")
+    save(button_image(ui, p["primary_dark"], p["primary"], p["primary_dark"], pressed=True), skin / "buttonPrimaryDown.9.png")
+    save(panel_image(ui), skin / "panel.9.png")
     (skin / "pack.json").write_text(PACK_JSON)
 
     save(splash(p, tile, logo_cv), out / "root/SplashScreen.png")
     save(loading_text(p), out / "root/LoadingAssets.png")
 
-    icon = app_icon(p, snake_head(p, look=(-PUPIL_TRAVEL, 0))).pil()
+    icon = app_icon(p, snake_head(snake, look=(-PUPIL_TRAVEL, 0))).pil()
     icons = out / "icons"
     for size in (16, 32, 64, 128):
         save(icon.resize((size, size), Image.LANCZOS), icons / f"icon{size}.png")
@@ -997,8 +1012,62 @@ def post_neon(out):
             glow(Image.open(path), 3, 1.5).save(path)
 
 
-POST = dict(gameboy=post_gameboy, neon=post_neon)
-POST_PREVIEW = dict(gameboy=lambda sheet: gameboy_pixels(sheet, factor=2, hard_alpha=False), neon=lambda sheet: sheet)
+LASER_GROUPS = dict(
+    snake=("snakeHead", "snakeHeadDead", "snakeBodyStraight", "snakeBodyTurn", "snakeTail"),
+    fruit=("fruit", "fruitBob_0", "fruitBob_1"),
+    ui=("button.9", "buttonDown.9", "buttonPrimary.9", "buttonPrimaryDown.9", "panel.9", "iconPause", "iconPlay",
+        "iconSoundOn", "iconSoundOff", "iconMusicOn", "iconMusicOff"),
+    logo=("logo",),
+)
+LASER_BLOOM = dict(snake=((2, 1.6), (5, 1.1)), fruit=((2, 1.6), (6, 1.2)), ui=((2, 1.8),), logo=((3, 1.6), (12, 1.2)))
+
+
+def blur(channel, radius):
+    return np.array(Image.fromarray(np.clip(channel, 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(radius))).astype(np.float32)
+
+
+def laser(img, line_hex, bloom):
+    arr = np.array(img.convert("RGBA")).astype(np.float32)
+    line = np.array(rgb(line_hex), np.float32)
+    on_line = (np.abs(arr[..., :3] - line).sum(-1) < 70) & (arr[..., 3] > 128)
+    core = ndimage.distance_transform_edt(on_line) >= 1.4
+    arr[core, :3] = arr[core, :3] * 0.25 + 255 * 0.75
+    luminance = arr[..., :3] @ np.array([0.299, 0.587, 0.114], np.float32)
+    bright = (on_line | (luminance > 170)) & (arr[..., 3] > 128)
+    source = np.zeros_like(arr)
+    source[bright] = arr[bright]
+    source[..., :3] *= source[..., 3:4] / 255
+    halo = np.zeros_like(arr)
+    for radius, strength in bloom:
+        for i in range(4):
+            halo[..., i] += blur(source[..., i], radius) * strength
+    halo = np.clip(halo, 0, 255)
+    alpha = halo[..., 3:4] / 255
+    halo[..., :3] = np.where(alpha > 0, halo[..., :3] / np.maximum(alpha, 1e-3), 0)
+    result = Image.fromarray(np.clip(halo, 0, 255).astype(np.uint8))
+    result.alpha_composite(Image.fromarray(arr.astype(np.uint8)))
+    return result
+
+
+def post_laser(out):
+    p = PALETTES[out.name]
+    skin = out / "textures/game/skin"
+    for group, stems in LASER_GROUPS.items():
+        color = p.get(f"line_{group}", p["outline"])
+        for stem in stems:
+            path = skin / f"{stem}.png"
+            if stem.endswith(".9"):
+                img, marks = strip_nine(path)
+                restore_nine(laser(img, color, LASER_BLOOM[group]), marks, path)
+            else:
+                laser(Image.open(path), color, LASER_BLOOM[group]).save(path)
+    ground = skin / "ground.png"
+    glow(Image.open(ground), 3, 1.2, wrap=True).save(ground)
+
+
+POST = dict(gameboy=post_gameboy, neon=post_neon, laser=post_laser)
+POST_PREVIEW = dict(gameboy=lambda sheet: gameboy_pixels(sheet, factor=2, hard_alpha=False), neon=lambda sheet: sheet,
+                    laser=lambda sheet: sheet)
 
 
 PACK_JSON = """{
@@ -1027,7 +1096,8 @@ PACK_JSON = """{
 """
 
 def kotlin_palette(p):
-    palette = dict(clear=p["clear"], outline=shade(p), text=p["text"], primary=p["primary_light"], surround=surround(p))
+    palette = dict(clear=p["clear"], outline=shade(p), text=p["text"], primary=p["primary_light"], surround=surround(p),
+                   snakeGlow=p.get("snake_glow", "#00000000"), fruitGlow=p.get("fruit_glow", "#00000000"))
     palette.update(p.get("kotlin", {}))
     return palette
 

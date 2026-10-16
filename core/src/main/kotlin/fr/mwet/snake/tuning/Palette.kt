@@ -8,6 +8,8 @@ object Palette {
     val outline: Color = Color.valueOf("3b2220")
     val primary: Color = Color.valueOf("78d0c8")
     val surround: Color = Color.valueOf("b28979")
+    val snakeGlow: Color = Color.valueOf("00000000")
+    val fruitGlow: Color = Color.valueOf("00000000")
     val fontFill: Color = text
     val fontOutline: Color = outline
     val fontShadow: Color = outline

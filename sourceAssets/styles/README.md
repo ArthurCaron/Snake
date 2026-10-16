@@ -13,6 +13,8 @@ The game uses the style that is installed in `sourceAssets/textures/game/skin`. 
 | `lagoon` | Same style, sand and tide pools, coral snake, yellow fruit. |
 | `neon` | Other style: glowing outlines on a night background. |
 | `gameboy` | Other style: 4-tone green pixel art. Pair it with a pixel font in Settings. |
+| `laser` | Other style: white-hot cyan and pink laser lines, light pools on the floor. |
+| `laser-sunset` | Same as `laser`, orange snake and cyan fruit. |
 
 `previews/<style>.png` shows the menu, a game and the end screen of each style. `previews/all.png` puts every style side by side.
 
@@ -23,6 +25,8 @@ python3 -m venv .venv && .venv/bin/pip install -r tools/style-generator/requirem
 .venv/bin/python tools/style-generator/generate.py --install oasis
 ./gradlew lwjgl3:run
 ```
+
+Laser styles set `snakeGlow` and `fruitGlow` in `Palette.kt`: the game then draws an additive light under the snake and the fruit. The other styles keep these colors transparent.
 
 `--install` copies the sprites, the splash and loading images, and the desktop, Android and web icons. The colors stay in `core/src/main/kotlin/fr/mwet/snake/tuning/Palette.kt`, edited by hand: each style lists its colors in `palette.json`.
 

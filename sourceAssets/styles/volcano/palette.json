@@ -3,5 +3,7 @@
   "outline": "#1a1012",
   "text": "#ffe9c9",
   "primary": "#ffe27a",
-  "surround": "#746668"
+  "surround": "#746668",
+  "snakeGlow": "#00000000",
+  "fruitGlow": "#00000000"
 }
