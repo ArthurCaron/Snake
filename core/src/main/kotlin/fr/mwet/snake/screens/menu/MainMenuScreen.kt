@@ -7,7 +7,6 @@ import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.inputs.GeneralCommandContext
 import fr.mwet.snake.inputs.GeneralInputProcessor
-import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.settings.SettingsRepository
@@ -26,7 +25,6 @@ class MainMenuScreen(
 ) : MenuEventListener, KtxScreen {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
-    private val background = Background(kit.textures)
     private val ui = MainMenuUi(uiLayer.stage, menuEventBus, navigator, settingsRepository, kit.widgets)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
@@ -54,7 +52,7 @@ class MainMenuScreen(
     }
 
     override fun render(delta: Float) {
-        worldLayer.render(background, delta)
+        worldLayer.render(kit.backdrop, delta)
         uiLayer.render(delta)
     }
 

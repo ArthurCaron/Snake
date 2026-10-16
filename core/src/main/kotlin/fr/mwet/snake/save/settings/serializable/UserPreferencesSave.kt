@@ -13,14 +13,23 @@ class UserPreferencesSave() {
     var musicOn: Boolean = true
     var fontTheme: String = DefaultUserPreferences.fontTheme.tag
     var transition: String = ""
+    var backdrop: String = ""
 
-    constructor(version: Int, locale: String, soundOn: Boolean, musicOn: Boolean, fontTheme: String, transition: String) : this() {
+    constructor(
+        version: Int,
+        locale: String,
+        soundOn: Boolean, musicOn: Boolean,
+        fontTheme: String,
+        transition: String,
+        backdrop: String,
+    ) : this() {
         this.version = version
         this.locale = locale
         this.soundOn = soundOn
         this.musicOn = musicOn
         this.fontTheme = fontTheme
         this.transition = transition
+        this.backdrop = backdrop
     }
 
     fun restoreDefaults() {
@@ -39,5 +48,6 @@ object DefaultUserPreferences {
         musicOn = true,
         fontTheme = fontTheme.tag,
         transition = "",
+        backdrop = "",
     )
 }

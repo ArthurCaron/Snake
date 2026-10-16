@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.inputs.InputRouter
+import fr.mwet.snake.render.WorldDrawable
 import fr.mwet.snake.save.settings.SettingsRepository
 
 class UiKit(
@@ -13,4 +14,5 @@ class UiKit(
     val input: InputRouter,
     val settingsRepository: SettingsRepository,
     val widgets: Widgets,
+    val backdrop: WorldDrawable,
 )

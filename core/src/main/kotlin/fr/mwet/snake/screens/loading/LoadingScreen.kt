@@ -9,7 +9,7 @@ import fr.mwet.snake.AssetLoading
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.LoadedAssets
 import fr.mwet.snake.Progress
-import fr.mwet.snake.render.Palette
+import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.*

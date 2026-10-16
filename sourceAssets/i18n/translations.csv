@@ -38,3 +38,14 @@ transitionNone,none,aucune
 transitionFade,fade,fondu
 transitionSlide,slide,glissement
 transitionSnake,snake,serpent
+backdrop,Background: {0},Fond : {0}
+backdropPlain,plain,uni
+backdropGrid,moving grid,grille mouvante
+backdropDemo,demo snake,serpent de démo
+backdropFruits,fruits,fruits
+backdropFireflies,fireflies,lucioles
+backdropStripes,stripes,rayures
+backdropWaves,waves,vagues
+backdropRipples,ripples,ondes
+backdropLife,game of life,jeu de la vie
+backdropWanderers,wandering snakes,serpents errants

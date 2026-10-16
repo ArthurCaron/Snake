@@ -1,5 +1,6 @@
 package fr.mwet.snake.save.settings
 
+import fr.mwet.snake.backdrop.BackdropStyle
 import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
@@ -24,6 +25,7 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
         get() = FontTheme.fromTag(settings.userPreferences.fontTheme) ?: DefaultUserPreferences.fontTheme
     val transition: TransitionStyle
         get() = TransitionStyle.fromTag(settings.userPreferences.transition)
+    val backdrop: BackdropStyle get() = BackdropStyle.fromTag(settings.userPreferences.backdrop)
 
     fun toggleSound() {
         save(settings.copy(userPreferences = settings.userPreferences.copy(soundOn = !soundOn)))
@@ -43,6 +45,10 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
 
     fun setTransition(style: TransitionStyle) {
         save(settings.copy(userPreferences = settings.userPreferences.copy(transition = style.tag)))
+    }
+
+    fun setBackdrop(style: BackdropStyle) {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(backdrop = style.tag)))
     }
 
     fun updateKeymappings(transform: (Keymappings) -> Keymappings) {
@@ -69,6 +75,7 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
                 musicOn = userPreferencesSave.musicOn,
                 fontTheme = userPreferencesSave.fontTheme,
                 transition = userPreferencesSave.transition,
+                backdrop = userPreferencesSave.backdrop,
             ),
             keymappings = Keymappings(
                 game = keymappingsSave.game.map { it.toKeymapping() },
@@ -114,5 +121,6 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
         musicOn = musicOn,
         fontTheme = fontTheme,
         transition = transition,
+        backdrop = backdrop,
     )
 }

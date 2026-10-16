@@ -10,7 +10,7 @@ import fr.mwet.snake.assets.FontRole
 import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.toDrawable
-import fr.mwet.snake.render.Palette
+import fr.mwet.snake.tuning.Palette
 import ktx.style.label
 import ktx.style.skin
 import ktx.style.textButton

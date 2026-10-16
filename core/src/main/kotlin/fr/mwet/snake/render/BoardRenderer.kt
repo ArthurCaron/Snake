@@ -1,5 +1,7 @@
 package fr.mwet.snake.render
 
+import fr.mwet.snake.tuning.Palette
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.GameState

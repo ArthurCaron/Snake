@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Disposable
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.inputs.GeneralCommandContext
 import fr.mwet.snake.inputs.GeneralInputProcessor
-import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.actors
@@ -13,7 +12,6 @@ import ktx.scene2d.table
 
 class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> Unit) : Disposable {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
-    private val boardBackground = Background(kit.textures)
     private val uiLayer = UiLayer(kit.batch)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
@@ -60,7 +58,7 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
     }
 
     fun render(delta: Float) {
-        worldLayer.render(boardBackground, delta)
+        worldLayer.render(kit.backdrop, delta)
         uiLayer.render(delta)
     }
 

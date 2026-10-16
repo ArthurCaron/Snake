@@ -2,7 +2,7 @@ package fr.mwet.snake.transition
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.render.Palette
+import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.tuning.TransitionTuning.WIPE_CELLS_ON_SHORT_SIDE
 import fr.mwet.snake.tuning.TransitionTuning.WIPE_SECONDS
 import kotlin.math.ceil

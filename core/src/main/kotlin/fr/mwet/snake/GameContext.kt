@@ -1,6 +1,7 @@
 package fr.mwet.snake
 
 import fr.mwet.snake.assets.SoundPlayer
+import fr.mwet.snake.backdrop.MenuBackdrop
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.events.MenuEventBus
@@ -38,7 +39,8 @@ class GameContext(
     private val gameEvents: GameEventBus = GameEventBusImpl()
     val menuEvents: MenuEventBus = MenuEventBusImpl()
     private val widgets = Widgets { menuEvents.emit(ButtonActivated) }
-    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, boot.input, boot.settingsRepository, widgets)
+    private val backdrop = MenuBackdrop(assets.textures, boot.settingsRepository)
+    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, boot.input, boot.settingsRepository, widgets, backdrop)
     private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
     private val world = GameWorld(gameEvents)
     private val gameCommandContext = GameCommandContext(world)

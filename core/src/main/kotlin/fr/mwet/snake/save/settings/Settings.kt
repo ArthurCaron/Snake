@@ -17,6 +17,7 @@ data class UserPreferences(
     val musicOn: Boolean,
     val fontTheme: String,
     val transition: String,
+    val backdrop: String,
 )
 
 data class Keymappings(

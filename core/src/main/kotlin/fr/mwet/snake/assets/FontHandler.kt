@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
-import fr.mwet.snake.render.Palette
+import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.tuning.FontTuning.TEXT_CHARS
 import fr.mwet.snake.tuning.FontTuning.TITLE_BORDER
