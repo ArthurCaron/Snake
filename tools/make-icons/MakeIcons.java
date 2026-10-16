@@ -51,5 +51,11 @@ public class MakeIcons {
         ico(src, new int[]{16, 32, 48, 256}, repo.resolve("lwjgl3/icons/logo.ico"));
         icns(src, repo.resolve("lwjgl3/icons/logo.icns"));
         ico(src, new int[]{16, 32, 48}, repo.resolve("sourceAssets/web/favicon.ico"));
+        String[] densities = {"mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"};
+        int[] launcherSizes = {48, 72, 96, 144, 192};
+        for (int i = 0; i < densities.length; i++)
+            ImageIO.write(scale(src, launcherSizes[i]), "png",
+                repo.resolve("android/res/drawable-" + densities[i] + "/ic_launcher.png").toFile());
+        ImageIO.write(scale(src, 512), "png", repo.resolve("android/ic_launcher-web.png").toFile());
     }
 }
