@@ -3,6 +3,7 @@ package fr.mwet.snake.save.settings
 import fr.mwet.snake.backdrop.BackdropStyle
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
+import fr.mwet.snake.render.GroundStyle
 import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.settings.serializable.DefaultKeymappings
 import fr.mwet.snake.save.settings.serializable.DefaultUserPreferences
@@ -56,6 +57,12 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
         save(settings.copy(userPreferences = settings.userPreferences.copy(backdrop = style.tag)))
     }
 
+    val ground: GroundStyle get() = GroundStyle.fromTag(settings.userPreferences.ground)
+
+    fun setGround(style: GroundStyle) {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(ground = style.tag)))
+    }
+
     fun updateKeymappings(transform: (Keymappings) -> Keymappings) {
         save(settings.copy(keymappings = transform(settings.keymappings)))
     }
@@ -81,6 +88,7 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
                 fontTheme = userPreferencesSave.fontTheme,
                 transition = userPreferencesSave.transition,
                 backdrop = userPreferencesSave.backdrop,
+                ground = userPreferencesSave.ground,
             ),
             keymappings = Keymappings(
                 game = keymappingsSave.game.map { it.toKeymapping() },
@@ -127,5 +135,6 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
         fontTheme = fontTheme,
         transition = transition,
         backdrop = backdrop,
+        ground = ground,
     )
 }

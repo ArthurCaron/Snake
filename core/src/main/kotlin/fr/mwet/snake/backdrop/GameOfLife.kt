@@ -34,8 +34,7 @@ private const val SURVIVAL_NEIGHBOURS = 2
 
 // Conway's Game of Life on the board, with wrapped edges. Cells fade in and out, and the grid reseeds
 // when it dies down.
-class GameOfLife(textures: TextureHandler) : WorldDrawable {
-    private val background = Background(textures)
+class GameOfLife(textures: TextureHandler, private val background: Background) : WorldDrawable {
     private val pixel = textures.rectangleTexture(1, 1, Color.WHITE)
     // Flat grid: the cell (x, y) is at y * COLUMNS + x. next receives the next generation.
     private var cells = BooleanArray(COLUMNS * ROWS)

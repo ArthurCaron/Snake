@@ -10,8 +10,11 @@ import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.utils.resetColor
 
 
-class BoardRenderer(textureHandler: TextureHandler, private val world: GameWorld) : WorldDrawable {
-    private val background = Background(textureHandler)
+class BoardRenderer(
+    textureHandler: TextureHandler,
+    private val world: GameWorld,
+    private val background: Background,
+) : WorldDrawable {
     private val gridCell = textureHandler.game.skin.gridCell
     private val food = FoodRenderer(textureHandler, world.food)
     private val snake = SnakeRenderer(textureHandler, world.snake, world.food)

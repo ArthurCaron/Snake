@@ -38,8 +38,7 @@ private val FIRST_X = -WORLD_HEIGHT - PERPENDICULAR_COMPONENT
 private val BAND_LENGTH = WORLD_HEIGHT * SQRT_2 + BAND
 
 // Faint bands at 45 degrees slide slowly to the right.
-class DiagonalStripes(textures: TextureHandler) : WorldDrawable {
-    private val background = Background(textures)
+class DiagonalStripes(textures: TextureHandler, private val background: Background) : WorldDrawable {
     private val pixel = textures.rectangleTexture(PIXEL_SIZE, PIXEL_SIZE, Color.WHITE)
     private var time = 0f
 

@@ -9,6 +9,7 @@ import fr.mwet.snake.events.MenuEvent.MusicToggled
 import fr.mwet.snake.events.MenuEvent.SoundToggled
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.generated.assets.I18N
+import fr.mwet.snake.render.GroundStyle
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.transition.TransitionStyle
 import fr.mwet.snake.ui.MenuPage
@@ -26,6 +27,7 @@ class SettingsScreen(
     private val musicButton: TextButton
     private val transitionButton: TextButton
     private val backdropButton: TextButton
+    private val groundButton: TextButton
 
     init {
         with(kit.widgets) {
@@ -38,6 +40,7 @@ class SettingsScreen(
             page.content.menuButton(I18N.font(), onClick = navigator::goToFont) { it.fillX().row() }
             transitionButton = page.content.menuButton("", onClick = ::nextTransition) { it.fillX().row() }
             backdropButton = page.content.menuButton("", onClick = ::nextBackdrop) { it.fillX().row() }
+            groundButton = page.content.menuButton("", onClick = ::nextGround) { it.fillX().row() }
         }
     }
 
@@ -73,6 +76,25 @@ class SettingsScreen(
         refreshBackdropButton()
     }
 
+    private fun nextGround() {
+        settingsRepository.setGround(settingsRepository.ground.next())
+        refreshGroundButton()
+    }
+
+    private fun refreshGroundButton() {
+        val name = when (settingsRepository.ground) {
+            GroundStyle.Checker -> I18N.groundChecker()
+            GroundStyle.Plain -> I18N.groundPlain()
+            GroundStyle.Grain -> I18N.groundGrain()
+            GroundStyle.Stripes -> I18N.groundStripes()
+            GroundStyle.Tiles -> I18N.groundTiles()
+            GroundStyle.Scales -> I18N.groundScales()
+            GroundStyle.Dunes -> I18N.groundDunes()
+            GroundStyle.Hex -> I18N.groundHex()
+        }
+        groundButton.setText(I18N.ground(name))
+    }
+
     private fun refreshBackdropButton() {
         val name = when (settingsRepository.backdrop) {
             BackdropStyle.Plain -> I18N.backdropPlain()
@@ -94,6 +116,7 @@ class SettingsScreen(
         refreshAudioButtons()
         refreshTransitionButton()
         refreshBackdropButton()
+        refreshGroundButton()
     }
 
     override fun hide() = page.hide()

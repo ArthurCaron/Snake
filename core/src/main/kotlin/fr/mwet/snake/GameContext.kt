@@ -21,6 +21,7 @@ import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.Widgets
+import fr.mwet.snake.render.Background
 import fr.mwet.snake.ui.createUiSkin
 import ktx.scene2d.Scene2DSkin
 
@@ -39,7 +40,8 @@ class GameContext(
     private val gameEvents: GameEventBus = GameEventBusImpl()
     val menuEvents: MenuEventBus = MenuEventBusImpl()
     private val widgets = Widgets { menuEvents.emit(ButtonActivated) }
-    private val backdrop = MenuBackdrop(assets.textures, boot.settingsRepository)
+    private val background = Background(assets.textures, boot.settingsRepository)
+    private val backdrop = MenuBackdrop(assets.textures, boot.settingsRepository, background)
     private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, boot.input, boot.settingsRepository, widgets, backdrop)
     private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
     private val world = GameWorld(gameEvents)
@@ -58,6 +60,7 @@ class GameContext(
     val gameScreen = GameScreen(
         kit = kit,
         world = world,
+        background = background,
         metadataRepository = boot.metadataRepository,
         gameInput = gameInput,
         touchInput = touchInput,

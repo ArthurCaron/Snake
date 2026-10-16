@@ -18,8 +18,7 @@ import fr.mwet.snake.utils.setTint
 private const val ROW_HEIGHT = 1f
 
 // Horizontal bands of light travel slowly up the board, one bright band every ROWS_PER_WAVE rows.
-class Waves(textures: TextureHandler) : WorldDrawable {
-    private val background = Background(textures)
+class Waves(textures: TextureHandler, private val background: Background) : WorldDrawable {
     private val pixel = textures.rectangleTexture(1, 1, Color.WHITE)
     private var time = 0f
 

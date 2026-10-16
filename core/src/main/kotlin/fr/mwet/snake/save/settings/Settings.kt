@@ -18,6 +18,7 @@ data class UserPreferences(
     val fontTheme: String,
     val transition: String,
     val backdrop: String,
+    val ground: String,
 )
 
 data class Keymappings(

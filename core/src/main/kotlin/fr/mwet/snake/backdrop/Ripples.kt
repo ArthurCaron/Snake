@@ -33,8 +33,7 @@ private const val MAX_WAVE = 2f
 private const val INSET_SIZE = 1f - 2 * INSET
 
 // Rings spread from two sources that wander over the board. Cells light up where two crests meet.
-class Ripples(textures: TextureHandler) : WorldDrawable {
-    private val background = Background(textures)
+class Ripples(textures: TextureHandler, private val background: Background) : WorldDrawable {
     private val pixel = textures.rectangleTexture(1, 1, Color.WHITE)
     private var time = 0f
 

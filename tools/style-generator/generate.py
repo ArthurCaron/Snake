@@ -390,191 +390,177 @@ def grid_cell(p):
     return cv
 
 
-def toroidal_voronoi(points, size):
-    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32)
-    f1 = np.full((size, size), np.inf, np.float32)
-    f2 = np.full((size, size), np.inf, np.float32)
-    index = np.zeros((size, size), np.int32)
-    half = size / 2
-    for k, (px, py) in enumerate(points):
-        dx = (xx - px + half) % size - half
-        dy = (yy - py + half) % size - half
-        d = np.sqrt(dx * dx + dy * dy)
-        closer = d < f1
-        f2 = np.where(closer, f1, np.minimum(f2, d))
-        index = np.where(closer, k, index)
-        f1 = np.where(closer, d, f1)
-    return f1, f2, index
-
-
-def wrap_distance(mask):
-    tiled = np.tile(mask, (3, 3))
-    distance = ndimage.distance_transform_edt(tiled)
-    n = mask.shape[0]
-    return distance[n:2 * n, n:2 * n]
-
-
-def ground_tile(p, seed):
-    rng = np.random.default_rng(seed)
-    scale = 2
-    size = TILE_CELLS * CELL * scale
-    grid = 5
-    points = []
-    for i in range(grid):
-        for j in range(grid):
-            shift = 0.5 * (j % 2)
-            points.append(((i + 0.25 + shift + rng.uniform(-0.3, 0.3)) / grid * size,
-                           (j + 0.5 + rng.uniform(-0.25, 0.25)) / grid * size))
-    f1, f2, index = toroidal_voronoi(points, size)
-    edge = (f2 - f1) / 2
-    stone = edge > 7 * scale
-    stone = ndimage.gaussian_filter(stone.astype(np.float32), 6 * scale, mode="wrap") > 0.5
-    missing = rng.random(len(points)) < 0.16
-    stone &= ~missing[index]
-    inside = wrap_distance(stone)
-    shifted_dark = np.roll(index, shift=(-7 * scale, -7 * scale), axis=(0, 1))
-    shifted_light = np.roll(index, shift=(5 * scale, 5 * scale), axis=(0, 1))
-    shifted_stone_dark = np.roll(stone, shift=(-7 * scale, -7 * scale), axis=(0, 1))
-    shifted_stone_light = np.roll(stone, shift=(5 * scale, 5 * scale), axis=(0, 1))
-    shade = stone & ((shifted_dark != index) | ~shifted_stone_dark)
-    light = stone & ((shifted_light != index) | ~shifted_stone_light) & ~shade
-
-    tone = rng.uniform(-0.04, 0.04, len(points))
-    image = np.zeros((size, size, 3), np.float32)
-    image[:] = np.array(rgb(p["grout"]), np.float32)
-    stone_rgb = np.array(rgb(p["stone"]), np.float32)
-    stone_colors = np.clip(stone_rgb[None, :] * (1 + tone[:, None]), 0, 255)
-    image[stone] = stone_colors[index[stone]]
-    image[light] = np.array(rgb(p["stone_light"]), np.float32)
-    image[shade] = np.array(rgb(p["stone_shade"]), np.float32)
-    line = stone & (inside <= p.get("line_width", 2.0) * scale)
-    image[line] = np.array(rgb(p["stone_line"]), np.float32)
-
-    speck_count = int(size * size / 1600)
-    sx = rng.integers(0, size, speck_count)
-    sy = rng.integers(0, size, speck_count)
-    speck_rgb = np.array(rgb(p["speck"]), np.float32)
-    for x, y in zip(sx, sy):
-        r = scale * (1 if rng.random() < 0.7 else 2)
-        image[max(0, y - r):y + r, max(0, x - r):x + r] = image[max(0, y - r):y + r, max(0, x - r):x + r] * 0.5 + speck_rgb * 0.5
-
-    small = Image.fromarray(image.astype(np.uint8), "RGB").resize((size // scale, size // scale), Image.LANCZOS)
-    tile = small.convert("RGBA")
-    cv = Canvas(tile.width, tile.height)
-    cv.c.drawImage(skia.Image.fromarray(np.array(tile)), 0, 0)
-    decorate_ground(cv, with_line(p, "decor"), random.Random(seed))
+def ground_tile(p):
+    size = TILE_CELLS * CELL
+    cv = Canvas(size, size)
+    c = cv.c
+    c.drawRect(skia.Rect(0, 0, size, size), fill(col(p["ground"])))
+    alternate = fill(col(p["grout"], 0.35))
+    for i in range(TILE_CELLS):
+        for j in range(TILE_CELLS):
+            if (i + j) % 2:
+                c.drawRect(skia.Rect(i * CELL, j * CELL, (i + 1) * CELL, (j + 1) * CELL), alternate)
     return cv
 
 
-def wrapped(c, size, x, y, draw):
-    for dx in (-size, 0, size):
-        for dy in (-size, 0, size):
-            c.save()
-            c.translate(x + dx, y + dy)
-            draw(c)
-            c.restore()
+GROUND_SIZE = TILE_CELLS * CELL
 
 
-def decor_agave(p, rng):
-    leaves = []
-    count = rng.randint(6, 8)
-    for i in range(count):
-        angle = i * 360 / count + rng.uniform(-12, 12) - 90
-        leaves.append((angle, rng.uniform(12, 17)))
-
-    def draw(c):
-        for angle, length in leaves:
-            outlined(c, leaf_path(0, 0, length, 4.2, angle), p["decor_dark"], p, width=2.2)
-        for angle, length in leaves[::2]:
-            outlined(c, leaf_path(0, 0, length * 0.62, 3.4, angle + 25), p["decor_light"], p, width=2.0)
-    return draw
+def tint_hex(hex_color, amount):
+    r, g, b = rgb(hex_color)
+    target = 255 if amount > 0 else 0
+    t = abs(amount)
+    return "#%02x%02x%02x" % tuple(int(round(v + (target - v) * t)) for v in (r, g, b))
 
 
-def decor_fern(p, rng):
-    blades = [(rng.uniform(-150, -30), rng.uniform(13, 19)) for _ in range(5)]
-
-    def draw(c):
-        for angle, length in blades:
-            outlined(c, leaf_path(0, 0, length, 3.2, angle), p["decor_dark"], p, width=2.0)
-        for angle, length in blades[::2]:
-            outlined(c, leaf_path(0, 0, length * 0.7, 2.6, angle + 10), p["decor_light"], p, width=1.8)
-    return draw
+def luminance(hex_color):
+    r, g, b = rgb(hex_color)
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
 
 
-def decor_crystal(p, rng):
-    shards = [(rng.uniform(-40, 40), rng.uniform(9, 15)) for _ in range(3)]
-
-    def draw(c):
-        for angle, height in shards:
-            path = skia.Path()
-            path.moveTo(-3.5, 0)
-            path.lineTo(-3.5, -height * 0.7)
-            path.lineTo(0, -height)
-            path.lineTo(3.5, -height * 0.7)
-            path.lineTo(3.5, 0)
-            path.close()
-            matrix = skia.Matrix()
-            matrix.setRotate(angle)
-            path.transform(matrix)
-            outlined(c, path, p["decor_light"], p, width=2.0)
-            c.save()
-            c.clipPath(path, doAntiAlias=True)
-            facet = rect(0, -20, 6, 2)
-            facet.transform(matrix)
-            c.drawPath(facet, fill(col(p["decor_dark"], 0.6)))
-            c.restore()
-    return draw
+def ground_line(p, alpha=1.0):
+    if abs(luminance(p["grout"]) - luminance(p["ground"])) > 0.04:
+        return col(p["grout"], alpha)
+    return col(p["outline"], alpha * 0.3)
 
 
-def decor_ember(p, rng):
-    radius = rng.uniform(3, 5)
-
-    def draw(c):
-        c.drawPath(circle(0, 0, radius * 2.2), fill(col(p["decor_dark"], 0.25)))
-        c.drawPath(circle(0, 0, radius), stroke(col(p["outline"]), 4))
-        c.drawPath(circle(0, 0, radius), fill(col(p["decor_dark"])))
-        c.drawPath(circle(-radius * 0.3, -radius * 0.3, radius * 0.5), fill(col(p["decor_light"])))
-    return draw
+def ground_canvas(p):
+    cv = Canvas(GROUND_SIZE, GROUND_SIZE)
+    cv.c.drawRect(skia.Rect(0, 0, GROUND_SIZE, GROUND_SIZE), fill(col(p["ground"])))
+    return cv
 
 
-def decor_shell(p, rng):
-    turn = rng.uniform(0, 360)
-
-    def draw(c):
-        c.save()
-        c.rotate(turn)
-        path = skia.Path()
-        path.moveTo(0, 5)
-        path.cubicTo(-12, 2, -9, -10, 0, -10)
-        path.cubicTo(9, -10, 12, 2, 0, 5)
-        path.close()
-        outlined(c, path, p["decor_light"], p, width=2.2)
-        for x in (-5, 0, 5):
-            ridge = skia.Path()
-            ridge.moveTo(0, 4)
-            ridge.lineTo(x, -8)
-            c.drawPath(ridge, stroke(col(p["decor_dark"]), 1.6))
-        c.restore()
-    return draw
+def wrapped(draw, x, y):
+    for dx in (-GROUND_SIZE, 0, GROUND_SIZE):
+        for dy in (-GROUND_SIZE, 0, GROUND_SIZE):
+            draw(x + dx, y + dy)
 
 
-DECOR = dict(agave=decor_agave, fern=decor_fern, crystal=decor_crystal, ember=decor_ember, shell=decor_shell)
+def ground_plain(p):
+    return ground_canvas(p)
 
 
-def decorate_ground(cv, p, rng):
-    size = cv.width
+def ground_grain(p):
+    cv = ground_canvas(p)
     c = cv.c
-    for _ in range(22):
-        x, y = rng.uniform(0, size), rng.uniform(0, size)
-        rx, ry = rng.uniform(2.5, 5), rng.uniform(2, 3.5)
+    rng = random.Random(7)
+    dark = fill(ground_line(p, 0.9))
+    light = fill(col(tint_hex(p["ground"], 0.25), 0.8))
+    for _ in range(320):
+        x, y = rng.uniform(0, GROUND_SIZE), rng.uniform(0, GROUND_SIZE)
+        radius = rng.uniform(1.4, 3.0)
+        paint = dark if rng.random() < 0.7 else light
+        wrapped(lambda px, py: c.drawCircle(px, py, radius, paint), x, y)
+    return cv
 
-        def pebble(canvas, rx=rx, ry=ry):
-            shape = oval(-rx, -ry, rx, ry)
-            outlined(canvas, shape, p["pebble"], p, width=1.6)
-        wrapped(c, size, x, y, pebble)
-    for _ in range(5):
-        x, y = rng.uniform(0, size), rng.uniform(0, size)
-        wrapped(c, size, x, y, DECOR[p["decor"]](p, rng))
+
+def ground_stripes(p):
+    cv = ground_canvas(p)
+    c = cv.c
+    paint = fill(ground_line(p, 0.45))
+    half = CELL / 2
+    for k in range(-TILE_CELLS * 2, TILE_CELLS + 1):
+        x0 = k * CELL
+        band = skia.Path()
+        band.moveTo(x0, 0)
+        band.lineTo(x0 + half, 0)
+        band.lineTo(x0 + half + GROUND_SIZE, GROUND_SIZE)
+        band.lineTo(x0 + GROUND_SIZE, GROUND_SIZE)
+        band.close()
+        c.drawPath(band, paint)
+    return cv
+
+
+def ground_tiles(p):
+    cv = Canvas(GROUND_SIZE, GROUND_SIZE)
+    c = cv.c
+    c.drawRect(skia.Rect(0, 0, GROUND_SIZE, GROUND_SIZE), fill(col(p["ground"])))
+    c.drawRect(skia.Rect(0, 0, GROUND_SIZE, GROUND_SIZE), fill(ground_line(p)))
+    rng = random.Random(3)
+    size = CELL * 2
+    for i in range(TILE_CELLS // 2):
+        for j in range(TILE_CELLS // 2):
+            x, y = i * size, j * size
+            base = tint_hex(p["ground"], rng.uniform(-0.05, 0.05))
+            c.drawPath(rect(x + 3, y + 3, x + size - 3, y + size - 3, 8), fill(col(base)))
+            c.drawPath(rect(x + 7, y + 7, x + size - 7, y + size - 7, 6), stroke(col(tint_hex(base, 0.2), 0.7), 2))
+    return cv
+
+
+def ground_scales(p):
+    cv = ground_canvas(p)
+    c = cv.c
+    radius = CELL / 2
+    line = stroke(ground_line(p), 3)
+    light = stroke(col(tint_hex(p["ground"], 0.25), 0.7), 2)
+    for j in range(-2, TILE_CELLS * 2 + 2):
+        y = j * radius
+        offset = radius if j % 2 else 0
+        base = fill(col(tint_hex(p["ground"], -0.03 if j % 2 else 0.02)))
+        for i in range(-1, TILE_CELLS + 1):
+            x = i * CELL + offset
+            c.drawCircle(x, y, radius, base)
+            c.drawCircle(x, y, radius - 1.5, line)
+            c.drawArc(skia.Rect(x - radius + 8, y - radius + 8, x + radius - 8, y + radius - 8), 30, 120, False, light)
+    return cv
+
+
+def ground_dunes(p):
+    cv = ground_canvas(p)
+    c = cv.c
+    dark = stroke(ground_line(p), 3.5)
+    light = stroke(col(tint_hex(p["ground"], 0.3), 0.8), 2)
+    for k in range(TILE_CELLS * 2):
+        base = k * CELL / 2 + CELL / 4
+        for paint, shift in ((light, -3.5), (dark, 0)):
+            path = skia.Path()
+            for step, x in enumerate(range(-8, GROUND_SIZE + 9, 4)):
+                t = x / GROUND_SIZE * math.tau
+                y = base + shift + 7 * math.sin(2 * t + k * 0.7) + 3 * math.sin(5 * t + k * 1.3)
+                if step == 0:
+                    path.moveTo(x, y)
+                else:
+                    path.lineTo(x, y)
+            c.drawPath(path, paint)
+    return cv
+
+
+def ground_hex(p):
+    cv = ground_canvas(p)
+    c = cv.c
+    columns, rows = TILE_CELLS, 7
+    step_x = GROUND_SIZE / columns
+    step_y = GROUND_SIZE / rows
+    rx = step_x / 1.5
+    half = step_y / 2
+    line = stroke(ground_line(p), 3)
+    for i in range(-1, columns + 1):
+        for j in range(-1, rows + 1):
+            cx = i * step_x
+            cy = j * step_y + (half if i % 2 else 0)
+            hexagon = skia.Path()
+            hexagon.moveTo(cx - rx, cy)
+            hexagon.lineTo(cx - rx / 2, cy - half)
+            hexagon.lineTo(cx + rx / 2, cy - half)
+            hexagon.lineTo(cx + rx, cy)
+            hexagon.lineTo(cx + rx / 2, cy + half)
+            hexagon.lineTo(cx - rx / 2, cy + half)
+            hexagon.close()
+            tone = ((i % columns) * 3 + (j % rows) * 5) % 4
+            c.drawPath(hexagon, fill(col(tint_hex(p["ground"], (tone - 1.5) * 0.02))))
+            c.drawPath(hexagon, line)
+    return cv
+
+
+GROUNDS = dict(
+    groundPlain=ground_plain,
+    groundGrain=ground_grain,
+    groundStripes=ground_stripes,
+    groundTiles=ground_tiles,
+    groundScales=ground_scales,
+    groundDunes=ground_dunes,
+    groundHex=ground_hex,
+)
 
 
 def board_frame(p):
@@ -602,10 +588,17 @@ def nine_patch(img, left, right, top, bottom):
     return out
 
 
-def button_image(p, base, light, dark, pressed=False, size=72):
+def button_image(p, base, light, dark, pressed=False, size=72, line=None):
     cv = Canvas(size, size)
     c = cv.c
     o = 5
+    if p.get("button_style") == "tube":
+        shape = rect(o, o, size - o, size - o, 18)
+        c.drawPath(shape, fill(col(dark)))
+        if pressed:
+            c.drawPath(shape, fill(col(light, 0.3)))
+        c.drawPath(shape, stroke(col(line or p["outline"]), 4.5))
+        return nine_patch(cv.pil(), 24, 24, 24, 24)
     top = o + (5 if pressed else 0)
     bevel = 4 if pressed else 10
     shape = rect(o, top, size - o, size - o, 18)
@@ -614,7 +607,7 @@ def button_image(p, base, light, dark, pressed=False, size=72):
     c.clipPath(shape, doAntiAlias=True)
     c.drawPath(shape, fill(col(dark)))
     c.drawPath(rect(o, top, size - o, size - o - bevel, 16), fill(col(base)))
-    c.drawPath(rect(o + 9, top + 5, size - o - 9, top + 9, 2), fill(col(light, 0.9)))
+    c.drawPath(rect(o + 12, top + 4, size - o - 12, top + 7, 1.5), fill(col(light, 0.9)))
     c.restore()
     return nine_patch(cv.pil(), 24, 24, 24, 24)
 
@@ -761,6 +754,8 @@ def logo(p, width=640, height=260):
     dy = (height - bounds.height()) / 2 - bounds.top() - 12
     path.offset(dx, dy)
     bounds = path.computeTightBounds()
+    if p.get("logo_style") == "tube":
+        return tube_logo(cv, p, path, bounds)
     shadow = skia.Path(path)
     shadow.offset(LOGO_SHADOW, LOGO_SHADOW)
     c.drawPath(shadow, stroke(col(p["outline"]), 34))
@@ -783,13 +778,25 @@ def logo(p, width=640, height=260):
     c.drawPath(wave, fill(col(p["primary"])))
     c.drawPath(rect(bounds.left(), bounds.top() + 10, bounds.right(), bounds.top() + 22), fill(col(p["primary_light"], 0.8)))
     c.restore()
+    logo_eyes(c, p, bounds, 9)
+    return cv
+
+
+def logo_eyes(c, p, bounds, outline_width):
     eye_y = bounds.top() + 30
     eye_x = bounds.left() + 62
     for ox in (0, 26):
-        c.drawPath(circle(eye_x + ox, eye_y, 13), stroke(col(p["outline"]), 9))
+        c.drawPath(circle(eye_x + ox, eye_y, 13), stroke(col(p["outline"]), outline_width))
         c.drawPath(circle(eye_x + ox, eye_y, 13), fill(col(p["eye"])))
         c.drawPath(circle(eye_x + ox + 4, eye_y + 2, 6.5), fill(col(p["pupil"])))
         c.drawPath(circle(eye_x + ox + 1.5, eye_y - 1, 2.2), fill(col("#ffffff")))
+
+
+def tube_logo(cv, p, path, bounds):
+    c = cv.c
+    c.drawPath(path, fill(col(p["panel"])))
+    c.drawPath(path, stroke(col(p["outline"]), 8))
+    logo_eyes(c, p, bounds, 5)
     return cv
 
 
@@ -899,15 +906,18 @@ def generate(name, out):
     )
     for sprite_name, cv in sprites.items():
         save(cv, skin / f"{sprite_name}.png")
-    tile = ground_tile(p, seed=11)
+    tile = ground_tile(p)
     save(tile, skin / "ground.png")
+    for ground_name, draw_ground in GROUNDS.items():
+        save(draw_ground(p), skin / f"{ground_name}.png")
     save(board_frame(p), skin / "boardFrame.png")
     logo_cv = logo(with_line(p, "logo"))
     save(logo_cv, skin / "logo.png")
     save(button_image(ui, p["button"], p["button_light"], p["button_dark"]), skin / "button.9.png")
     save(button_image(ui, p["button_dark"], p["button"], p["button_dark"], pressed=True), skin / "buttonDown.9.png")
-    save(button_image(ui, p["primary"], p["primary_light"], p["primary_dark"]), skin / "buttonPrimary.9.png")
-    save(button_image(ui, p["primary_dark"], p["primary"], p["primary_dark"], pressed=True), skin / "buttonPrimaryDown.9.png")
+    save(button_image(ui, p["primary"], p["primary_light"], p["primary_dark"], line=p["primary"]), skin / "buttonPrimary.9.png")
+    save(button_image(ui, p["primary_dark"], p["primary"], p["primary_dark"], pressed=True, line=p["primary"]),
+         skin / "buttonPrimaryDown.9.png")
     save(panel_image(ui), skin / "panel.9.png")
     (skin / "pack.json").write_text(PACK_JSON)
 
@@ -1006,8 +1016,6 @@ def post_neon(out):
         if path.name.endswith(".9.png"):
             img, marks = strip_nine(path)
             restore_nine(glow(img, 3, 1.4), marks, path)
-        elif path.stem == "ground":
-            glow(Image.open(path), 4, 1.3, wrap=True).save(path)
         elif path.stem not in ("boardFrame", "gridCell"):
             glow(Image.open(path), 3, 1.5).save(path)
 
@@ -1019,18 +1027,19 @@ LASER_GROUPS = dict(
         "iconSoundOn", "iconSoundOff", "iconMusicOn", "iconMusicOff"),
     logo=("logo",),
 )
-LASER_BLOOM = dict(snake=((2, 1.6), (5, 1.1)), fruit=((2, 1.6), (6, 1.2)), ui=((2, 1.8),), logo=((3, 1.6), (12, 1.2)))
+LASER_BLOOM = dict(snake=((2, 1.6), (5, 1.1)), fruit=((2, 1.6), (6, 1.2)), ui=((2, 1.8),), logo=((2, 1.0), (7, 0.6)))
+LASER_CORE = dict(snake=1.4, fruit=1.4, ui=1.4, logo=2.4)
 
 
 def blur(channel, radius):
     return np.array(Image.fromarray(np.clip(channel, 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(radius))).astype(np.float32)
 
 
-def laser(img, line_hex, bloom):
+def laser(img, line_hex, bloom, core_depth):
     arr = np.array(img.convert("RGBA")).astype(np.float32)
     line = np.array(rgb(line_hex), np.float32)
     on_line = (np.abs(arr[..., :3] - line).sum(-1) < 70) & (arr[..., 3] > 128)
-    core = ndimage.distance_transform_edt(on_line) >= 1.4
+    core = ndimage.distance_transform_edt(on_line) >= core_depth
     arr[core, :3] = arr[core, :3] * 0.25 + 255 * 0.75
     luminance = arr[..., :3] @ np.array([0.299, 0.587, 0.114], np.float32)
     bright = (on_line | (luminance > 170)) & (arr[..., 3] > 128)
@@ -1058,11 +1067,9 @@ def post_laser(out):
             path = skin / f"{stem}.png"
             if stem.endswith(".9"):
                 img, marks = strip_nine(path)
-                restore_nine(laser(img, color, LASER_BLOOM[group]), marks, path)
+                restore_nine(laser(img, color, LASER_BLOOM[group], LASER_CORE[group]), marks, path)
             else:
-                laser(Image.open(path), color, LASER_BLOOM[group]).save(path)
-    ground = skin / "ground.png"
-    glow(Image.open(ground), 3, 1.2, wrap=True).save(ground)
+                laser(Image.open(path), color, LASER_BLOOM[group], LASER_CORE[group]).save(path)
 
 
 POST = dict(gameboy=post_gameboy, neon=post_neon, laser=post_laser)
@@ -1134,6 +1141,7 @@ def main():
     if args.install:
         install(args.install, args.out / args.install)
         print(f"installed {args.install}")
+    preview.grounds_sheet(args.out, list(PALETTES)).save(args.out / "previews/grounds.png")
 
 
 if __name__ == "__main__":

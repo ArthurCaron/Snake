@@ -49,3 +49,12 @@ backdropWaves,waves,vagues
 backdropRipples,ripples,ondes
 backdropLife,game of life,jeu de la vie
 backdropWanderers,wandering snakes,serpents errants
+ground,Ground: {0},Sol : {0}
+groundChecker,checkerboard,damier
+groundPlain,plain,uni
+groundGrain,grain,grains
+groundStripes,stripes,rayures
+groundTiles,tiles,dalles
+groundScales,scales,écailles
+groundDunes,dunes,dunes
+groundHex,hexagons,hexagones

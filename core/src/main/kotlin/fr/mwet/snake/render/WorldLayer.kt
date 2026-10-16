@@ -1,13 +1,17 @@
 package fr.mwet.snake.render
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.HdpiUtils
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector3
 import fr.mwet.snake.GameViewport
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import ktx.graphics.use
+import kotlin.math.roundToInt
 
 interface WorldDrawable {
     fun draw(batch: SpriteBatch, delta: Float)
@@ -48,3 +52,24 @@ fun SpriteBatch.visibleWorld(out: Rectangle): Rectangle {
     corner.set(1f, 1f, 0f).prj(inverseProjection)
     return out.set(left, bottom, corner.x - left, corner.y - bottom)
 }
+
+// Clips the next draws to the board, so that the bands around it keep only the ground. Call endBoardClip after them.
+fun SpriteBatch.clipToBoard() {
+    flush()
+    corner.set(0f, 0f, 0f).prj(projectionMatrix)
+    val left = toScreen(corner.x, Gdx.graphics.width)
+    val bottom = toScreen(corner.y, Gdx.graphics.height)
+    corner.set(WORLD_WIDTH, WORLD_HEIGHT, 0f).prj(projectionMatrix)
+    val right = toScreen(corner.x, Gdx.graphics.width)
+    val top = toScreen(corner.y, Gdx.graphics.height)
+    Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST)
+    HdpiUtils.glScissor(left, bottom, right - left, top - bottom)
+}
+
+fun SpriteBatch.endBoardClip() {
+    flush()
+    Gdx.gl.glDisable(GL20.GL_SCISSOR_TEST)
+}
+
+// The projection puts the screen between -1 and 1: this converts back to pixels.
+private fun toScreen(projected: Float, screenSize: Int): Int = ((projected + 1f) / 2f * screenSize).roundToInt()

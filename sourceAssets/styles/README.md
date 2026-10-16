@@ -5,12 +5,12 @@ The game uses the style that is installed in `sourceAssets/textures/game/skin`. 
 
 | Folder | Look |
 |---|---|
-| `desert` | Cartoon cell shading: thick dark outlines, sand flagstones, teal snake. Installed. |
-| `oasis` | Same style, green jungle floor, orange snake, mango. |
+| `desert` | Cartoon cell shading: thick dark outlines, sand ground, teal snake. Installed. |
+| `oasis` | Same style, green floor, orange snake, mango. |
 | `tundra` | Same style, snow and ice, purple snake, red berry. |
-| `volcano` | Same style, basalt and lava, yellow snake, ice fruit. |
+| `volcano` | Same style, basalt and lava colors, yellow snake, ice fruit. |
 | `dusk` | Same style, purple dunes at night, orange snake, turquoise fruit. |
-| `lagoon` | Same style, sand and tide pools, coral snake, yellow fruit. |
+| `lagoon` | Same style, sand and sea colors, coral snake, yellow fruit. |
 | `neon` | Other style: glowing outlines on a night background. |
 | `gameboy` | Other style: 4-tone green pixel art. Pair it with a pixel font in Settings. |
 | `laser` | Other style: white-hot cyan and pink laser lines, light pools on the floor. |

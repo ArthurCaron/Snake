@@ -9,6 +9,7 @@ import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralCommandContext
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.TouchInputProcessor
+import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
@@ -20,6 +21,7 @@ import ktx.app.KtxScreen
 class GameScreen(
     private val kit: UiKit,
     private val world: GameWorld,
+    background: Background,
     private val metadataRepository: MetadataRepository,
     private val gameInput: GameInputProcessor,
     private val touchInput: TouchInputProcessor,
@@ -27,7 +29,7 @@ class GameScreen(
 ) : KtxScreen {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
-    private val board = BoardRenderer(kit.textures, world)
+    private val board = BoardRenderer(kit.textures, world, background)
     private val ui = GameUi(uiLayer.stage, UiActions(), kit.widgets)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(

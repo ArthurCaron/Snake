@@ -14,6 +14,7 @@ class UserPreferencesSave() {
     var fontTheme: String = DefaultUserPreferences.fontTheme.tag
     var transition: String = ""
     var backdrop: String = ""
+    var ground: String = ""
 
     constructor(
         version: Int,
@@ -22,6 +23,7 @@ class UserPreferencesSave() {
         fontTheme: String,
         transition: String,
         backdrop: String,
+        ground: String,
     ) : this() {
         this.version = version
         this.locale = locale
@@ -30,6 +32,7 @@ class UserPreferencesSave() {
         this.fontTheme = fontTheme
         this.transition = transition
         this.backdrop = backdrop
+        this.ground = ground
     }
 
     fun restoreDefaults() {
@@ -49,5 +52,6 @@ object DefaultUserPreferences {
         fontTheme = fontTheme.tag,
         transition = "",
         backdrop = "",
+        ground = "",
     )
 }

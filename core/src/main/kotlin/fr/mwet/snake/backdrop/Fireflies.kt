@@ -21,8 +21,7 @@ import fr.mwet.snake.utils.setTint
 private const val HALF_SIZE = SIZE / 2
 
 // Small squares drift over the board and blink slowly, each one at its own pace.
-class Fireflies(textures: TextureHandler) : WorldDrawable {
-    private val background = Background(textures)
+class Fireflies(textures: TextureHandler, private val background: Background) : WorldDrawable {
     private val pixel = textures.rectangleTexture(1, 1, Color.WHITE)
     // Each firefly gets a random position, velocity, blink speed and phase once, in parallel arrays:
     // nothing is allocated per frame.

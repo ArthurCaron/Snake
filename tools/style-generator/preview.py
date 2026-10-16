@@ -200,6 +200,29 @@ def icon_button(c, skin, icon, right, top, size=80):
     c.drawImageRect(icon, skia.Rect(r.left() + inset, r.top() + inset * 0.8, r.right() - inset, r.bottom() - inset * 1.2), SAMPLING)
 
 
+def grounds_sheet(folder, names, cell=128):
+    from PIL import ImageDraw
+    from generate import GROUNDS
+    files = ["ground", *GROUNDS]
+    label_h, gap = 22, 8
+    width = len(files) * (cell + gap) + 120
+    height = label_h + len(names) * (cell + gap)
+    sheet = Image.new("RGB", (width, height), (32, 32, 32))
+    draw = ImageDraw.Draw(sheet)
+    for i, name in enumerate(files):
+        draw.text((120 + i * (cell + gap), 4), "checker" if name == "ground" else name[len("ground"):].lower(), fill=(230, 230, 230))
+    for j, style in enumerate(names):
+        y = label_h + j * (cell + gap)
+        draw.text((6, y + cell // 2), style, fill=(230, 230, 230))
+        for i, name in enumerate(files):
+            tile = Image.open(folder / style / "textures/game/skin" / f"{name}.png").convert("RGB").resize((cell // 2, cell // 2), Image.LANCZOS)
+            x = 120 + i * (cell + gap)
+            for dx in (0, cell // 2):
+                for dy in (0, cell // 2):
+                    sheet.paste(tile, (x + dx, y + dy))
+    return sheet
+
+
 def phone(p, tile):
     cv = Canvas(int(PHONE_W), PHONE_H)
     c = cv.c

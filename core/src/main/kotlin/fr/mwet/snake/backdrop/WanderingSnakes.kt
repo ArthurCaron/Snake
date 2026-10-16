@@ -26,8 +26,7 @@ private const val ROWS = WORLD_HEIGHT.toInt()
 private const val INSET_SIZE = 1f - 2 * INSET
 
 // Short snakes move cell by cell, turn at random and wrap around the edges.
-class WanderingSnakes(textures: TextureHandler) : WorldDrawable {
-    private val background = Background(textures)
+class WanderingSnakes(textures: TextureHandler, private val background: Background) : WorldDrawable {
     private val pixel = textures.rectangleTexture(1, 1, Color.WHITE)
     // Each body is a ring buffer of MAX_LENGTH cells, and head is the index of the head. A move writes the
     // new head over the oldest cell, so nothing moves in memory.
