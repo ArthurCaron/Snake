@@ -1,16 +1,14 @@
 package fr.mwet.snake.assets
 
-import com.badlogic.gdx.assets.AssetDescriptor
-import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.I18NBundle
-import ktx.assets.getValue
-import ktx.assets.loadAsset
 import ktx.i18n.BundleLine
+import java.util.Locale
 
 private const val I18N_ROOT = "i18n/translations"
 
-class I18NHandler(assetManager: AssetManager) {
-    val t: I18NBundle by assetManager.loadAsset(AssetDescriptor(I18N_ROOT, I18NBundle::class.java))
+fun loadTranslations(locale: Locale) {
+    I18N.i18nBundle = I18NBundle.createBundle(Gdx.files.internal(I18N_ROOT), locale)
 }
 
 enum class I18N : BundleLine {
@@ -44,7 +42,9 @@ enum class I18N : BundleLine {
     actionGoLeft,
     actionPause,
     actionBack,
-    actionStartGame;
+    actionStartGame,
+    language,
+    languageSystem;
 
     override val bundle: I18NBundle
         get() = i18nBundle

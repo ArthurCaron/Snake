@@ -14,6 +14,8 @@ import ktx.assets.DisposableRegistry
 class TextureHandler(assetManager: AssetManager) :
     TextureAssets(assetManager),
     DisposableRegistry by DisposableContainer() {
+    private val rectangles = HashMap<RectangleKey, Texture>()
+
     fun rectangleTexture(width: Float, height: Float, fill: Color = Color.BLACK) =
         rectangleTexture(width.toInt(), height.toInt(), fill)
 
@@ -35,17 +37,24 @@ class TextureHandler(assetManager: AssetManager) :
         fill: Color = Color.BLACK,
         borderColor: Color = Color.BLACK,
     ): Texture {
-        val pixmap = Pixmap(width, height, Format.RGBA8888)
+        val key = RectangleKey(width, height, border, Color(fill), Color(borderColor))
+        return rectangles.getOrPut(key) {
+            createRectangle(key)
+        }
+    }
 
-        pixmap.setColor(borderColor)
-        pixmap.fillRectangle(0, 0, width, height)
+    private fun createRectangle(key: RectangleKey): Texture {
+        val pixmap = Pixmap(key.width, key.height, Format.RGBA8888)
 
-        pixmap.setColor(fill)
+        pixmap.setColor(key.borderColor)
+        pixmap.fillRectangle(0, 0, key.width, key.height)
+
+        pixmap.setColor(key.fill)
         pixmap.fillRectangle(
-            border,
-            border,
-            width - border * 2,
-            height - border * 2,
+            key.border,
+            key.border,
+            key.width - key.border * 2,
+            key.height - key.border * 2,
         )
 
         val texture = Texture(pixmap).alsoRegister()
@@ -54,6 +63,14 @@ class TextureHandler(assetManager: AssetManager) :
         return texture
     }
 }
+
+private data class RectangleKey(
+    val width: Int,
+    val height: Int,
+    val border: Int,
+    val fill: Color,
+    val borderColor: Color
+)
 
 fun Texture.toDrawable() = TextureRegionDrawable(TextureRegion(this))
 

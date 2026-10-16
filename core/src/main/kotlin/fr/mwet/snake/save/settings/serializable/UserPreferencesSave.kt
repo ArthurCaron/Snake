@@ -1,7 +1,7 @@
 package fr.mwet.snake.save.settings.serializable
 
 import fr.mwet.snake.utils.NO_VERSION
-import java.util.*
+import fr.mwet.snake.save.settings.Language
 
 private const val NO_LOCALE = ""
 
@@ -27,7 +27,7 @@ class UserPreferencesSave() {
 object DefaultUserPreferences {
     fun defaultUserPreferences() = UserPreferencesSave(
         version = 0,
-        locale = Locale.getDefault().toString(),
+        locale = Language.System.tag,
         soundOn = true,
         musicOn = true,
     )

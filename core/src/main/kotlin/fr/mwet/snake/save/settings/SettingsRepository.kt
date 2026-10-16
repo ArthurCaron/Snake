@@ -16,6 +16,7 @@ class SettingsRepository(private val jsonStore: JsonStore) {
         private set
     val soundOn: Boolean get() = settings.userPreferences.soundOn
     val musicOn: Boolean get() = settings.userPreferences.musicOn
+    val language: Language get() = Language.fromTag(settings.userPreferences.locale)
 
     fun toggleSound() {
         save(settings.copy(userPreferences = settings.userPreferences.copy(soundOn = !soundOn)))
@@ -23,6 +24,10 @@ class SettingsRepository(private val jsonStore: JsonStore) {
 
     fun toggleMusic() {
         save(settings.copy(userPreferences = settings.userPreferences.copy(musicOn = !musicOn)))
+    }
+
+    fun setLanguage(language: Language) {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(locale = language.tag)))
     }
 
     fun updateKeymappings(transform: (Keymappings) -> Keymappings) {
