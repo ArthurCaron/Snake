@@ -12,6 +12,7 @@ import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.TouchInputProcessor
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.game.GameScreen
+import fr.mwet.snake.screens.font.FontScreen
 import fr.mwet.snake.screens.language.LanguageScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.screens.scores.ScoresScreen
@@ -20,9 +21,16 @@ import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.createUiSkin
 import ktx.scene2d.Scene2DSkin
 
-class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigator: Navigator, languages: LanguageSwitcher) {
+class GameContext(
+    boot: Boot,
+    assets: LoadedAssets,
+    keyNames: KeyNames,
+    navigator: Navigator,
+    languages: LanguageSwitcher,
+    fontSwitcher: FontSwitcher,
+) {
     init {
-        Scene2DSkin.defaultSkin = createUiSkin(assets.fonts, assets.textures)
+        Scene2DSkin.defaultSkin = createUiSkin(assets.fonts, boot.settingsRepository.fontTheme, assets.textures)
     }
 
     private val gameEvents: GameEventBus = GameEventBusImpl()
@@ -55,6 +63,7 @@ class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigato
     val settingsScreen = SettingsScreen(kit, boot.settingsRepository, menuEvents, navigator)
     val controlsScreen = ControlsScreen(kit, boot.settingsRepository, keyNames, navigator)
     val languageScreen = LanguageScreen(kit, boot.settingsRepository, languages, navigator)
+    val fontScreen = FontScreen(kit, assets.fonts, boot.settingsRepository, fontSwitcher, navigator)
 
     init {
         gameEvents.listen(soundPlayer)

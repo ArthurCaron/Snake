@@ -27,6 +27,7 @@ class SettingsScreen(
             page.content.menuButton(I18N.controls(), onClick = navigator::goToControls) { it.fillX().row() }
         }
         page.content.menuButton(I18N.language(), onClick = navigator::goToLanguage) { it.fillX().row() }
+        page.content.menuButton(I18N.font(), onClick = navigator::goToFont) { it.fillX().row() }
     }
 
     private fun toggleSound() {

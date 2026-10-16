@@ -2,7 +2,7 @@ package fr.mwet.snake.inputs
 
 import com.badlogic.gdx.Input.Keys
 import fr.mwet.snake.save.serialization.JsonStore
-import fr.mwet.snake.save.serialization.TextStore
+import fr.mwet.snake.save.serialization.InMemoryTextStore
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.save.settings.addGeneralKey
 import fr.mwet.snake.save.settings.removeGeneralKey
@@ -46,13 +46,4 @@ class GeneralInputProcessorTest {
         assertEquals(2, starts)
         assertEquals(1, resumes)
     }
-}
-
-private class InMemoryTextStore : TextStore {
-    private val files = mutableMapOf<String, String>()
-    override fun read(path: String) = files[path]
-    override fun write(path: String, text: String) { files[path] = text }
-    override fun exists(path: String) = path in files
-    override fun delete(path: String) = files.remove(path) != null
-    override fun backupCorrupted(path: String) = files.remove(path) != null
 }

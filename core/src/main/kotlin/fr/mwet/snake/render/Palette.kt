@@ -9,4 +9,7 @@ object Palette {
     val border: Color = Color.WHITE
     val dim: Color = Color(0f, 0f, 0f, 0.6f)
     val lightDim: Color = Color(0f, 0f, 0f, 0.35f)
+    val fontFill: Color = text
+    val fontOutline: Color = accent
+    val gridLine: Color = Color(1f, 1f, 1f, 0.05f)
 }
