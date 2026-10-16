@@ -50,7 +50,7 @@ class BoardRenderer(
     private fun onFoodEaten() {
         lastFood.set(world.food.position)
         if (Palette.snakeTakesFruitColor) snake.colors.change(food.color)
-        food.nextColor()
+        food.nextFruit()
     }
 
     private fun drawGrid(batch: SpriteBatch) {

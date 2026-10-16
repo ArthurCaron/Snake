@@ -61,13 +61,16 @@ def tint(p, part):
     return p.get(f"{part}_tint", p[part])
 
 
+FRUIT_DETAIL_COLORS = dict(stem="#6b4a2a", rind="#4f9a46", rind_dark="#2d6233", pip="#2a1a18")
 TINTED_KEYS = dict(snake=("snake", "snake_dark"), fruit=("fruit", "fruit_dark"))
-FIXED_KEYS = dict(snake=("eye", "pupil", "tongue", "snake_light"), fruit=("seed", "leaf", "leaf_dark", "fruit_shadow", "fruit_light"))
+FIXED_KEYS = dict(snake=("eye", "pupil", "tongue", "snake_light"),
+                  fruit=("seed", "leaf", "leaf_dark", "fruit_shadow", "fruit_light", "stem", "rind", "rind_dark", "pip"))
 HIGHLIGHTS = dict(snake=("snake_light", "#ffffff80"), fruit=("fruit_light", "#ffffffc0"))
 
 
 def layer(p, part, kind):
     q = dict(p, tongue=p.get("tongue", "#e0475a"), fruit_shadow=p.get("fruit_shadow", shade(p)))
+    q.update({key: p.get(key, value) for key, value in FRUIT_DETAIL_COLORS.items()})
     color = tint(p, part)
     for key in TINTED_KEYS[part]:
         q[key] = gray(p[key], color) if kind == "base" else CLEAR
@@ -370,39 +373,77 @@ def leaf_path(x, y, length, width, angle):
     return path
 
 
-def fruit_leaves(c, p, kind):
-    if kind == "prickly":
-        for angle, length in ((-120, 11), (-90, 13), (-60, 11)):
-            leaf = leaf_path(MID, 15, length - 1, 4.5, angle)
-            outlined(c, leaf, p["leaf"], p, width=2.5)
-        return
-    if kind == "berry":
-        for angle in (-160, -125, -90, -55, -20):
-            leaf = leaf_path(MID, 16, 12, 4.5, angle)
-            outlined(c, leaf, p["leaf"], p, width=2.5)
-        return
+FRUIT_KINDS = ("apple", "strawberry", "cherry", "banana", "grapes", "orange", "pear", "lemon", "watermelon", "prickly")
+NATURAL_FRUIT_COLORS = dict(apple="#e0443a", strawberry="#e8344a", cherry="#c0203f", banana="#f2cf3a", grapes="#8a4aa8",
+                            orange="#f28a1f", pear="#a8c43a", lemon="#f5e04a", watermelon="#f0485a", prickly="#d8467b")
+
+
+def stem_and_leaf(c, p, x, y, leaf_angle=-25, leaf_length=15):
     stem = skia.Path()
-    stem.moveTo(MID, 18)
-    stem.quadTo(MID + 1, 11, MID + 4, 7)
+    stem.moveTo(x, y + 6)
+    stem.quadTo(x + 1, y - 1, x + 4, y - 5)
     c.drawPath(stem, stroke(col(p["outline"]), 6))
-    c.drawPath(stem, stroke(col(p["leaf_dark"]), 2.5))
-    leaf = leaf_path(MID + 3, 11, 15, 5.5, -25)
+    c.drawPath(stem, stroke(col(p["stem"]), 2.5))
+    leaf = leaf_path(x + 3, y - 1, leaf_length, 5.5, leaf_angle)
     outlined(c, leaf, p["leaf"], p, width=2.5)
     vein = skia.Path()
-    vein.moveTo(MID + 5, 10)
-    vein.lineTo(MID + 15, 5.5)
+    vein.moveTo(x + 5, y - 2)
+    vein.lineTo(x + 5 + leaf_length * 0.65 * math.cos(math.radians(leaf_angle)), y - 2 + leaf_length * 0.65 * math.sin(math.radians(leaf_angle)))
     c.drawPath(vein, stroke(col(p["leaf_dark"]), 1.5))
+
+
+def crown(c, p, x, y, angles, length, width):
+    for angle in angles:
+        outlined(c, leaf_path(x, y, length, width, angle), p["leaf"], p, width=2.5)
 
 
 def fruit_body(kind):
     if kind == "prickly":
         return oval(MID - 20, 13, MID + 20, 58)
-    if kind == "berry":
+    if kind == "strawberry":
         path = skia.Path()
         path.moveTo(MID, 58)
         path.cubicTo(MID - 12, 54, MID - 22, 36, MID - 19, 24)
         path.cubicTo(MID - 16, 13, MID + 16, 13, MID + 19, 24)
         path.cubicTo(MID + 22, 36, MID + 12, 54, MID, 58)
+        path.close()
+        return path
+    if kind == "cherry":
+        return union(circle(21, 45, 11.5), circle(43, 43, 11.5))
+    if kind == "banana":
+        path = skia.Path()
+        path.moveTo(9, 25)
+        path.cubicTo(12, 54, 46, 60, 57, 30)
+        path.lineTo(54, 25)
+        path.cubicTo(42, 45, 22, 44, 16, 22)
+        path.close()
+        return path
+    if kind == "grapes":
+        centers = ((22, 25), (32, 24), (42, 25), (27, 35), (37, 35), (32, 46), (21, 35), (43, 35))
+        return union(*(circle(x, y, 8.2) for x, y in centers))
+    if kind == "orange":
+        return circle(MID, 37, 20)
+    if kind == "pear":
+        path = skia.Path()
+        path.moveTo(MID, 16)
+        path.cubicTo(MID + 8, 16, MID + 8, 27, MID + 12, 33)
+        path.cubicTo(MID + 23, 43, MID + 18, 58, MID, 58)
+        path.cubicTo(MID - 18, 58, MID - 23, 43, MID - 12, 33)
+        path.cubicTo(MID - 8, 27, MID - 8, 16, MID, 16)
+        path.close()
+        return path
+    if kind == "lemon":
+        path = skia.Path()
+        path.moveTo(7, 38)
+        path.cubicTo(12, 18, 52, 18, 57, 38)
+        path.cubicTo(52, 56, 12, 56, 7, 38)
+        path.close()
+        return union(path, circle(8, 38, 3.5), circle(56, 38, 3.5))
+    if kind == "watermelon":
+        path = skia.Path()
+        path.moveTo(5, 24)
+        path.lineTo(59, 24)
+        path.arcTo(skia.Rect(5, -3, 59, 51), 0, 180, False)
         path.close()
         return path
     path = skia.Path()
@@ -415,10 +456,63 @@ def fruit_body(kind):
     return path
 
 
-def fruit_sprite(p, squash=0.0, shadow=True):
+def fruit_inside(c, p, kind, body):
+    bounds = body.computeTightBounds()
+    rng = random.Random(7)
+    if kind in ("prickly", "strawberry"):
+        for _ in range(9):
+            x = bounds.left() + bounds.width() * rng.uniform(0.2, 0.8)
+            y = bounds.top() + bounds.height() * rng.uniform(0.3, 0.9)
+            if kind == "prickly":
+                c.drawPath(circle(x, y, 2.2), fill(col(p["fruit_dark"])))
+                c.drawPath(circle(x, y - 0.6, 1.4), fill(col(p["seed"])))
+            else:
+                c.drawPath(oval(x - 1.2, y - 2, x + 1.2, y + 2), fill(col(p["seed"])))
+    if kind == "orange":
+        for _ in range(14):
+            x, y = rng.uniform(16, 48), rng.uniform(22, 54)
+            c.drawPath(circle(x, y, 0.9), fill(col(p["fruit_dark"])))
+    if kind == "watermelon":
+        rind = skia.Path()
+        rind.addArc(skia.Rect(5, -3, 59, 51), 0, 180)
+        c.drawPath(rind, stroke(col(p["rind"]), 13))
+        c.drawPath(rind, stroke(col(p["rind_dark"]), 4))
+        for x, y in ((20, 31), (32, 35), (44, 31), (26, 40), (38, 40)):
+            c.drawPath(oval(x - 1.6, y - 2.6, x + 1.6, y + 2.6), fill(col(p["pip"])))
+    if kind == "banana":
+        c.drawPath(circle(10.5, 25, 3.2), fill(col(p["stem"])))
+        c.drawPath(circle(55.5, 27.5, 3.2), fill(col(p["stem"])))
+
+
+def fruit_top(c, p, kind):
+    if kind == "prickly":
+        crown(c, p, MID, 15, (-120, -90, -60), 11, 4.5)
+    elif kind == "strawberry":
+        crown(c, p, MID, 16, (-160, -125, -90, -55, -20), 12, 4.5)
+    elif kind == "cherry":
+        stems = skia.Path()
+        stems.moveTo(21, 35)
+        stems.quadTo(24, 18, 34, 10)
+        stems.moveTo(43, 33)
+        stems.quadTo(40, 18, 34, 10)
+        c.drawPath(stems, stroke(col(p["outline"]), 6))
+        c.drawPath(stems, stroke(col(p["stem"]), 2.5))
+        outlined(c, leaf_path(34, 10, 13, 5, -20), p["leaf"], p, width=2.5)
+    elif kind == "grapes":
+        stem_and_leaf(c, p, MID, 14, leaf_angle=-30, leaf_length=13)
+    elif kind == "orange":
+        outlined(c, leaf_path(MID, 18, 13, 5, -35), p["leaf"], p, width=2.5)
+    elif kind == "pear":
+        stem_and_leaf(c, p, MID, 13, leaf_angle=-20, leaf_length=13)
+    elif kind == "lemon":
+        outlined(c, leaf_path(MID + 2, 22, 12, 4.5, -30), p["leaf"], p, width=2.5)
+    elif kind == "apple":
+        stem_and_leaf(c, p, MID, 13)
+
+
+def fruit_sprite(p, kind, squash=0.0, shadow=True):
     cv = Canvas(CELL, CELL)
     c = cv.c
-    kind = p["fruit_kind"]
     if shadow:
         c.drawPath(oval(MID - 20 - squash * 20, 53, MID + 20 + squash * 20, 63), fill(col(p.get("fruit_shadow", shade(p)), 0.25)))
     c.save()
@@ -426,6 +520,7 @@ def fruit_sprite(p, squash=0.0, shadow=True):
     c.scale(1 + squash, 1 - squash)
     c.translate(-MID, -58)
     body = fruit_body(kind)
+    bounds = body.computeTightBounds()
     c.drawPath(body, stroke(col(p["outline"]), OUT * 2))
     c.save()
     c.clipPath(body, doAntiAlias=True)
@@ -433,20 +528,13 @@ def fruit_sprite(p, squash=0.0, shadow=True):
     shifted = skia.Path(body)
     shifted.offset(-4, -5)
     c.drawPath(shifted, fill(col(p["fruit"])))
-    c.drawPath(oval(MID - 13, 22, MID - 4, 30), fill(col(p["fruit_light"])))
-    c.drawPath(circle(MID - 2, 22.5, 1.8), fill(col(p["fruit_light"])))
-    rng = random.Random(7)
-    if kind in ("prickly", "berry"):
-        for _ in range(9):
-            x = MID + rng.uniform(-13, 13)
-            y = rng.uniform(25, 52)
-            if kind == "prickly":
-                c.drawPath(circle(x, y, 2.2), fill(col(p["outline"], 0.35)))
-                c.drawPath(circle(x, y - 0.6, 1.4), fill(col(p["seed"])))
-            else:
-                c.drawPath(oval(x - 1.2, y - 2, x + 1.2, y + 2), fill(col(p["seed"])))
+    left, top, w, h = bounds.left(), bounds.top(), bounds.width(), bounds.height()
+    c.drawPath(oval(left + w * 0.16, top + h * 0.14, left + w * 0.36, top + h * 0.3), fill(col(p["fruit_light"])))
+    fruit_inside(c, p, kind, body)
     c.restore()
-    fruit_leaves(c, p, kind)
+    if kind == "watermelon":
+        c.drawPath(body, stroke(col(p["outline"]), 2.5))
+    fruit_top(c, p, kind)
     c.restore()
     return cv
 
@@ -978,9 +1066,11 @@ def generate(name, out):
         sprites[f"snakeBodyStraight{suffix}"] = snake_body_straight(snake_layer)
         sprites[f"snakeBodyTurn{suffix}"] = snake_body_turn(snake_layer)
         sprites[f"snakeTail{suffix}"] = snake_tail(snake_layer)
-        sprites[f"fruit{suffix}"] = fruit_sprite(fruit_layer, shadow=False)
-        sprites[f"fruitBob{suffix}_0"] = fruit_sprite(fruit_layer, 0.0)
-        sprites[f"fruitBob{suffix}_1"] = fruit_sprite(fruit_layer, 0.07)
+        for fruit_kind in FRUIT_KINDS:
+            name = f"fruit{fruit_kind.capitalize()}"
+            sprites[f"{name}Still{suffix}"] = fruit_sprite(fruit_layer, fruit_kind, shadow=False)
+            sprites[f"{name}{suffix}_0"] = fruit_sprite(fruit_layer, fruit_kind, 0.0)
+            sprites[f"{name}{suffix}_1"] = fruit_sprite(fruit_layer, fruit_kind, 0.07)
     for sprite_name, cv in sprites.items():
         save(cv, skin / f"{sprite_name}.png")
     tile = ground_tile(p)
@@ -1099,7 +1189,7 @@ def post_neon(out):
 
 LASER_LAYERS = dict(
     snake=("snakeHead", "snakeHeadDead", "snakeBodyStraight", "snakeBodyTurn", "snakeTail"),
-    fruit=("fruit", "fruitBob_0", "fruitBob_1"),
+    fruit=tuple(f"fruit{kind.capitalize()}{suffix}" for kind in FRUIT_KINDS for suffix in ("Still", "_0", "_1")),
 )
 LASER_GROUPS = dict(
     ui=("button.9", "buttonDown.9", "buttonPrimary.9", "buttonPrimaryDown.9", "panel.9", "iconPause", "iconPlay",
@@ -1219,6 +1309,13 @@ PACK_JSON = """{
 }
 """
 
+def fruit_entries(p):
+    colors = p.get("fruit_colors")
+    if colors:
+        return [(kind, colors[i % len(colors)]) for i, kind in enumerate(FRUIT_KINDS)]
+    return [(kind, NATURAL_FRUIT_COLORS[kind]) for kind in FRUIT_KINDS]
+
+
 def kotlin_palette(p):
     palette = dict(
         clear=p["clear"],
@@ -1229,7 +1326,7 @@ def kotlin_palette(p):
         snake=tint(p, "snake"),
         marks=p.get("mark_color", p["snake_pattern"]),
         markShape=p.get("mark_shape", "diamond"),
-        fruits=p.get("fruit_colors", [tint(p, "fruit")]),
+        fruits=fruit_entries(p),
         snakeTakesFruitColor=p.get("snake_takes_fruit_color", False),
         snakeGlow=p.get("snake_glow", 0.0),
         fruitGlow=p.get("fruit_glow", 0.0),
@@ -1268,6 +1365,7 @@ def main():
     import preview
     preview.overview(args.out / "previews", list(PALETTES)).save(args.out / "previews/all.png")
     preview.marks_sheet(args.out, ["desert", "laser"]).save(args.out / "previews/marks.png")
+    preview.fruits_sheet(args.out, list(PALETTES)).save(args.out / "previews/fruits.png")
     if args.install:
         install(args.install, args.out / args.install)
         print(f"installed {args.install}")

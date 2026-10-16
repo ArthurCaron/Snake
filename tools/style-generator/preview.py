@@ -141,11 +141,12 @@ def tint_paint(color_hex, alpha):
     return paint
 
 
-def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False, snake_color=None, fruit_color=None):
+def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False, snake_color=None, fruit=None):
     images = {k: v.image() for k, v in sprites.items()}
     palette = kotlin_palette(p)
     snake_color = snake_color or palette["snake"]
-    fruit_color = fruit_color or palette["fruits"][0]
+    fruit_kind, fruit_color = fruit or palette["fruits"][0]
+    fruit_name = f"fruit{fruit_kind.capitalize()}"
     tile_fill(c, tile.image(), 0, BOARD_Y, PHONE_W, BOARD_H, CELL_PX * 8 / tile.width)
     grid = images["gridCell"]
     paint = skia.Paint(AntiAlias=True, Alpha=int(0.10 * 255))
@@ -155,8 +156,8 @@ def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False, snake_color=N
     c.drawImageRect(images["boardFrame"], skia.Rect(0, BOARD_Y, PHONE_W, BOARD_Y + BOARD_H), SAMPLING)
     if fruit_cell:
         draw_light(c, images["glow"], fruit_cell, FRUIT_GLOW, fruit_color, palette["fruitGlow"])
-        draw_sprite(c, images["fruitBob_0"], *fruit_cell, paint=multiply_paint(fruit_color))
-        draw_sprite(c, images["fruitBobDetail_0"], *fruit_cell)
+        draw_sprite(c, images[f"{fruit_name}_0"], *fruit_cell, paint=multiply_paint(fruit_color))
+        draw_sprite(c, images[f"{fruit_name}Detail_0"], *fruit_cell)
     parts = segments(cells)
     if dead:
         parts[0]["name"] = "snakeHeadDead"
@@ -299,8 +300,8 @@ def menu_screen(p, sprites, tile, logo_cv, skin):
     c = cv.c
     palette = kotlin_palette(p)
     fruits = palette["fruits"]
-    snake = fruits[2 % len(fruits)] if palette["snakeTakesFruitColor"] else None
-    draw_board(c, p, sprites, tile, DEMO_SNAKE, (13, 12), snake_color=snake, fruit_color=fruits[3 % len(fruits)])
+    snake = fruits[2 % len(fruits)][1] if palette["snakeTakesFruitColor"] else None
+    draw_board(c, p, sprites, tile, DEMO_SNAKE, (13, 12), snake_color=snake, fruit=fruits[3 % len(fruits)])
     dim(c, p, 0.35)
     logo_w = PHONE_W * 0.78
     logo_h = logo_w * logo_cv.height / logo_cv.width
@@ -329,7 +330,7 @@ def panel_screen(p, sprites, tile, skin):
     c = cv.c
     palette = kotlin_palette(p)
     fruits = palette["fruits"]
-    snake = fruits[3 % len(fruits)] if palette["snakeTakesFruitColor"] else None
+    snake = fruits[3 % len(fruits)][1] if palette["snakeTakesFruitColor"] else None
     draw_board(c, p, sprites, tile, GAME_SNAKE, None, dead=True, snake_color=snake)
     dim(c, p, 0.55)
     r = skia.Rect(PHONE_W * 0.14, 300, PHONE_W * 0.86, 690)
@@ -402,5 +403,28 @@ def marks_sheet(styles_folder, names):
             outlined_text(label.c, f"{name} - {shape}", 4, 30, 20, PALETTES["desert"])
             sheet.alpha_composite(label.pil(), (x, y))
             sheet.paste(cv.pil().crop((int(crop_left), int(crop_top), int(crop_right), int(crop_bottom))), (x, y + 40))
+    return sheet
+
+
+def fruits_sheet(styles_folder, names):
+    from generate import PALETTES
+    size, gap, label_width = 96, 12, 230
+    columns = len(kotlin_palette(PALETTES[names[0]])["fruits"])
+    sheet = Image.new("RGBA", (label_width + columns * (size + gap) + gap, len(names) * (size + gap) + gap), (30, 26, 28, 255))
+    for row, name in enumerate(names):
+        p = PALETTES[name]
+        folder = styles_folder / name / "textures/game/skin"
+        y = gap + row * (size + gap)
+        cell = Canvas(columns * (size + gap) + label_width, size)
+        c = cell.c
+        c.drawRect(skia.Rect(label_width, 0, label_width + columns * (size + gap), size), fill(col(p["ground"])))
+        outlined_text(c, p["label"].replace(" (other style)", ""), 8, size / 2 + 10, 26, PALETTES["desert"])
+        for column, (kind, color) in enumerate(kotlin_palette(p)["fruits"]):
+            base = FileSprite(folder / f"fruit{kind.capitalize()}_0.png").image()
+            detail = FileSprite(folder / f"fruit{kind.capitalize()}Detail_0.png").image()
+            rect = skia.Rect(label_width + column * (size + gap), 0, label_width + column * (size + gap) + size, size)
+            c.drawImageRect(base, rect, SAMPLING, multiply_paint(color))
+            c.drawImageRect(detail, rect, SAMPLING)
+        sheet.alpha_composite(cell.pil(), (0, y))
     return sheet
 
