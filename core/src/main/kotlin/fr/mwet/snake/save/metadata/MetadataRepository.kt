@@ -2,12 +2,17 @@ package fr.mwet.snake.save.metadata
 
 import fr.mwet.snake.save.metadata.serializable.CURRENT_VERSION
 import fr.mwet.snake.save.metadata.serializable.HighScoreSave
+import fr.mwet.snake.save.metadata.serializable.HighScoresSave
 import fr.mwet.snake.save.serialization.JsonStore
 
 private const val ROOT_FOLDER = "metadata"
-private const val HIGH_SCORE_FILE = "${ROOT_FOLDER}/highscore.json"
+private const val HIGH_SCORES_FILE = "${ROOT_FOLDER}/highscores.json"
+private const val MAX_HIGH_SCORES = 10
 
-data class Metadata(val highScore: HighScore)
+data class Metadata(val highScores: List<HighScore>) {
+    val highestScore: HighScore get() = highScores.firstOrNull() ?: HighScore(0)
+}
+
 data class HighScore(val score: Int)
 
 class MetadataRepository(private val jsonStore: JsonStore) {
@@ -15,22 +20,31 @@ class MetadataRepository(private val jsonStore: JsonStore) {
         private set
 
     fun submitHighScore(score: Int): Boolean {
-        if (score <= metadata.highScore.score) return false
-        save(metadata.copy(highScore = metadata.highScore.copy(score = score)))
-        return true
+        if (score <= 0) return false
+        val isNewHighScore = score > metadata.highestScore.score
+        val highScores = (metadata.highScores + HighScore(score))
+            .sortedByDescending { it.score }
+            .take(MAX_HIGH_SCORES)
+        save(metadata.copy(highScores = highScores))
+        return isNewHighScore
     }
 
     private fun load(): Metadata {
-        val highScoreSave = jsonStore.readOrCreate(HIGH_SCORE_FILE) { HighScoreSave(0, 0) }
-        val metadata = Metadata(HighScore(highScoreSave.score))
+        val highScoresSave = jsonStore.readOrCreate(HIGH_SCORES_FILE) { HighScoresSave(CURRENT_VERSION, emptyList()) }
+        val metadata = Metadata(
+            highScoresSave.highScores
+                .map { HighScore(it.score) }
+                .sortedByDescending { it.score }
+                .take(MAX_HIGH_SCORES)
+        )
         save(metadata)
         return metadata
     }
 
     private fun save(metadata: Metadata) {
         this.metadata = metadata
-        jsonStore.write(HIGH_SCORE_FILE, metadata.highScore.toSerializable())
+        jsonStore.write(HIGH_SCORES_FILE, metadata.toSerializable())
     }
 
-    private fun HighScore.toSerializable() = HighScoreSave(CURRENT_VERSION, score)
+    private fun Metadata.toSerializable() = HighScoresSave(CURRENT_VERSION, highScores.map { HighScoreSave(it.score) })
 }

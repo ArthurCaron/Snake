@@ -39,7 +39,7 @@ class MainMenuScreen(
 
     override fun show() {
         input.add(menuInput, uiLayer.stage)
-        ui.onShow(metadataRepository.metadata.highScore.score)
+        ui.onShow(metadataRepository.metadata.highestScore.score)
     }
 
     override fun hide() {

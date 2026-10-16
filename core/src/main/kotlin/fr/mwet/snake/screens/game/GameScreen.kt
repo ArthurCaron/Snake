@@ -50,7 +50,7 @@ class GameScreen(
     override fun render(delta: Float) {
         world.update(delta)
         if (world.state != gameState) onStateChanged(world.state)
-        ui.showScore(world.score, metadataRepository.metadata.highScore.score)
+        ui.showScore(world.score, metadataRepository.metadata.highestScore.score)
 
         worldLayer.render(board, delta)
         uiLayer.render(delta)
@@ -98,7 +98,7 @@ class GameScreen(
 
     private fun setEndGameResult() {
         val isNewHighScore = metadataRepository.submitHighScore(world.score)
-        ui.setEndGameResult(world.score, metadataRepository.metadata.highScore.score, isNewHighScore)
+        ui.setEndGameResult(world.score, metadataRepository.metadata.highestScore.score, isNewHighScore)
     }
 
     private fun back() {
@@ -113,7 +113,7 @@ class GameScreen(
     }
 
     private fun returnToMainMenu() {
-        metadataRepository.submitHighScore(world.score)
+        if (world.state == GameState.Paused) metadataRepository.submitHighScore(world.score)
         navigator.goToMainMenu()
     }
 
