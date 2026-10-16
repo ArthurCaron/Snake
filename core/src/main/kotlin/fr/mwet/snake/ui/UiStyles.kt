@@ -17,6 +17,7 @@ class UiStyles(fontHandler: FontHandler, textureHandler: TextureHandler) {
 
     val panel = textureHandler.ninePatch(fill = Palette.background)
     val dim = textureHandler.rectangleTexture(1, 1, Palette.dim).toDrawable()
+    val lightDim = textureHandler.rectangleTexture(1, 1, Palette.lightDim).toDrawable()
 
     val playButton = TextButton.TextButtonStyle().apply {
         up = textureHandler.rectangleWithBorderTexture(

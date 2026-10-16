@@ -8,4 +8,5 @@ object Palette {
     val text: Color = Color.WHITE
     val border: Color = Color.WHITE
     val dim: Color = Color(0f, 0f, 0f, 0.6f)
+    val lightDim: Color = Color(0f, 0f, 0f, 0.35f)
 }

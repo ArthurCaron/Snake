@@ -9,7 +9,6 @@ import fr.mwet.snake.ui.UiStyles
 
 class ReadyPrompt(styles: UiStyles) {
     private val tapToStart = Label(I18N.tapToStart(), styles.label).apply {
-        touchable = Touchable.disabled
         wrap = true
         setAlignment(Align.center)
     }
@@ -17,7 +16,8 @@ class ReadyPrompt(styles: UiStyles) {
     val actor = Table().apply {
         setFillParent(true)
         touchable = Touchable.disabled
-        bottom().padBottom(96f)
+        background = styles.lightDim
+        add(Label(I18N.ready(), styles.title)).padBottom(24f).row()
         add(tapToStart).growX().padLeft(32f).padRight(32f)
     }
 }
