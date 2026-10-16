@@ -9,6 +9,7 @@ import fr.mwet.snake.inputs.SwipeInputProcessor
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.screens.scores.ScoresScreen
+import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiStyles
 
@@ -49,6 +50,7 @@ class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator) {
     )
 
     val scoresScreen = ScoresScreen(kit, boot.metadataRepository, navigator)
+    val settingsScreen = SettingsScreen(kit, boot.settingsRepository, boot.menuEvents, navigator)
 
     init {
         boot.gameEvents.listen(soundPlayer)

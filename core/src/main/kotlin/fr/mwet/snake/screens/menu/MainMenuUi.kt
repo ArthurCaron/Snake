@@ -50,6 +50,7 @@ class MainMenuUi(
     private val secondaryButtons = Table().apply {
         defaults().space(MARGIN)
         add(smallButton(I18N.highscore()) { navigator.goToScores() })
+        add(smallButton(I18N.settings()) { navigator.goToSettings() })
     }
 
     init {
