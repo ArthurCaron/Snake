@@ -25,6 +25,14 @@ class SettingsRepository(private val jsonStore: JsonStore) {
         save(settings.copy(userPreferences = settings.userPreferences.copy(musicOn = !musicOn)))
     }
 
+    fun updateKeymappings(transform: (Keymappings) -> Keymappings) {
+        save(settings.copy(keymappings = transform(settings.keymappings)))
+    }
+
+    fun resetKeymappings() {
+        save(settings.copy(keymappings = defaultKeymappings()))
+    }
+
     private fun load(): Settings {
         val keymappingsSave = jsonStore.readOrCreate(KEYMAPPINGS_FILE) { DefaultKeymappings.defaultKeymappings() }
         keymappingsSave.restoreDefaults()
@@ -48,6 +56,13 @@ class SettingsRepository(private val jsonStore: JsonStore) {
         save(settings)
 
         return settings
+    }
+
+    private fun defaultKeymappings(): Keymappings = DefaultKeymappings.defaultKeymappings().let { defaults ->
+        Keymappings(
+            game = defaults.game.map { it.toKeymapping() },
+            general = defaults.general.map { it.toKeymapping() },
+        )
     }
 
     private fun save(settings: Settings) {

@@ -1,6 +1,8 @@
 package fr.mwet.snake
 
 import fr.mwet.snake.events.MenuEvent.LoadingFinished
+
+import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.loading.LoadingScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
@@ -26,6 +28,7 @@ class SnakeGame(private val splashWorker: SplashWorker? = null) : KtxGame<KtxScr
         addScreen(context.gameScreen)
         addScreen(context.scoresScreen)
         addScreen(context.settingsScreen)
+        addScreen(context.controlsScreen)
         boot.menuEvents.emit(LoadingFinished)
         goToMainMenu()
         removeScreen<LoadingScreen>()?.dispose()
@@ -38,6 +41,8 @@ class SnakeGame(private val splashWorker: SplashWorker? = null) : KtxGame<KtxScr
     override fun goToScores() = setScreen<ScoresScreen>()
 
     override fun goToSettings() = setScreen<SettingsScreen>()
+
+    override fun goToControls() = setScreen<ControlsScreen>()
 
     override fun dispose() {
         super.dispose()
