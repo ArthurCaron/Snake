@@ -17,7 +17,7 @@ import fr.mwet.snake.utils.SplashWorker
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
-class SnakeGame(
+class GameApp(
     private val splashWorker: SplashWorker? = null,
     private val keyNames: KeyNames = LibGdxKeyNames,
 ) : KtxGame<KtxScreen>(), Navigator, LanguageSwitcher {
