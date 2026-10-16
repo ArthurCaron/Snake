@@ -2,7 +2,7 @@ package fr.mwet.snake.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import fr.mwet.snake.SnakeGame;
+import fr.mwet.snake.GameApp;
 
 /**
  * Launches the desktop (LWJGL3) application.
@@ -14,7 +14,7 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new SnakeGame(new LwjglSplashWorker(), new GlfwKeyNames()), getDefaultConfiguration());
+        return new Lwjgl3Application(new GameApp(new LwjglSplashWorker(), new GlfwKeyNames()), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
