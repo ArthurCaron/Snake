@@ -10,7 +10,7 @@ import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.KeyNames
-import fr.mwet.snake.inputs.SwipeInputProcessor
+import fr.mwet.snake.inputs.TouchInputProcessor
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
@@ -29,7 +29,7 @@ class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigato
     private val world = GameWorld(gameEvents)
     private val gameCommandContext = GameCommandContext(world, gameEvents)
     private val gameInput = GameInputProcessor(boot.settingsRepository, gameCommandContext)
-    private val swipeInput = SwipeInputProcessor(gameCommandContext)
+    private val touchInput = TouchInputProcessor(gameCommandContext)
     private val generalInput = GeneralInputProcessor(boot.settingsRepository, menuEvents)
 
     val mainMenuScreen = MainMenuScreen(
@@ -46,7 +46,7 @@ class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigato
         world = world,
         metadataRepository = boot.metadataRepository,
         gameInput = gameInput,
-        swipeInput = swipeInput,
+        touchInput = touchInput,
         navigator = navigator,
     )
 

@@ -6,9 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.ui.UiStyles
-import ktx.actors.onClick
 
-class ReadyPrompt(styles: UiStyles, onStart: () -> Unit) {
+class ReadyPrompt(styles: UiStyles) {
     private val tapToStart = Label(I18N.tapToStart(), styles.label).apply {
         touchable = Touchable.disabled
         wrap = true
@@ -17,9 +16,8 @@ class ReadyPrompt(styles: UiStyles, onStart: () -> Unit) {
 
     val actor = Table().apply {
         setFillParent(true)
-        touchable = Touchable.enabled
+        touchable = Touchable.disabled
         bottom().padBottom(96f)
         add(tapToStart).growX().padLeft(32f).padRight(32f)
-        onClick { onStart() }
     }
 }
