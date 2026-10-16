@@ -31,7 +31,9 @@ enum class I18N : BundleLine {
     gameOver,
     victory,
     newHighScore,
-    playAgain;
+    playAgain,
+    back,
+    noScores;
 
     override val bundle: I18NBundle
         get() = i18nBundle

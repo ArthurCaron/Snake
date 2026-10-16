@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.Navigator
@@ -22,7 +23,7 @@ import ktx.actors.onEnter
 import ktx.actors.onExit
 
 private const val MARGIN = 24f
-private const val BEST_SCORE_GAP = 32f
+private const val TITLE_WIDTH_RATIO = 0.70f
 
 class MainMenuUi(
     fontHandler: FontHandler,
@@ -35,32 +36,37 @@ class MainMenuUi(
     private val styles = Styles(fontHandler, textureHandler)
     private val title = MainMenuTitle(styles)
     private val playButton = PlayButton(styles, menuEventBus, navigator)
-    private val soundButton = TextButton("", styles.smallButton).apply {
-        pad(8f, 24f, 8f, 24f)
-        onClick {
-            settingsRepository.toggleSound()
-            refreshAudioButtons()
-            menuEventBus.emit(SoundToggled)
-        }
-    }
-    private val musicButton = TextButton("", styles.smallButton).apply {
-        pad(8f, 24f, 8f, 24f)
-        onClick {
-            settingsRepository.toggleMusic()
-            refreshAudioButtons()
-            menuEventBus.emit(MusicToggled)
-        }
-    }
     private val bestScoreLabel = Label("", styles.info)
-    private var stageWidth = 0f
-    private var stageHeight = 0f
+    private val soundButton = smallButton("") {
+        settingsRepository.toggleSound()
+        refreshAudioButtons()
+        menuEventBus.emit(SoundToggled)
+    }
+    private val musicButton = smallButton("") {
+        settingsRepository.toggleMusic()
+        refreshAudioButtons()
+        menuEventBus.emit(MusicToggled)
+    }
+    private val secondaryButtons = Table().apply {
+        defaults().space(MARGIN)
+        add(smallButton(I18N.highscore()) { navigator.goToScores() })
+    }
 
     init {
-        stage.addActor(title.actor)
-        stage.addActor(playButton.actor)
-        stage.addActor(soundButton)
-        stage.addActor(musicButton)
-        stage.addActor(bestScoreLabel)
+        stage.addActor(Table().apply {
+            setFillParent(true)
+            add(title.actor).padBottom(48f).row()
+            add(playButton.actor).padBottom(MARGIN).row()
+            add(bestScoreLabel).padBottom(32f).row()
+            add(secondaryButtons)
+        })
+        stage.addActor(Table().apply {
+            setFillParent(true)
+            top().right().pad(MARGIN)
+            defaults().right().space(MARGIN)
+            add(soundButton).row()
+            add(musicButton)
+        })
     }
 
     fun onShow(bestScore: Int) {
@@ -68,7 +74,6 @@ class MainMenuUi(
         playButton.startAnimation()
         refreshAudioButtons()
         updateBestScoreLabel(bestScore)
-        layoutBestScore()
     }
 
     fun onHide() {
@@ -76,13 +81,8 @@ class MainMenuUi(
         playButton.resetAnimation()
     }
 
-    fun layout(stageWidth: Float, stageHeight: Float, boardWidth: Float) {
-        this.stageWidth = stageWidth
-        this.stageHeight = stageHeight
-        title.resetPosition(stageWidth, stageHeight, boardWidth)
-        playButton.resetPosition(stageWidth, stageHeight)
-        positionAudioButtons()
-        layoutBestScore()
+    fun layout(boardWidth: Float) {
+        title.fit(boardWidth)
     }
 
     fun startGame() {
@@ -91,15 +91,12 @@ class MainMenuUi(
 
     private fun refreshAudioButtons() {
         soundButton.setText(if (settingsRepository.soundOn) I18N.soundOn() else I18N.soundOff())
-        soundButton.pack()
         musicButton.setText(if (settingsRepository.musicOn) I18N.musicOn() else I18N.musicOff())
-        musicButton.pack()
-        positionAudioButtons()
     }
 
-    private fun positionAudioButtons() {
-        soundButton.setPosition(stageWidth - soundButton.width - MARGIN, stageHeight - soundButton.height - MARGIN)
-        musicButton.setPosition(stageWidth - musicButton.width - MARGIN, soundButton.y - musicButton.height - MARGIN)
+    private fun smallButton(text: String, onClick: () -> Unit) = TextButton(text, styles.smallButton).apply {
+        pad(8f, 24f, 8f, 24f)
+        onClick { onClick() }
     }
 
     private fun updateBestScoreLabel(bestScore: Int) {
@@ -107,12 +104,6 @@ class MainMenuUi(
         bestScoreLabel.pack()
     }
 
-    private fun layoutBestScore() {
-        bestScoreLabel.setPosition(
-            (stageWidth - bestScoreLabel.width) * 0.5f,
-            playButton.actor.y - bestScoreLabel.height - BEST_SCORE_GAP,
-        )
-    }
 }
 
 private class MainMenuTitle(styles: Styles) {
@@ -121,21 +112,13 @@ private class MainMenuTitle(styles: Styles) {
         setOrigin(Align.center)
     }
 
-    fun resetPosition(stageWidth: Float, stageHeight: Float, boardWidth: Float) {
+    fun fit(boardWidth: Float) {
         actor.setFontScale(1f)
-        actor.pack()
-
-        val targetWidth = boardWidth * 0.70f
-        if (actor.width > 0f) {
-            actor.setFontScale(targetWidth / actor.width)
+        val naturalWidth = actor.prefWidth
+        if (naturalWidth > 0f) {
+            actor.setFontScale(boardWidth * TITLE_WIDTH_RATIO / naturalWidth)
         }
-
-        actor.pack()
-        actor.setOrigin(Align.center)
-        actor.setPosition(
-            (stageWidth - actor.width) * 0.5f,
-            (stageHeight - actor.height) * 0.75f,
-        )
+        actor.invalidateHierarchy()
     }
 
     fun startAnimation() {
@@ -177,13 +160,6 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus, private val
                 delay(0.3f),
                 Actions.run { navigator.goToGame() },
             ),
-        )
-    }
-
-    fun resetPosition(stageWidth: Float, stageHeight: Float) {
-        actor.setPosition(
-            (stageWidth - actor.width) * 0.5f,
-            (stageHeight - actor.height) * 0.25f
         )
     }
 

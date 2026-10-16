@@ -6,10 +6,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import fr.mwet.snake.assets.I18N
-import fr.mwet.snake.ui.GameUiStyles
+import fr.mwet.snake.ui.UiStyles
 import ktx.actors.onClick
 
-class EndOverlay(styles: GameUiStyles, onPlayAgain: () -> Unit, onMainMenu: () -> Unit) {
+class EndOverlay(styles: UiStyles, onPlayAgain: () -> Unit, onMainMenu: () -> Unit) {
     private val title = Label("", styles.title)
     private val score = Label("", styles.label)
     private val best = Label("", styles.label)

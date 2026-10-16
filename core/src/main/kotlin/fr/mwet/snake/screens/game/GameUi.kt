@@ -6,7 +6,7 @@ import fr.mwet.snake.screens.game.overlays.EndOverlay
 import fr.mwet.snake.screens.game.overlays.GameHud
 import fr.mwet.snake.screens.game.overlays.PauseOverlay
 import fr.mwet.snake.screens.game.overlays.ReadyPrompt
-import fr.mwet.snake.ui.GameUiStyles
+import fr.mwet.snake.ui.UiStyles
 
 private const val LOST_OVERLAY_DELAY = 1f
 
@@ -18,7 +18,7 @@ interface GameUiActions {
     fun mainMenu()
 }
 
-class GameUi(styles: GameUiStyles, stage: Stage, actions: GameUiActions) {
+class GameUi(styles: UiStyles, stage: Stage, actions: GameUiActions) {
     private val readyPrompt = ReadyPrompt(styles, onStart = actions::start)
     private val hud = GameHud(styles, onPause = actions::pause)
     private val pauseOverlay = PauseOverlay(styles, onResume = actions::resume, onMainMenu = actions::mainMenu)

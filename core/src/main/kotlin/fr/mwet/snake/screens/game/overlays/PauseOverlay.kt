@@ -5,10 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import fr.mwet.snake.assets.I18N
-import fr.mwet.snake.ui.GameUiStyles
+import fr.mwet.snake.ui.UiStyles
 import ktx.actors.onClick
 
-class PauseOverlay(styles: GameUiStyles, onResume: () -> Unit, onMainMenu: () -> Unit) {
+class PauseOverlay(styles: UiStyles, onResume: () -> Unit, onMainMenu: () -> Unit) {
     private val resume = TextButton(I18N.resume(), styles.button).apply {
         pad(8f, 24f, 8f, 24f)
         onClick { onResume() }
