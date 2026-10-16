@@ -14,7 +14,7 @@ class BoardRenderer(textureHandler: TextureHandler, private val world: GameWorld
     private val background = Background(textureHandler)
     private val gridCell = textureHandler.game.skin.gridCell
     private val food = FoodRenderer(textureHandler, world.food)
-    private val snake = SnakeRenderer(textureHandler, world.snake)
+    private val snake = SnakeRenderer(textureHandler, world.snake, world.food)
     private val disintegratingSnake = DisintegratingSnakeRenderer(textureHandler, world.snake)
 
     fun reset() {

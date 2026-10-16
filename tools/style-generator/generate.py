@@ -20,6 +20,12 @@ MID = CELL / 2
 BODY = 19
 OUT = 4.0
 TILE_CELLS = 8
+EYE_FORWARD = 22
+EYE_SIDE = 14.5
+EYE_RADIUS = 9
+PUPIL_RADIUS = 4.4
+PUPIL_TRAVEL = 3.6
+PUPIL_SPRITE = 16
 TYPEFACE = skia.Typeface.MakeFromFile(str(FONT_FILE))
 
 
@@ -208,7 +214,18 @@ def head_shape(front):
     return union(rect(30, MID - BODY, CELL + 12, MID + BODY), oval(front, MID - 25, 54, MID + 25))
 
 
-def snake_head(p, dead=False):
+def pupil(c, p, x, y):
+    c.drawPath(circle(x, y, PUPIL_RADIUS), fill(col(p["pupil"])))
+    c.drawPath(circle(x - 1.5, y - 1.7, 1.5), fill(col("#ffffff")))
+
+
+def snake_pupil(p):
+    cv = Canvas(PUPIL_SPRITE, PUPIL_SPRITE)
+    pupil(cv.c, p, PUPIL_SPRITE / 2, PUPIL_SPRITE / 2)
+    return cv
+
+
+def snake_head(p, dead=False, look=None):
     cv = Canvas(CELL, CELL)
     c = cv.c
     front = 9 if dead else 4
@@ -241,7 +258,7 @@ def snake_head(p, dead=False):
     c.drawPath(chevron, stroke(col(p["outline"], 0.85), 2.5))
     c.drawPath(chevron, fill(col(p["snake_pattern"])))
     for side in (-1, 1):
-        ex, ey = front + 18, MID + side * 14.5
+        ex, ey = front + EYE_FORWARD - 4, MID + side * EYE_SIDE
         if dead:
             c.drawPath(circle(ex, ey, 8), stroke(col(p["outline"]), 6))
             c.drawPath(circle(ex, ey, 8), fill(col(p["eye"])))
@@ -252,10 +269,10 @@ def snake_head(p, dead=False):
             cross.lineTo(ex - 3.5, ey + 3.5)
             c.drawPath(cross, stroke(col(p["pupil"]), 2.6))
         else:
-            c.drawPath(circle(ex, ey, 8.5), stroke(col(p["outline"]), 6))
-            c.drawPath(circle(ex, ey, 8.5), fill(col(p["eye"])))
-            c.drawPath(circle(ex - 2.5, ey, 4.6), fill(col(p["pupil"])))
-            c.drawPath(circle(ex - 4, ey - 1.8, 1.6), fill(col("#ffffff")))
+            c.drawPath(circle(ex, ey, EYE_RADIUS), stroke(col(p["outline"]), 6))
+            c.drawPath(circle(ex, ey, EYE_RADIUS), fill(col(p["eye"])))
+            if look:
+                pupil(c, p, ex + look[0], ey + look[1])
         c.drawPath(circle(front + 5, MID + side * 4.5, 1.6), fill(col(p["outline"])))
     return cv
 
@@ -850,6 +867,7 @@ def generate(name, out):
     sprites = dict(
         snakeHead=snake_head(p),
         snakeHeadDead=snake_head(p, dead=True),
+        snakePupil=snake_pupil(p),
         snakeBodyStraight=snake_body_straight(p),
         snakeBodyTurn=snake_body_turn(p),
         snakeTail=snake_tail(p),
@@ -881,7 +899,7 @@ def generate(name, out):
     save(splash(p, tile, logo_cv), out / "root/SplashScreen.png")
     save(loading_text(p), out / "root/LoadingAssets.png")
 
-    icon = app_icon(p, sprites["snakeHead"]).pil()
+    icon = app_icon(p, snake_head(p, look=(-PUPIL_TRAVEL, 0))).pil()
     icons = out / "icons"
     for size in (16, 32, 64, 128):
         save(icon.resize((size, size), Image.LANCZOS), icons / f"icon{size}.png")

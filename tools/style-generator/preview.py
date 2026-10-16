@@ -1,8 +1,10 @@
+import math
+
 import numpy as np
 import skia
 from PIL import Image
 
-from generate import Canvas, col, fill, kotlin_palette, outlined_text, shade, text_path, tile_fill
+from generate import CELL, EYE_FORWARD, EYE_SIDE, MID, PUPIL_SPRITE, PUPIL_TRAVEL, Canvas, col, fill, kotlin_palette, outlined_text, shade, text_path, tile_fill
 
 PHONE_W = 450
 PHONE_H = 975
@@ -114,6 +116,27 @@ def draw_board(c, p, sprites, tile, cells, fruit_cell, dead=False):
         if dead and image is images["snakeHead"]:
             image = images["snakeHeadDead"]
         draw_sprite(c, image, *cell, angle)
+    if not dead and fruit_cell:
+        head, _, angle = parts[0]
+        draw_pupils(c, images["snakePupil"], head, angle, fruit_cell)
+
+
+def draw_pupils(c, image, head, angle, fruit_cell):
+    cos, sin = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    center_x, center_y = head[0] + 0.5, head[1] + 0.5
+    forward = (EYE_FORWARD - MID) / CELL
+    for side in (-1, 1):
+        lateral = side * EYE_SIDE / CELL
+        eye_x = center_x + forward * cos - lateral * sin
+        eye_y = center_y + forward * sin + lateral * cos
+        dx, dy = fruit_cell[0] + 0.5 - eye_x, fruit_cell[1] + 0.5 - eye_y
+        distance = math.hypot(dx, dy)
+        travel = PUPIL_TRAVEL / CELL
+        k = travel / distance if distance > travel else 1.0
+        x, y = eye_x + dx * k, eye_y + dy * k
+        half = PUPIL_SPRITE / CELL / 2 * CELL_PX
+        sx, sy = x * CELL_PX, BOARD_Y + (ROWS - y) * CELL_PX
+        c.drawImageRect(image, skia.Rect(sx - half, sy - half, sx + half, sy + half), SAMPLING)
 
 
 def nine(c, image_path_img, rect):
