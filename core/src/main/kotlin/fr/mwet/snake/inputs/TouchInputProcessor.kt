@@ -7,17 +7,19 @@ import kotlin.math.abs
 private const val SWIPE_THRESHOLD_SCREEN_RATIO = 0.05f
 private const val NO_POINTER = -1
 
-class SwipeInputProcessor(private val context: GameCommandContext) : KtxInputAdapter {
+class TouchInputProcessor(private val context: GameCommandContext) : KtxInputAdapter {
     private var pointer = NO_POINTER
     private var anchorX = 0
     private var anchorY = 0
+    private var swiped = false
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (this.pointer != NO_POINTER) return false
         this.pointer = pointer
         anchorX = screenX
         anchorY = screenY
-        return false
+        swiped = false
+        return true
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
@@ -25,17 +27,22 @@ class SwipeInputProcessor(private val context: GameCommandContext) : KtxInputAda
         val dx = screenX - anchorX
         val dy = screenY - anchorY
         val threshold = minOf(Gdx.graphics.width, Gdx.graphics.height) * SWIPE_THRESHOLD_SCREEN_RATIO
-        if (maxOf(abs(dx), abs(dy)) < threshold) return false
+        if (maxOf(abs(dx), abs(dy)) < threshold) return true
 
-        swipeCommand(dx, dy).execute(context)
+        directionCommand(dx, dy).execute(context)
+        swiped = true
         anchorX = screenX
         anchorY = screenY
         return true
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (pointer == this.pointer) this.pointer = NO_POINTER
-        return false
+        if (pointer != this.pointer) return false
+        if (!swiped) {
+            directionCommand(screenX - Gdx.graphics.width / 2, screenY - Gdx.graphics.height / 2).execute(context)
+        }
+        this.pointer = NO_POINTER
+        return true
     }
 
     override fun touchCancelled(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
@@ -43,7 +50,7 @@ class SwipeInputProcessor(private val context: GameCommandContext) : KtxInputAda
         return false
     }
 
-    private fun swipeCommand(dx: Int, dy: Int): GameCommand =
+    private fun directionCommand(dx: Int, dy: Int): GameCommand =
         if (abs(dx) > abs(dy)) {
             if (dx > 0) GoRightCommand else GoLeftCommand
         } else {

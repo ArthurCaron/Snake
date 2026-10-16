@@ -7,7 +7,7 @@ import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameInputProcessor
-import fr.mwet.snake.inputs.SwipeInputProcessor
+import fr.mwet.snake.inputs.TouchInputProcessor
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
@@ -20,7 +20,7 @@ class GameScreen(
     private val world: GameWorld,
     private val metadataRepository: MetadataRepository,
     private val gameInput: GameInputProcessor,
-    private val swipeInput: SwipeInputProcessor,
+    private val touchInput: TouchInputProcessor,
     private val navigator: Navigator,
 ) : KtxScreen, GameEventListener {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
@@ -30,12 +30,12 @@ class GameScreen(
     private var gameState: GameState? = null
 
     override fun show() {
-        kit.input.add(gameInput, swipeInput, uiLayer.stage)
+        kit.input.add(gameInput, uiLayer.stage, touchInput)
         startNewGame()
     }
 
     override fun hide() {
-        kit.input.remove(gameInput, swipeInput, uiLayer.stage)
+        kit.input.remove(gameInput, uiLayer.stage, touchInput)
         ui.onHide()
     }
 
@@ -110,7 +110,6 @@ class GameScreen(
     }
 
     private inner class UiActions : GameUiActions {
-        override fun start() = world.start()
         override fun pause() = world.pause()
         override fun resume() = world.resume()
         override fun playAgain() = startNewGame()
