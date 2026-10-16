@@ -48,3 +48,7 @@ tasks.register("generateAssetCatalog", JavaExec) {
 tasks.named("compileKotlin") {
   dependsOn("generateAssetCatalog")
 }
+
+tasks.named("test") {
+  inputs.dir(rootProject.file("sourceAssets/i18n"))
+}
