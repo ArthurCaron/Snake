@@ -1,7 +1,7 @@
 package fr.mwet.snake.save.metadata
 
 import fr.mwet.snake.save.serialization.JsonStore
-import fr.mwet.snake.save.serialization.TextStore
+import fr.mwet.snake.save.serialization.InMemoryTextStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,16 +23,4 @@ class MetadataRepositoryTest {
         assertEquals(200, sut.metadata.highestScore.score)
         assertEquals(listOf(200, 110, 100, 90, 80, 70, 60, 55, 50, 40).map { HighScore(it) }, sut.metadata.highScores)
     }
-}
-
-private class InMemoryTextStore : TextStore {
-    private val files = mutableMapOf<String, String>()
-    override fun read(path: String) = files[path]
-    override fun write(path: String, text: String) {
-        files[path] = text
-    }
-
-    override fun exists(path: String) = path in files
-    override fun delete(path: String) = files.remove(path) != null
-    override fun backupCorrupted(path: String) = files.remove(path) != null
 }

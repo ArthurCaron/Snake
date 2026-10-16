@@ -8,7 +8,6 @@ import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
 
-private const val GRID_ALPHA = 0.05f
 
 class BoardRenderer(textureHandler: TextureHandler, private val world: GameWorld) : WorldDrawable {
     private val background = Background(textureHandler)
@@ -41,7 +40,7 @@ class BoardRenderer(textureHandler: TextureHandler, private val world: GameWorld
     }
 
     private fun drawGrid(batch: SpriteBatch) {
-        batch.setColor(1f, 1f, 1f, GRID_ALPHA)
+        batch.color = Palette.gridLine
         for (x in 0..<WORLD_WIDTH.toInt()) {
             for (y in 0..<WORLD_HEIGHT.toInt()) {
                 batch.draw(gridCell, x.toFloat(), y.toFloat(), 1f, 1f)

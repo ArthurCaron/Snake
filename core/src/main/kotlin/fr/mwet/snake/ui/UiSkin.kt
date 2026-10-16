@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import fr.mwet.snake.assets.FontHandler
+import fr.mwet.snake.assets.FontRole
+import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.render.Palette
@@ -22,29 +24,32 @@ object UiStyle {
     const val LIGHT_DIM = "lightDim"
 }
 
-fun createUiSkin(fonts: FontHandler, textures: TextureHandler): Skin = skin {
+fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler): Skin = skin {
+    val smallFont = fonts.font(theme, FontRole.Small)
+    val bigFont = fonts.font(theme, FontRole.Big)
+    val snekTitleFont = fonts.font(theme, FontRole.SnekTitle)
     label {
-        font = fonts.smallFont
+        font = smallFont
         fontColor = Palette.text
     }
     label(UiStyle.TITLE) {
-        font = fonts.bigFont
+        font = bigFont
         fontColor = Palette.text
     }
     label(UiStyle.LOGO) {
-        font = fonts.snekTitleFont
+        font = snekTitleFont
         fontColor = Palette.text
     }
     textButton {
         up = textures.ninePatch(Palette.background)
         down = textures.ninePatch(Palette.accent)
-        font = fonts.smallFont
+        font = smallFont
         fontColor = Palette.text
     }
     textButton(UiStyle.BIG) {
         up = textures.rectangleWithBorderTexture(256, 96, border = 4, fill = Palette.background, borderColor = Palette.border).toDrawable()
         down = textures.rectangleWithBorderTexture(256, 96, border = 4, fill = Palette.accent, borderColor = Palette.border).toDrawable()
-        font = fonts.bigFont
+        font = bigFont
         fontColor = Palette.text
     }
     add(UiStyle.PANEL, textures.ninePatch(Palette.background), Drawable::class.java)

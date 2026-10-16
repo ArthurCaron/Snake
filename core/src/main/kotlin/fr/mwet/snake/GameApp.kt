@@ -7,6 +7,8 @@ import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.LibGdxKeyNames
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.screens.controls.ControlsScreen
+import fr.mwet.snake.tuning.FontTheme
+import fr.mwet.snake.screens.font.FontScreen
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
 import fr.mwet.snake.screens.loading.LoadingScreen
@@ -20,7 +22,7 @@ import ktx.app.KtxScreen
 class GameApp(
     private val splashWorker: SplashWorker? = null,
     private val keyNames: KeyNames = LibGdxKeyNames,
-) : KtxGame<KtxScreen>(), Navigator, LanguageSwitcher {
+) : KtxGame<KtxScreen>(), Navigator, LanguageSwitcher, FontSwitcher {
     private lateinit var boot: Boot
     private lateinit var assets: LoadedAssets
 
@@ -34,7 +36,7 @@ class GameApp(
     private fun onAssetsLoaded(assets: LoadedAssets) {
         this.assets = assets
         loadTranslations(boot.settingsRepository.language.locale())
-        val context = GameContext(boot, assets, keyNames, navigator = this, languages = this)
+        val context = newContext()
         registerScreens(context)
         context.menuEvents.emit(LoadingFinished)
         goToMainMenu()
@@ -43,14 +45,25 @@ class GameApp(
 
     override fun applyLanguage(language: Language) {
         boot.settingsRepository.setLanguage(language)
+        rebuildScreens(prepare = { loadTranslations(language.locale()) }, show = ::goToLanguage)
+    }
+
+    override fun applyFontTheme(theme: FontTheme) {
+        boot.settingsRepository.setFontTheme(theme)
+        rebuildScreens(show = ::goToFont)
+    }
+
+    private fun rebuildScreens(prepare: () -> Unit = {}, show: () -> Unit) {
         Gdx.app.postRunnable {
-            loadTranslations(language.locale())
+            prepare()
             val oldScreens = unregisterScreens()
-            registerScreens(GameContext(boot, assets, keyNames, navigator = this, languages = this))
-            goToLanguage()
+            registerScreens(newContext())
+            show()
             oldScreens.forEach { it.dispose() }
         }
     }
+
+    private fun newContext() = GameContext(boot, assets, keyNames, navigator = this, languages = this, fontSwitcher = this)
 
     override fun goToMainMenu() = setScreen<MainMenuScreen>()
 
@@ -64,6 +77,8 @@ class GameApp(
 
     override fun goToLanguage() = setScreen<LanguageScreen>()
 
+    override fun goToFont() = setScreen<FontScreen>()
+
     override fun dispose() {
         super.dispose()
         boot.dispose()
@@ -76,6 +91,7 @@ class GameApp(
         addScreen(context.settingsScreen)
         addScreen(context.controlsScreen)
         addScreen(context.languageScreen)
+        addScreen(context.fontScreen)
     }
 
     private fun unregisterScreens(): List<KtxScreen> = listOfNotNull(
@@ -85,5 +101,6 @@ class GameApp(
         removeScreen<SettingsScreen>(),
         removeScreen<ControlsScreen>(),
         removeScreen<LanguageScreen>(),
+        removeScreen<FontScreen>(),
     )
 }

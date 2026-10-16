@@ -7,4 +7,5 @@ interface Navigator {
     fun goToSettings()
     fun goToControls()
     fun goToLanguage()
+    fun goToFont()
 }

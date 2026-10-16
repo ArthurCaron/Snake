@@ -26,7 +26,7 @@ class Boot : DisposableRegistry by DisposableContainer() {
     val batch = SpriteBatch().alsoRegister()
     val gameViewport = GameViewport(OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT))
 
-    val assetLoading = AssetLoading().alsoRegister()
+    val assetLoading = AssetLoading(settingsRepository.fontTheme).alsoRegister()
 }
 
 private fun textStore(): TextStore = if (Gdx.app.type == WebGL) {

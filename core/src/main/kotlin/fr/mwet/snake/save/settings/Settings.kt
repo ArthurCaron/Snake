@@ -15,6 +15,7 @@ data class UserPreferences(
     val locale: String,
     val soundOn: Boolean,
     val musicOn: Boolean,
+    val fontTheme: String,
 )
 
 data class Keymappings(

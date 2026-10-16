@@ -2,19 +2,19 @@ package fr.mwet.snake
 
 import com.badlogic.gdx.assets.AssetManager
 import fr.mwet.snake.assets.FontHandler
+import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.assets.MusicHandler
 import fr.mwet.snake.assets.SoundHandler
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.registerFontLoaders
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
+import fr.mwet.snake.tuning.AssetTuning.LOADING_MILLIS_PER_FRAME
 
-private const val LOADING_MILLIS_PER_FRAME = 16
-
-class AssetLoading : DisposableRegistry by DisposableContainer() {
+class AssetLoading(initialFontTheme: FontTheme) : DisposableRegistry by DisposableContainer() {
     private val assetManager = AssetManager().apply { registerFontLoaders() }.alsoRegister()
     private val textures = TextureHandler(assetManager).alsoRegister()
-    private val fonts = FontHandler(assetManager)
+    private val fonts = FontHandler(assetManager, initialFontTheme)
     private val sounds = SoundHandler(assetManager)
     private val music = MusicHandler(assetManager)
 

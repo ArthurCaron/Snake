@@ -1,5 +1,6 @@
 package fr.mwet.snake.save.settings
 
+import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.save.serialization.JsonStore
@@ -18,6 +19,8 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
     val soundOn: Boolean get() = settings.userPreferences.soundOn
     val musicOn: Boolean get() = settings.userPreferences.musicOn
     val language: Language get() = Language.fromTag(settings.userPreferences.locale)
+    val fontTheme: FontTheme
+        get() = FontTheme.fromTag(settings.userPreferences.fontTheme) ?: DefaultUserPreferences.fontTheme
 
     fun toggleSound() {
         save(settings.copy(userPreferences = settings.userPreferences.copy(soundOn = !soundOn)))
@@ -29,6 +32,10 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
 
     fun setLanguage(language: Language) {
         save(settings.copy(userPreferences = settings.userPreferences.copy(locale = language.tag)))
+    }
+
+    fun setFontTheme(theme: FontTheme) {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(fontTheme = theme.tag)))
     }
 
     fun updateKeymappings(transform: (Keymappings) -> Keymappings) {
@@ -53,6 +60,7 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
                 locale = userPreferencesSave.locale,
                 soundOn = userPreferencesSave.soundOn,
                 musicOn = userPreferencesSave.musicOn,
+                fontTheme = userPreferencesSave.fontTheme,
             ),
             keymappings = Keymappings(
                 game = keymappingsSave.game.map { it.toKeymapping() },
@@ -91,6 +99,11 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
     private fun GeneralKeymapping.toSerializable() =
         GeneralKeymappingSave(action = GeneralActionId.from(action), keys = keys)
 
-    private fun UserPreferences.toSerializable() =
-        UserPreferencesSave(version = version, locale = locale, soundOn = soundOn, musicOn = musicOn)
+    private fun UserPreferences.toSerializable() = UserPreferencesSave(
+        version = version,
+        locale = locale,
+        soundOn = soundOn,
+        musicOn = musicOn,
+        fontTheme = fontTheme,
+    )
 }
