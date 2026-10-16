@@ -2,6 +2,7 @@ package fr.mwet.snake
 
 import fr.mwet.snake.events.MenuEvent.LoadingFinished
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import fr.mwet.snake.assets.loadTranslations
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.LibGdxKeyNames
@@ -9,6 +10,7 @@ import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.screens.font.FontScreen
+import fr.mwet.snake.transition.ScreenTransitions
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
 import fr.mwet.snake.screens.loading.LoadingScreen
@@ -25,6 +27,7 @@ class GameApp(
 ) : KtxGame<KtxScreen>(), Navigator, LanguageSwitcher, FontSwitcher {
     private lateinit var boot: Boot
     private lateinit var assets: LoadedAssets
+    private var transitions: ScreenTransitions? = null
 
     override fun create() {
         splashWorker?.closeSplashScreen()
@@ -35,22 +38,23 @@ class GameApp(
 
     private fun onAssetsLoaded(assets: LoadedAssets) {
         this.assets = assets
+        transitions = ScreenTransitions(boot.batch, assets.textures.rectangleTexture(1, 1, Color.WHITE), boot.settingsRepository)
         loadTranslations(boot.settingsRepository.language.locale())
         val context = newContext()
         registerScreens(context)
         context.menuEvents.emit(LoadingFinished)
-        goToMainMenu()
+        setScreen<MainMenuScreen>()
         removeScreen<LoadingScreen>()?.dispose()
     }
 
     override fun applyLanguage(language: Language) {
         boot.settingsRepository.setLanguage(language)
-        rebuildScreens(prepare = { loadTranslations(language.locale()) }, show = ::goToLanguage)
+        rebuildScreens(prepare = { loadTranslations(language.locale()) }, show = { setScreen<LanguageScreen>() })
     }
 
     override fun applyFontTheme(theme: FontTheme) {
         boot.settingsRepository.setFontTheme(theme)
-        rebuildScreens(show = ::goToFont)
+        rebuildScreens(show = { setScreen<FontScreen>() })
     }
 
     private fun rebuildScreens(prepare: () -> Unit = {}, show: () -> Unit) {
@@ -65,19 +69,28 @@ class GameApp(
 
     private fun newContext() = GameContext(boot, assets, keyNames, navigator = this, languages = this, fontSwitcher = this)
 
-    override fun goToMainMenu() = setScreen<MainMenuScreen>()
+    override fun goToMainMenu() = navigate { setScreen<MainMenuScreen>() }
 
-    override fun goToGame() = setScreen<GameScreen>()
+    override fun goToGame() = navigate { setScreen<GameScreen>() }
 
-    override fun goToScores() = setScreen<ScoresScreen>()
+    override fun goToScores() = navigate { setScreen<ScoresScreen>() }
 
-    override fun goToSettings() = setScreen<SettingsScreen>()
+    override fun goToSettings() = navigate { setScreen<SettingsScreen>() }
 
-    override fun goToControls() = setScreen<ControlsScreen>()
+    override fun goToControls() = navigate { setScreen<ControlsScreen>() }
 
-    override fun goToLanguage() = setScreen<LanguageScreen>()
+    override fun goToLanguage() = navigate { setScreen<LanguageScreen>() }
 
-    override fun goToFont() = setScreen<FontScreen>()
+    override fun goToFont() = navigate { setScreen<FontScreen>() }
+
+    private fun navigate(switch: () -> Unit) {
+        transitions?.start(switch) ?: switch()
+    }
+
+    override fun render() {
+        super.render()
+        transitions?.render(Gdx.graphics.deltaTime)
+    }
 
     override fun dispose() {
         super.dispose()

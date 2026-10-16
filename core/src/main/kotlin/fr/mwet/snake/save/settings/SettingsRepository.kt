@@ -5,6 +5,7 @@ import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.settings.serializable.*
+import fr.mwet.snake.transition.TransitionStyle
 
 private const val ROOT_FOLDER = "settings"
 private const val KEYMAPPINGS_FILE = "${ROOT_FOLDER}/keymappings.json"
@@ -21,6 +22,8 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
     val language: Language get() = Language.fromTag(settings.userPreferences.locale)
     val fontTheme: FontTheme
         get() = FontTheme.fromTag(settings.userPreferences.fontTheme) ?: DefaultUserPreferences.fontTheme
+    val transition: TransitionStyle
+        get() = TransitionStyle.fromTag(settings.userPreferences.transition)
 
     fun toggleSound() {
         save(settings.copy(userPreferences = settings.userPreferences.copy(soundOn = !soundOn)))
@@ -36,6 +39,10 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
 
     fun setFontTheme(theme: FontTheme) {
         save(settings.copy(userPreferences = settings.userPreferences.copy(fontTheme = theme.tag)))
+    }
+
+    fun setTransition(style: TransitionStyle) {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(transition = style.tag)))
     }
 
     fun updateKeymappings(transform: (Keymappings) -> Keymappings) {
@@ -61,6 +68,7 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
                 soundOn = userPreferencesSave.soundOn,
                 musicOn = userPreferencesSave.musicOn,
                 fontTheme = userPreferencesSave.fontTheme,
+                transition = userPreferencesSave.transition,
             ),
             keymappings = Keymappings(
                 game = keymappingsSave.game.map { it.toKeymapping() },
@@ -105,5 +113,6 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
         soundOn = soundOn,
         musicOn = musicOn,
         fontTheme = fontTheme,
+        transition = transition,
     )
 }

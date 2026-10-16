@@ -33,3 +33,8 @@ language,Language,Langue
 languageSystem,Device language,Langue de l'appareil
 ready,Ready?,Prêt ?
 font,Font,Police
+transition,Transition: {0},Transition : {0}
+transitionNone,none,aucune
+transitionFade,fade,fondu
+transitionSlide,slide,glissement
+transitionSnake,snake,serpent

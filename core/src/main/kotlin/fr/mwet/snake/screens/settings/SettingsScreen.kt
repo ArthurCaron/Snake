@@ -9,6 +9,8 @@ import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
+import fr.mwet.snake.transition.TransitionStyle
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.app.KtxScreen
 
 class SettingsScreen(
@@ -18,16 +20,20 @@ class SettingsScreen(
     navigator: Navigator,
 ) : KtxScreen {
     private val page = MenuPage(kit, I18N.settings(), onBack = navigator::goToMainMenu)
-    private val soundButton = with(kit.widgets) { page.content.menuButton("", onClick = ::toggleSound) { it.fillX().row() } }
-    private val musicButton = with(kit.widgets) { page.content.menuButton("", onClick = ::toggleMusic) { it.fillX().row() } }
+    private val soundButton: TextButton
+    private val musicButton: TextButton
+    private val transitionButton: TextButton
 
     init {
         with(kit.widgets) {
+            soundButton = page.content.menuButton("", onClick = ::toggleSound) { it.fillX().row() }
+            musicButton = page.content.menuButton("", onClick = ::toggleMusic) { it.fillX().row() }
             if (Gdx.app.type != Android) {
                 page.content.menuButton(I18N.controls(), onClick = navigator::goToControls) { it.fillX().row() }
             }
             page.content.menuButton(I18N.language(), onClick = navigator::goToLanguage) { it.fillX().row() }
             page.content.menuButton(I18N.font(), onClick = navigator::goToFont) { it.fillX().row() }
+            transitionButton = page.content.menuButton("", onClick = ::nextTransition) { it.fillX().row() }
         }
     }
 
@@ -43,9 +49,25 @@ class SettingsScreen(
         menuEvents.emit(MusicToggled)
     }
 
+    private fun nextTransition() {
+        settingsRepository.setTransition(settingsRepository.transition.next())
+        refreshTransitionButton()
+    }
+
+    private fun refreshTransitionButton() {
+        val name = when (settingsRepository.transition) {
+            TransitionStyle.None -> I18N.transitionNone()
+            TransitionStyle.Fade -> I18N.transitionFade()
+            TransitionStyle.Slide -> I18N.transitionSlide()
+            TransitionStyle.SnakeWipe -> I18N.transitionSnake()
+        }
+        transitionButton.setText(I18N.transition(name))
+    }
+
     override fun show() {
         page.show()
         refreshAudioButtons()
+        refreshTransitionButton()
     }
 
     override fun hide() = page.hide()

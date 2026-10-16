@@ -112,12 +112,12 @@ class GameScreen(
 
     private fun resumeGame() {
         if (world.state == GameState.Paused) world.resume()
-        if (world.state == GameState.Lost || world.state == GameState.Won) startNewGame()
+        else if (world.state == GameState.Lost || world.state == GameState.Won) startNewGame()
     }
 
     private fun back() {
         if (world.state.isPlaying()) world.pause()
-        if (world.state.isStopped()) returnToMainMenu()
+        else if (world.state.isStopped()) returnToMainMenu()
     }
 
     private fun togglePause() {

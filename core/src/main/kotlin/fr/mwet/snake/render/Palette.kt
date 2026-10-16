@@ -11,5 +11,6 @@ object Palette {
     val lightDim: Color = Color(0f, 0f, 0f, 0.35f)
     val fontFill: Color = text
     val fontOutline: Color = accent
+    val transitionFade: Color = Color.BLACK
     val gridLine: Color = Color(1f, 1f, 1f, 0.05f)
 }
