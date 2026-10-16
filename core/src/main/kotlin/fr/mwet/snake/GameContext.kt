@@ -15,10 +15,9 @@ class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator) {
     private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
     private val world = GameWorld(boot.gameEvents)
     private val gameCommandContext = GameCommandContext(world, boot.gameEvents)
-    private val gameInput = GameInputProcessor(boot.settingsRepository.settings.keymappings.game, gameCommandContext)
+    private val gameInput = GameInputProcessor(boot.settingsRepository, gameCommandContext)
     private val swipeInput = SwipeInputProcessor(gameCommandContext)
-    private val generalInput =
-        GeneralInputProcessor(boot.settingsRepository.settings.keymappings.general, boot.menuEvents)
+    private val generalInput = GeneralInputProcessor(boot.settingsRepository, boot.menuEvents)
 
     val mainMenuScreen = MainMenuScreen(
         menuEventBus = boot.menuEvents,
