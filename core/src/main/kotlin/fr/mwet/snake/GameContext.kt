@@ -1,6 +1,10 @@
 package fr.mwet.snake
 
 import fr.mwet.snake.assets.SoundPlayer
+import fr.mwet.snake.events.GameEventBus
+import fr.mwet.snake.events.GameEventBusImpl
+import fr.mwet.snake.events.MenuEventBus
+import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
@@ -8,24 +12,27 @@ import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.SwipeInputProcessor
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.game.GameScreen
+import fr.mwet.snake.screens.language.LanguageScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiStyles
 
-class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator) {
+class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator, languages: LanguageSwitcher) {
+    private val gameEvents: GameEventBus = GameEventBusImpl()
+    val menuEvents: MenuEventBus = MenuEventBusImpl()
     private val styles = UiStyles(assets.fonts, assets.textures)
     private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, styles, boot.input)
     private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
-    private val world = GameWorld(boot.gameEvents)
-    private val gameCommandContext = GameCommandContext(world, boot.gameEvents)
+    private val world = GameWorld(gameEvents)
+    private val gameCommandContext = GameCommandContext(world, gameEvents)
     private val gameInput = GameInputProcessor(boot.settingsRepository, gameCommandContext)
     private val swipeInput = SwipeInputProcessor(gameCommandContext)
-    private val generalInput = GeneralInputProcessor(boot.settingsRepository, boot.menuEvents)
+    private val generalInput = GeneralInputProcessor(boot.settingsRepository, menuEvents)
 
     val mainMenuScreen = MainMenuScreen(
-        menuEventBus = boot.menuEvents,
+        menuEventBus = menuEvents,
         fontHandler = assets.fonts,
         textureHandler = assets.textures,
         batch = boot.batch,
@@ -51,13 +58,14 @@ class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator) {
     )
 
     val scoresScreen = ScoresScreen(kit, boot.metadataRepository, navigator)
-    val settingsScreen = SettingsScreen(kit, boot.settingsRepository, boot.menuEvents, navigator)
+    val settingsScreen = SettingsScreen(kit, boot.settingsRepository, menuEvents, navigator)
     val controlsScreen = ControlsScreen(kit, boot.settingsRepository, navigator)
+    val languageScreen = LanguageScreen(kit, boot.settingsRepository, languages, navigator)
 
     init {
-        boot.gameEvents.listen(soundPlayer)
-        boot.menuEvents.listen(soundPlayer)
-        boot.menuEvents.listen(mainMenuScreen)
-        boot.gameEvents.listen(gameScreen)
+        gameEvents.listen(soundPlayer)
+        menuEvents.listen(soundPlayer)
+        menuEvents.listen(mainMenuScreen)
+        gameEvents.listen(gameScreen)
     }
 }

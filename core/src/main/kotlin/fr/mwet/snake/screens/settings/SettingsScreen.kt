@@ -27,11 +27,14 @@ class SettingsScreen(
         refreshAudioButtons()
         menuEvents.emit(MusicToggled)
     }
+    private val controlsButton = kit.styles.textButton(I18N.controls()) { navigator.goToControls() }
+    private val languageButton = kit.styles.textButton(I18N.language()) { navigator.goToLanguage() }
 
     init {
         page.content.add(soundButton).fillX().row()
         page.content.add(musicButton).fillX().row()
-        page.content.add(kit.styles.textButton(I18N.controls()) { navigator.goToControls() }).fillX().row()
+        page.content.add(controlsButton).fillX().row()
+        page.content.add(languageButton).fillX().row()
     }
 
     override fun show() {

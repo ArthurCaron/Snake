@@ -6,4 +6,5 @@ interface Navigator {
     fun goToScores()
     fun goToSettings()
     fun goToControls()
+    fun goToLanguage()
 }
