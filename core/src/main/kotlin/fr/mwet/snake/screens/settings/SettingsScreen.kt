@@ -9,7 +9,7 @@ import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
-import fr.mwet.snake.ui.textButton
+import fr.mwet.snake.ui.menuButton
 import ktx.app.KtxScreen
 
 class SettingsScreen(
@@ -19,24 +19,26 @@ class SettingsScreen(
     navigator: Navigator,
 ) : KtxScreen {
     private val page = MenuPage(kit, I18N.settings(), onBack = navigator::goToMainMenu)
-    private val soundButton = kit.styles.textButton("") {
+    private val soundButton = page.content.menuButton("", onClick = ::toggleSound) { it.fillX().row() }
+    private val musicButton = page.content.menuButton("", onClick = ::toggleMusic) { it.fillX().row() }
+
+    init {
+        if (Gdx.app.type != Android) {
+            page.content.menuButton(I18N.controls(), onClick = navigator::goToControls) { it.fillX().row() }
+        }
+        page.content.menuButton(I18N.language(), onClick = navigator::goToLanguage) { it.fillX().row() }
+    }
+
+    private fun toggleSound() {
         settingsRepository.toggleSound()
         refreshAudioButtons()
         menuEvents.emit(SoundToggled)
     }
-    private val musicButton = kit.styles.textButton("") {
+
+    private fun toggleMusic() {
         settingsRepository.toggleMusic()
         refreshAudioButtons()
         menuEvents.emit(MusicToggled)
-    }
-    private val controlsButton = kit.styles.textButton(I18N.controls()) { navigator.goToControls() }
-    private val languageButton = kit.styles.textButton(I18N.language()) { navigator.goToLanguage() }
-
-    init {
-        page.content.add(soundButton).fillX().row()
-        page.content.add(musicButton).fillX().row()
-        if (Gdx.app.type != Android) page.content.add(controlsButton).fillX().row()
-        page.content.add(languageButton).fillX().row()
     }
 
     override fun show() {

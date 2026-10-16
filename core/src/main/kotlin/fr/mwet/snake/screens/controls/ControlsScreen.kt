@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
-import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.generated.assets.I18N
@@ -22,8 +21,13 @@ import fr.mwet.snake.save.settings.removeGameKey
 import fr.mwet.snake.save.settings.removeGeneralKey
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
-import fr.mwet.snake.ui.textButton
+import fr.mwet.snake.ui.UiStyle
+import fr.mwet.snake.ui.menuButton
 import ktx.app.KtxScreen
+import ktx.scene2d.actor
+import ktx.scene2d.label
+import ktx.scene2d.scene2d
+import ktx.scene2d.table
 
 private const val NO_KEY = "-"
 private const val ADD_KEY = "+"
@@ -37,7 +41,7 @@ class ControlsScreen(
     navigator: Navigator,
 ) : KtxScreen {
     private val page = MenuPage(kit, I18N.controls(), onBack = navigator::goToSettings)
-    private val rows = listOf(
+    private val actionRows = listOf(
         gameRow(GameActionId.GoUp, I18N.actionGoUp()),
         gameRow(GameActionId.GoRight, I18N.actionGoRight()),
         gameRow(GameActionId.GoDown, I18N.actionGoDown()),
@@ -50,11 +54,7 @@ class ControlsScreen(
     private var capturing: ActionRow? = null
 
     private val removeKeyWidth = REMOVE_KEY_GAP + removeKeyButton {}.prefWidth
-    private val resetButton = kit.styles.textButton(I18N.resetControls()) {
-        stopCapture()
-        settingsRepository.resetKeymappings()
-        refresh()
-    }
+    private val resetButton = menuButton(I18N.resetControls(), onClick = ::resetControls)
 
     override fun show() {
         page.show()
@@ -71,6 +71,12 @@ class ControlsScreen(
     override fun render(delta: Float) = page.render(delta)
 
     override fun dispose() = page.dispose()
+
+    private fun resetControls() {
+        stopCapture()
+        settingsRepository.resetKeymappings()
+        refresh()
+    }
 
     private fun startCapture(row: ActionRow) {
         if (capturing == null) kit.input.addFirst(keyCapture)
@@ -96,35 +102,35 @@ class ControlsScreen(
 
     private fun refresh() {
         val keymappings = settingsRepository.settings.keymappings
-        val keyColumns = rows.maxOf { maxOf(1, it.keys(keymappings).size) }
-        val content = page.content
-        content.clearChildren()
-        rows.forEach { row ->
-            val keys = row.keys(keymappings)
-            content.add(row.titleLabel).left().padRight(12f)
-            when {
-                row == capturing -> content.add(Label(I18N.pressAKey(), kit.styles.label)).left().colspan(keyColumns)
-                keys.isEmpty() -> content.add(Label(NO_KEY, kit.styles.label)).left().colspan(keyColumns)
-                else -> {
-                    keys.forEach { key -> keyFrame(row, key).let { content.add(it).left().minWidth(it.prefWidth + removeKeyWidth) } }
-                    repeat(keyColumns - keys.size) { content.add() }
+        val keyColumns = actionRows.maxOf { maxOf(1, it.keys(keymappings).size) }
+        page.content.apply {
+            clearChildren()
+            actionRows.forEach { row ->
+                val keys = row.keys(keymappings)
+                actor(row.titleLabel) { it.left().padRight(12f) }
+                when {
+                    row == capturing -> label(I18N.pressAKey()) { it.left().colspan(keyColumns) }
+                    keys.isEmpty() -> label(NO_KEY) { it.left().colspan(keyColumns) }
+                    else -> {
+                        keys.forEach { key -> keyFrame(row, key).let { frame -> actor(frame) { it.left().minWidth(frame.prefWidth + removeKeyWidth) } } }
+                        repeat(keyColumns - keys.size) { add() }
+                    }
                 }
+                actor(row.addButton) { it.row() }
             }
-            content.add(row.addButton)
-            content.row()
+            actor(resetButton) { it.colspan(keyColumns + 2).padTop(12f) }
         }
-        content.add(resetButton).colspan(keyColumns + 2).padTop(12f)
     }
 
-    private fun removeKeyButton(onClick: () -> Unit) = kit.styles.textButton(REMOVE_KEY, onClick).apply { pad(0f, 8f, 0f, 8f) }
+    private fun removeKeyButton(onClick: () -> Unit) = menuButton(REMOVE_KEY, onClick).apply { pad(0f, 8f, 0f, 8f) }
 
     private fun keyFrame(row: ActionRow, key: Int): Table {
         val removeButton = removeKeyButton { remove(row, key) }
-        return Table().apply {
-            background = kit.styles.panel
+        return scene2d.table {
+            background(UiStyle.PANEL)
             touchable = Touchable.enabled
             pad(4f, 12f, 4f, 12f)
-            add(Label(keyNames.nameOf(key) ?: "?", kit.styles.label))
+            label(keyNames.nameOf(key) ?: "?")
             addListener(RevealOnHover(add(), removeButton))
         }
     }
@@ -149,8 +155,8 @@ class ControlsScreen(
         val addKey: (Keymappings, Int) -> Keymappings,
         val removeKey: (Keymappings, Int) -> Keymappings,
     ) {
-        val titleLabel = Label(title, kit.styles.label)
-        val addButton = kit.styles.textButton(ADD_KEY) { startCapture(this) }
+        val titleLabel = scene2d.label(title)
+        val addButton = menuButton(ADD_KEY, onClick = { startCapture(this) })
     }
 
     private inner class KeyCapture : InputAdapter() {

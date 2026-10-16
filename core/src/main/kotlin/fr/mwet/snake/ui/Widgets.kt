@@ -1,11 +1,20 @@
 package fr.mwet.snake.ui
 
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.actors.onClick
+import ktx.scene2d.KTextButton
+import ktx.scene2d.KWidget
+import ktx.scene2d.scene2d
+import ktx.scene2d.textButton
 
-fun UiStyles.textButton(text: String, onClick: () -> Unit) = button.textButton(text, onClick)
+fun <S> KWidget<S>.menuButton(text: String, onClick: () -> Unit, init: KTextButton.(S) -> Unit = {}): KTextButton =
+    textButton(text) { cell ->
+        pad(8f, 24f, 8f, 24f)
+        onClick { onClick() }
+        init(cell)
+    }
 
-fun TextButton.TextButtonStyle.textButton(text: String, onClick: () -> Unit) = TextButton(text, this).apply {
-    pad(8f, 24f, 8f, 24f)
-    onClick { onClick() }
-}
+fun menuButton(text: String, onClick: () -> Unit): KTextButton =
+    scene2d.textButton(text) {
+        pad(8f, 24f, 8f, 24f)
+        onClick { onClick() }
+    }

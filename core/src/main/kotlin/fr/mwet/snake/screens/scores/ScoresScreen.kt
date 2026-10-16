@@ -1,14 +1,14 @@
 package fr.mwet.snake.screens.scores
 
-import com.badlogic.gdx.scenes.scene2d.ui.Label
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
 import ktx.app.KtxScreen
+import ktx.scene2d.label
 
-class ScoresScreen(private val kit: UiKit, private val metadataRepository: MetadataRepository, navigator: Navigator) : KtxScreen {
+class ScoresScreen(kit: UiKit, private val metadataRepository: MetadataRepository, navigator: Navigator) : KtxScreen {
     private val page = MenuPage(kit, I18N.highscore(), onBack = navigator::goToMainMenu)
 
     override fun show() {
@@ -25,17 +25,17 @@ class ScoresScreen(private val kit: UiKit, private val metadataRepository: Metad
     override fun dispose() = page.dispose()
 
     private fun fillTable() {
-        val table = page.content
-        table.clear()
-        val highScores = metadataRepository.metadata.highScores
-        if (highScores.isEmpty()) {
-            table.add(Label(I18N.noScores(), kit.styles.label))
-            return
-        }
-        highScores.forEachIndexed { index, highScore ->
-            table.add(Label("${index + 1}.", kit.styles.label)).right().padRight(32f)
-            table.add(Label(highScore.score.toString(), kit.styles.label)).right()
-            table.row()
+        page.content.apply {
+            clear()
+            val highScores = metadataRepository.metadata.highScores
+            if (highScores.isEmpty()) {
+                label(I18N.noScores())
+                return
+            }
+            highScores.forEachIndexed { index, highScore ->
+                label("${index + 1}.") { it.right().padRight(32f) }
+                label(highScore.score.toString()) { it.right().row() }
+            }
         }
     }
 }

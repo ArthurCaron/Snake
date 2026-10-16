@@ -25,7 +25,7 @@ class GameScreen(
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
     private val board = BoardRenderer(kit.textures, world)
-    private val ui = GameUi(kit.styles, uiLayer.stage, UiActions())
+    private val ui = GameUi(uiLayer.stage, UiActions())
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
             onStartGame = {

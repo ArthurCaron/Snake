@@ -27,7 +27,7 @@ class MainMenuScreen(
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
     private val background = Background(kit.textures)
-    private val ui = MainMenuUi(kit, uiLayer.stage, menuEventBus, navigator, settingsRepository)
+    private val ui = MainMenuUi(uiLayer.stage, menuEventBus, navigator, settingsRepository)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
             onStartGame = {
