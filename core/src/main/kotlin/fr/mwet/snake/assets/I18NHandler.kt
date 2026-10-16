@@ -33,7 +33,18 @@ enum class I18N : BundleLine {
     newHighScore,
     playAgain,
     back,
-    noScores;
+    noScores,
+    controls,
+    change,
+    resetControls,
+    pressAKey,
+    actionGoUp,
+    actionGoRight,
+    actionGoDown,
+    actionGoLeft,
+    actionPause,
+    actionBack,
+    actionStartGame;
 
     override val bundle: I18NBundle
         get() = i18nBundle

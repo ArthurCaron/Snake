@@ -5,4 +5,5 @@ interface Navigator {
     fun goToGame()
     fun goToScores()
     fun goToSettings()
+    fun goToControls()
 }

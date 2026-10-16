@@ -31,6 +31,7 @@ class SettingsScreen(
     init {
         page.content.add(soundButton).fillX().row()
         page.content.add(musicButton).fillX().row()
+        page.content.add(kit.styles.textButton(I18N.controls()) { navigator.goToControls() }).fillX().row()
     }
 
     override fun show() {

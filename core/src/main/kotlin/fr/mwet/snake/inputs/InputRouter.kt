@@ -15,5 +15,7 @@ class InputRouter {
 
     fun add(vararg processors: InputProcessor) = processors.forEach { multiplexer.addProcessor(it) }
 
+    fun addFirst(processor: InputProcessor) = multiplexer.addProcessor(0, processor)
+
     fun remove(vararg processors: InputProcessor) = processors.forEach { multiplexer.removeProcessor(it) }
 }
