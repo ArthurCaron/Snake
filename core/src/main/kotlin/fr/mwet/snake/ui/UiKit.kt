@@ -10,7 +10,6 @@ class UiKit(
     val batch: SpriteBatch,
     val gameViewport: GameViewport,
     val textures: TextureHandler,
-    val styles: UiStyles,
     val input: InputRouter,
     val settingsRepository: SettingsRepository,
 )

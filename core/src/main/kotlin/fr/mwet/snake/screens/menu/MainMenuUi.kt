@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.Navigator
@@ -14,57 +13,54 @@ import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
-import fr.mwet.snake.ui.UiKit
-import fr.mwet.snake.ui.UiStyles
-import fr.mwet.snake.ui.textButton
+import fr.mwet.snake.ui.UiStyle
+import fr.mwet.snake.ui.menuButton
 import ktx.actors.onClick
 import ktx.actors.onEnter
 import ktx.actors.onExit
+import ktx.scene2d.actor
+import ktx.scene2d.actors
+import ktx.scene2d.label
+import ktx.scene2d.scene2d
+import ktx.scene2d.table
+import ktx.scene2d.textButton
 
 private const val MARGIN = 24f
 private const val TITLE_WIDTH_RATIO = 0.70f
 
 class MainMenuUi(
-    kit: UiKit,
     stage: Stage,
-    menuEventBus: MenuEventBus,
+    private val menuEventBus: MenuEventBus,
     navigator: Navigator,
     private val settingsRepository: SettingsRepository,
 ) {
-    private val title = MainMenuTitle(kit.styles)
-    private val playButton = PlayButton(kit.styles, menuEventBus, navigator)
-    private val bestScoreLabel = Label("", kit.styles.label)
-    private val soundButton = kit.styles.button.textButton("") {
-        settingsRepository.toggleSound()
-        refreshAudioButtons()
-        menuEventBus.emit(SoundToggled)
-    }
-    private val musicButton = kit.styles.button.textButton("") {
-        settingsRepository.toggleMusic()
-        refreshAudioButtons()
-        menuEventBus.emit(MusicToggled)
-    }
-    private val secondaryButtons = Table().apply {
-        defaults().space(MARGIN)
-        add(kit.styles.button.textButton(I18N.highscore()) { navigator.goToScores() })
-        add(kit.styles.button.textButton(I18N.settings()) { navigator.goToSettings() })
-    }
+    private val title = MainMenuTitle()
+    private val playButton = PlayButton(menuEventBus, navigator)
+    private var bestScoreLabel: Label
+    private var soundButton: TextButton
+    private var musicButton: TextButton
 
     init {
-        stage.addActor(Table().apply {
-            setFillParent(true)
-            add(title.actor).padBottom(48f).row()
-            add(playButton.actor).padBottom(MARGIN).row()
-            add(bestScoreLabel).padBottom(32f).row()
-            add(secondaryButtons)
-        })
-        stage.addActor(Table().apply {
-            setFillParent(true)
-            top().right().pad(MARGIN)
-            defaults().right().space(MARGIN)
-            add(soundButton).row()
-            add(musicButton)
-        })
+        stage.actors {
+            table {
+                setFillParent(true)
+                actor(title.actor) { it.padBottom(48f).row() }
+                actor(playButton.actor) { it.padBottom(MARGIN).row() }
+                bestScoreLabel = label("") { it.padBottom(32f).row() }
+                table {
+                    defaults().space(MARGIN)
+                    menuButton(I18N.highscore(), onClick = navigator::goToScores)
+                    menuButton(I18N.settings(), onClick = navigator::goToSettings)
+                }
+            }
+            table {
+                setFillParent(true)
+                top().right().pad(MARGIN)
+                defaults().right().space(MARGIN)
+                soundButton = menuButton("", onClick = ::toggleSound) { it.row() }
+                musicButton = menuButton("", onClick = ::toggleMusic)
+            }
+        }
     }
 
     fun onShow(bestScore: Int) {
@@ -87,6 +83,18 @@ class MainMenuUi(
         playButton.startGame()
     }
 
+    private fun toggleSound() {
+        settingsRepository.toggleSound()
+        refreshAudioButtons()
+        menuEventBus.emit(SoundToggled)
+    }
+
+    private fun toggleMusic() {
+        settingsRepository.toggleMusic()
+        refreshAudioButtons()
+        menuEventBus.emit(MusicToggled)
+    }
+
     private fun refreshAudioButtons() {
         soundButton.setText(if (settingsRepository.soundOn) I18N.soundOn() else I18N.soundOff())
         musicButton.setText(if (settingsRepository.musicOn) I18N.musicOn() else I18N.musicOff())
@@ -96,11 +104,10 @@ class MainMenuUi(
         bestScoreLabel.setText(I18N.best(bestScore))
         bestScoreLabel.pack()
     }
-
 }
 
-private class MainMenuTitle(uiStyles: UiStyles) {
-    val actor = Label("Snek", uiStyles.mainTitle).apply {
+private class MainMenuTitle {
+    val actor = scene2d.label("Snek", UiStyle.LOGO) {
         setAlignment(Align.center)
         setOrigin(Align.center)
     }
@@ -122,15 +129,11 @@ private class MainMenuTitle(uiStyles: UiStyles) {
     }
 }
 
-private class PlayButton(
-    uiStyles: UiStyles,
-    menuEventBus: MenuEventBus,
-    private val navigator: Navigator
-) {
+private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navigator) {
     private var clicked = false
     private var hoverAction: Action? = null
 
-    val actor = TextButton(I18N.play(), uiStyles.playButton).apply {
+    val actor = scene2d.textButton(I18N.play(), UiStyle.BIG) {
         setOrigin(Align.center)
 
         val replaceHoverAction = { action: Action ->

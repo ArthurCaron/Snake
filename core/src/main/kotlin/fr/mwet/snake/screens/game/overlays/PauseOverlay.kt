@@ -1,36 +1,25 @@
 package fr.mwet.snake.screens.game.overlays
 
 import com.badlogic.gdx.scenes.scene2d.Touchable
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import fr.mwet.snake.generated.assets.I18N
-import fr.mwet.snake.ui.UiStyles
-import ktx.actors.onClick
+import fr.mwet.snake.ui.UiStyle
+import fr.mwet.snake.ui.menuButton
+import ktx.scene2d.label
+import ktx.scene2d.scene2d
+import ktx.scene2d.table
 
-class PauseOverlay(styles: UiStyles, onResume: () -> Unit, onMainMenu: () -> Unit) {
-    private val resume = TextButton(I18N.resume(), styles.button).apply {
-        pad(8f, 24f, 8f, 24f)
-        onClick { onResume() }
-    }
-    private val mainMenu = TextButton(I18N.mainMenu(), styles.button).apply {
-        pad(8f, 24f, 8f, 24f)
-        onClick { onMainMenu() }
-    }
-
-    private val panel = Table().apply {
-        background = styles.panel
-        pad(32f)
-        defaults().space(16f).fillX()
-        add(Label(I18N.paused(), styles.title)).row()
-        add(resume).row()
-        add(mainMenu)
-    }
-
-    val actor = Table().apply {
+class PauseOverlay(onResume: () -> Unit, onMainMenu: () -> Unit) {
+    val actor = scene2d.table {
         setFillParent(true)
         touchable = Touchable.enabled
-        background = styles.dim
-        add(panel)
+        background(UiStyle.DIM)
+        table {
+            background(UiStyle.PANEL)
+            pad(32f)
+            defaults().space(16f).fillX()
+            label(I18N.paused(), UiStyle.TITLE) { it.row() }
+            menuButton(I18N.resume(), onClick = onResume) { it.row() }
+            menuButton(I18N.mainMenu(), onClick = onMainMenu)
+        }
     }
 }

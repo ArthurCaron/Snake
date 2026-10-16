@@ -10,6 +10,8 @@ dependencies {
   api "io.github.libktx:ktx-collections:$ktxVersion"
   api "io.github.libktx:ktx-graphics:$ktxVersion"
   api "io.github.libktx:ktx-i18n:$ktxVersion"
+  api "io.github.libktx:ktx-scene2d:$ktxVersion"
+  api "io.github.libktx:ktx-style:$ktxVersion"
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
   if(enableGraalNative == 'true') {

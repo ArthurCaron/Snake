@@ -17,13 +17,17 @@ import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.ui.UiKit
-import fr.mwet.snake.ui.UiStyles
+import fr.mwet.snake.ui.createUiSkin
+import ktx.scene2d.Scene2DSkin
 
 class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigator: Navigator, languages: LanguageSwitcher) {
+    init {
+        Scene2DSkin.defaultSkin = createUiSkin(assets.fonts, assets.textures)
+    }
+
     private val gameEvents: GameEventBus = GameEventBusImpl()
     val menuEvents: MenuEventBus = MenuEventBusImpl()
-    private val styles = UiStyles(assets.fonts, assets.textures)
-    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, styles, boot.input, boot.settingsRepository)
+    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, boot.input, boot.settingsRepository)
     private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
     private val world = GameWorld(gameEvents)
     private val gameCommandContext = GameCommandContext(world)

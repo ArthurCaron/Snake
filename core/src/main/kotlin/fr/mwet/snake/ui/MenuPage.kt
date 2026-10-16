@@ -1,13 +1,15 @@
 package fr.mwet.snake.ui
 
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Disposable
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.inputs.GeneralCommandContext
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
+import ktx.scene2d.KTableWidget
+import ktx.scene2d.actors
+import ktx.scene2d.label
+import ktx.scene2d.table
 
 class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> Unit) : Disposable {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
@@ -22,21 +24,24 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
         )
     )
 
-    val content = Table().apply { defaults().space(12f) }
+    var content: KTableWidget
+        private set
 
     init {
-        val panel = Table().apply {
-            background = kit.styles.panel
-            pad(32f)
-            defaults().space(24f)
-            add(Label(title, kit.styles.title)).row()
-            add(content).row()
-            add(kit.styles.textButton(I18N.back()) { onBack() })
+        uiLayer.stage.actors {
+            table {
+                setFillParent(true)
+                table {
+                    background(UiStyle.PANEL)
+                    pad(32f)
+                    defaults().space(24f)
+                    label(title, UiStyle.TITLE) { it.row() }
+                    content = table { it.row() }
+                    content.defaults().space(12f)
+                    menuButton(I18N.back(), onClick = onBack)
+                }
+            }
         }
-        uiLayer.stage.addActor(Table().apply {
-            setFillParent(true)
-            add(panel)
-        })
     }
 
     fun show() {
