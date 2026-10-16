@@ -10,7 +10,7 @@ import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.render.Palette
 
-class GameUiStyles(fontHandler: FontHandler, textureHandler: TextureHandler) {
+class UiStyles(fontHandler: FontHandler, textureHandler: TextureHandler) {
     val label = Label.LabelStyle(fontHandler.uiFont, Palette.text)
     val title = Label.LabelStyle(fontHandler.buttonFont, Palette.text)
 

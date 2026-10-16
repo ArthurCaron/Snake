@@ -4,6 +4,7 @@ import fr.mwet.snake.events.MenuEvent.LoadingFinished
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.loading.LoadingScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
+import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.utils.SplashWorker
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -22,6 +23,7 @@ class SnakeGame(private val splashWorker: SplashWorker? = null) : KtxGame<KtxScr
         val context = GameContext(boot, assets, navigator = this)
         addScreen(context.mainMenuScreen)
         addScreen(context.gameScreen)
+        addScreen(context.scoresScreen)
         boot.menuEvents.emit(LoadingFinished)
         goToMainMenu()
         removeScreen<LoadingScreen>()?.dispose()
@@ -30,6 +32,8 @@ class SnakeGame(private val splashWorker: SplashWorker? = null) : KtxGame<KtxScr
     override fun goToMainMenu() = setScreen<MainMenuScreen>()
 
     override fun goToGame() = setScreen<GameScreen>()
+
+    override fun goToScores() = setScreen<ScoresScreen>()
 
     override fun dispose() {
         super.dispose()

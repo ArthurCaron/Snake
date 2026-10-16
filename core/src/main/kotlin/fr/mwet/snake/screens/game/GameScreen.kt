@@ -15,7 +15,7 @@ import fr.mwet.snake.inputs.SwipeInputProcessor
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
-import fr.mwet.snake.ui.GameUiStyles
+import fr.mwet.snake.ui.UiStyles
 import fr.mwet.snake.ui.UiLayer
 import ktx.app.KtxScreen
 
@@ -24,7 +24,7 @@ class GameScreen(
     batch: SpriteBatch,
     gameViewport: GameViewport,
     private val world: GameWorld,
-    styles: GameUiStyles,
+    styles: UiStyles,
     private val metadataRepository: MetadataRepository,
     private val input: InputRouter,
     private val gameInput: GameInputProcessor,

@@ -50,8 +50,7 @@ class MainMenuScreen(
     override fun resize(width: Int, height: Int) {
         worldLayer.resize(width, height)
         uiLayer.resize(width, height)
-        val boardWidth = minOf(width.toFloat(), height * WORLD_WIDTH / WORLD_HEIGHT) * uiLayer.unitsPerPixel
-        ui.layout(uiLayer.width, uiLayer.height, boardWidth)
+        ui.layout(boardWidth = minOf(width.toFloat(), height * WORLD_WIDTH / WORLD_HEIGHT) * uiLayer.unitsPerPixel)
     }
 
     override fun render(delta: Float) {
