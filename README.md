@@ -79,7 +79,7 @@ Without butler, upload `Snake-web.zip` by hand on the project's edit page.
 
 ## Icons
 
-The window, package and browser icons are generated from a sprite: `java tools/make-icons/MakeIcons.java <sprite.png> .` from the repository root.
+The window, package and browser icons are generated with the other assets of a style by `tools/style-generator`: see `sourceAssets/styles/README.md`.
 
 ## Modules
 

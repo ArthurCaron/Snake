@@ -170,3 +170,7 @@ Thumbs.db
 /save_data/metadata/highscores.json
 /save_data/settings/keymappings.json
 /save_data/settings/user_preferences.json
+
+## Style generator:
+/.venv/
+__pycache__/
