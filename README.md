@@ -13,8 +13,8 @@ A Snake game in Kotlin with [libGDX](https://libgdx.com/) and [KTX](https://libk
 
 - One food = one point. The snake speeds up a little with each food.
 - The game is lost when the snake hits a wall or itself, and won when the snake fills the board.
-- The best score and the sound and music settings are saved between sessions (files in `save_data/` on desktop, browser storage on the web).
-- Texts follow the device language: French or English.
+- Scores and settings are saved between sessions (files in `save_data/` on desktop, browser storage on the web).
+- The main menu leads to the 10 best scores and to the settings: sound and music on/off, controls (rebind each keyboard action; Escape cancels) and language (device, English or French, applied at once).
 
 ## Run
 
