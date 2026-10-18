@@ -10,7 +10,20 @@ private const val KEYMAPPINGS_FILE = "${ROOT_FOLDER}/keymappings.json"
 private const val USER_PREFERENCES_FILE = "${ROOT_FOLDER}/user_preferences.json"
 
 class SettingsRepository(private val jsonStore: JsonStore) {
-    fun load(): Settings {
+    var settings = load()
+        private set
+    val soundOn: Boolean get() = settings.userPreferences.soundOn
+    val musicOn: Boolean get() = settings.userPreferences.musicOn
+
+    fun toggleSound() {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(soundOn = !settings.userPreferences.soundOn)))
+    }
+
+    fun toggleMusic() {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(musicOn = !settings.userPreferences.musicOn)))
+    }
+
+    private fun load(): Settings {
         val keymappingsSave = jsonStore.readOrCreate(KEYMAPPINGS_FILE) { DefaultKeymappings.defaultKeymappings() }
         keymappingsSave.restoreDefaults()
 
@@ -35,7 +48,8 @@ class SettingsRepository(private val jsonStore: JsonStore) {
         return settings
     }
 
-    fun save(settings: Settings) {
+    private fun save(settings: Settings) {
+        this.settings = settings
         jsonStore.write(KEYMAPPINGS_FILE, settings.keymappings.toSerializable())
         jsonStore.write(USER_PREFERENCES_FILE, settings.userPreferences.toSerializable())
     }

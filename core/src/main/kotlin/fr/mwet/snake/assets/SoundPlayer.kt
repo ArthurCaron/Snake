@@ -5,7 +5,7 @@ import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventListener
-import fr.mwet.snake.save.settings.AudioSettings
+import fr.mwet.snake.save.settings.SettingsRepository
 
 private const val MUSIC_VOLUME = 0.1f
 private const val MOVE_VOLUME = 0.1f
@@ -13,7 +13,7 @@ private const val MOVE_VOLUME = 0.1f
 class SoundPlayer(
     private val soundHandler: SoundHandler,
     private val musicHandler: MusicHandler,
-    private val audioSettings: AudioSettings,
+    private val settingsRepository: SettingsRepository,
 ) : MenuEventListener, GameEventListener {
     private var buttonPressedId: Long = 0
     private var moveId: Long = 0
@@ -56,7 +56,7 @@ class SoundPlayer(
     private fun updateMusicPlayback() {
         val music = musicHandler.music
 
-        if (audioSettings.musicOn) {
+        if (settingsRepository.musicOn) {
             if (!music.isPlaying) music.play()
         } else {
             music.pause()
@@ -64,33 +64,33 @@ class SoundPlayer(
     }
 
     fun playButtonPressed() {
-        if (!audioSettings.soundOn) return
+        if (!settingsRepository.soundOn) return
         buttonPressedId = soundHandler.buttonPressedSound.play()
     }
 
     fun playMove() {
-        if (!audioSettings.soundOn) return
+        if (!settingsRepository.soundOn) return
         soundHandler.moveSound.stop()
         moveId = soundHandler.moveSound.play(MOVE_VOLUME)
     }
 
     fun playEat() {
-        if (!audioSettings.soundOn) return
+        if (!settingsRepository.soundOn) return
         eatId = soundHandler.eatSound.play()
     }
 
     fun playLost() {
-        if (!audioSettings.soundOn) return
+        if (!settingsRepository.soundOn) return
         soundHandler.lostSound.play()
     }
 
     fun playWon() {
-        if (!audioSettings.soundOn) return
+        if (!settingsRepository.soundOn) return
         soundHandler.wonSound.play()
     }
 
     fun playPauseToggled() {
-        if (!audioSettings.soundOn) return
+        if (!settingsRepository.soundOn) return
         soundHandler.pauseSound.play()
     }
 }

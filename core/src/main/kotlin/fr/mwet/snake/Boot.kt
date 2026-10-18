@@ -14,7 +14,6 @@ import fr.mwet.snake.save.serialization.FileTextStore
 import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.serialization.PreferencesTextStore
 import fr.mwet.snake.save.serialization.TextStore
-import fr.mwet.snake.save.settings.AudioSettings
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
@@ -26,9 +25,7 @@ class Boot : DisposableRegistry by DisposableContainer() {
     val menuEvents: MenuEventBus = MenuEventBusImpl()
 
     private val jsonStore = JsonStore(textStore())
-    private val settingsRepository = SettingsRepository(jsonStore)
-    val settings = settingsRepository.load()
-    val audioSettings = AudioSettings(settingsRepository, settings)
+    val settingsRepository = SettingsRepository(jsonStore)
     val metadataRepository = MetadataRepository(jsonStore)
 
     val input = InputRouter()
@@ -39,9 +36,8 @@ class Boot : DisposableRegistry by DisposableContainer() {
     val assetLoading = AssetLoading().alsoRegister()
 }
 
-private fun textStore(): TextStore =
-    if (Gdx.app.type == WebGL) {
-        PreferencesTextStore(Gdx.app.getPreferences("fr.mwet.snek.save_data"))
-    } else {
-        FileTextStore(Gdx.files.local("save_data"))
-    }
+private fun textStore(): TextStore = if (Gdx.app.type == WebGL) {
+    PreferencesTextStore(Gdx.app.getPreferences("fr.mwet.snek.save_data"))
+} else {
+    FileTextStore(Gdx.files.local("save_data"))
+}

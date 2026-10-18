@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import fr.mwet.snake.Navigator
 import fr.mwet.snake.GameViewport
+import fr.mwet.snake.Navigator
 import fr.mwet.snake.StageViewport
 import fr.mwet.snake.assets.FontHandler
 import fr.mwet.snake.assets.I18N
@@ -24,7 +24,7 @@ import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.InputRouter
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.save.metadata.MetadataRepository
-import fr.mwet.snake.save.settings.AudioSettings
+import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.actors.onClick
@@ -34,7 +34,6 @@ import ktx.actors.stage
 import ktx.app.KtxScreen
 import ktx.graphics.use
 
-
 class MainMenuScreen(
     menuEventBus: MenuEventBus,
     fontHandler: FontHandler,
@@ -43,7 +42,7 @@ class MainMenuScreen(
     private val gameViewport: GameViewport,
     private val gameCamera: OrthographicCamera,
     private val metadataRepository: MetadataRepository,
-    private val audioSettings: AudioSettings,
+    private val settingsRepository: SettingsRepository,
     private val input: InputRouter,
     private val menuInput: GeneralInputProcessor,
     navigator: Navigator,
@@ -58,7 +57,7 @@ class MainMenuScreen(
     private val soundButton = TextButton("", styles.smallButton).apply {
         pad(8f, 24f, 8f, 24f)
         onClick {
-            audioSettings.toggleSound()
+            settingsRepository.toggleSound()
             refreshAudioButtons()
             menuEventBus.emit(SoundToggled)
         }
@@ -66,7 +65,7 @@ class MainMenuScreen(
     private val musicButton = TextButton("", styles.smallButton).apply {
         pad(8f, 24f, 8f, 24f)
         onClick {
-            audioSettings.toggleMusic()
+            settingsRepository.toggleMusic()
             refreshAudioButtons()
             menuEventBus.emit(MusicToggled)
         }
@@ -135,9 +134,9 @@ class MainMenuScreen(
     }
 
     private fun refreshAudioButtons() {
-        soundButton.setText(if (audioSettings.soundOn) I18N.soundOn() else I18N.soundOff())
+        soundButton.setText(if (settingsRepository.soundOn) I18N.soundOn() else I18N.soundOff())
         soundButton.pack()
-        musicButton.setText(if (audioSettings.musicOn) I18N.musicOn() else I18N.musicOff())
+        musicButton.setText(if (settingsRepository.musicOn) I18N.musicOn() else I18N.musicOff())
         musicButton.pack()
         positionAudioButtons()
     }
