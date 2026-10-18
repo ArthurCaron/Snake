@@ -105,6 +105,7 @@ object DI : Context() {
                 assetHandler = assetHandler,
                 batch = spriteBatch,
                 gameCamera = camera,
+                menuEventBus = menuEventBus,
             )
         })
         Game.setScreen<LoadingScreen>()
