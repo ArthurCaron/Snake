@@ -37,17 +37,19 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
     fun start() {
         if (state != GameState.Ready) return
         state = GameState.Playing
-        ticker.reset()
+        ticker.resetTiming()
     }
 
     fun pause() {
         if (state != GameState.Playing && state != GameState.Ready) return
         state = GameState.Paused
+        gameEventBus.emit(Paused)
     }
 
     fun resume() {
         if (state != GameState.Paused) return
         state = GameState.Ready
+        gameEventBus.emit(Resumed)
     }
 
     override fun setDirection(newDirection: Direction) {

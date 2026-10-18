@@ -25,8 +25,8 @@ class SoundPlayer(
             FoodEaten -> playEat()
             Lost -> playLost()
             Won -> playWon()
-            Pause -> playPause()
-            GoBackToMainMenu -> {}
+            Paused, Resumed -> playPauseToggled()
+            Pause, GoBackToMainMenu -> {}
         }
     }
 
@@ -89,7 +89,7 @@ class SoundPlayer(
         soundHandler.wonSound.play()
     }
 
-    fun playPause() {
+    fun playPauseToggled() {
         if (!audioSettings.soundOn) return
         soundHandler.pauseSound.play()
     }
