@@ -149,7 +149,7 @@ class GameScreen(
         when (event) {
             GoBackToMainMenu -> back()
             Pause -> togglePause()
-            FoodEaten, SnakeMoved, Lost, Won -> {}
+            FoodEaten, SnakeMoved, Lost, Won, Paused, Resumed -> {}
         }
     }
 

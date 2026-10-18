@@ -7,6 +7,10 @@ class Ticker(private val initialTicksPerSecond: Float) {
 
     fun reset() {
         ticksPerSecond = initialTicksPerSecond
+        resetTiming()
+    }
+
+    fun resetTiming() {
         secondsSinceLastTick = 0f
     }
 
