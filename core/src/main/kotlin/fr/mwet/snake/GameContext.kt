@@ -12,12 +12,13 @@ import fr.mwet.snake.ui.GameUiStyles
 
 class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator) {
     private val styles = GameUiStyles(assets.fonts, assets.textures)
-    private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.audioSettings)
+    private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
     private val world = GameWorld(boot.gameEvents)
     private val gameCommandContext = GameCommandContext(world, boot.gameEvents)
-    private val gameInput = GameInputProcessor(boot.settings.keymappings.game, gameCommandContext)
+    private val gameInput = GameInputProcessor(boot.settingsRepository.settings.keymappings.game, gameCommandContext)
     private val swipeInput = SwipeInputProcessor(gameCommandContext)
-    private val generalInput = GeneralInputProcessor(boot.settings.keymappings.general, boot.menuEvents)
+    private val generalInput =
+        GeneralInputProcessor(boot.settingsRepository.settings.keymappings.general, boot.menuEvents)
 
     val mainMenuScreen = MainMenuScreen(
         menuEventBus = boot.menuEvents,
@@ -27,7 +28,7 @@ class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator) {
         gameViewport = boot.gameViewport,
         gameCamera = boot.camera,
         metadataRepository = boot.metadataRepository,
-        audioSettings = boot.audioSettings,
+        settingsRepository = boot.settingsRepository,
         input = boot.input,
         menuInput = generalInput,
         navigator = navigator,

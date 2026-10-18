@@ -8,7 +8,7 @@ private const val ROOT_FOLDER = "metadata"
 private const val HIGH_SCORE_FILE = "${ROOT_FOLDER}/highscore.json"
 
 data class Metadata(val highScore: HighScore)
-class HighScore(val score: Int)
+data class HighScore(val score: Int)
 
 class MetadataRepository(private val jsonStore: JsonStore) {
     var metadata = load()
@@ -16,7 +16,7 @@ class MetadataRepository(private val jsonStore: JsonStore) {
 
     fun submitHighScore(score: Int): Boolean {
         if (score <= metadata.highScore.score) return false
-        save(Metadata(HighScore(score)))
+        save(metadata.copy(highScore = metadata.highScore.copy(score = score)))
         return true
     }
 
