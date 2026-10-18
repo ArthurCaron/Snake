@@ -9,6 +9,8 @@ import fr.mwet.snake.DI
 import fr.mwet.snake.Game
 import fr.mwet.snake.assets.AssetHandler
 import fr.mwet.snake.assets.Progress
+import fr.mwet.snake.events.MenuEvent.LoadingFinished
+import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.utils.*
 import ktx.app.KtxScreen
@@ -22,6 +24,7 @@ class LoadingScreen(
     private val assetHandler: AssetHandler,
     private val batch: SpriteBatch,
     private val gameCamera: OrthographicCamera,
+    private val menuEventBus: MenuEventBus,
 ) : KtxScreen, DisposableRegistry by DisposableContainer() {
     private val progressBar = ProgressBar(barWidth = 6f, barHeight = 0.5f)
     private val loadingText = LoadingText(textWidth = 3f, textHeight = 3f * 16 / 200f)
@@ -30,6 +33,7 @@ class LoadingScreen(
         val progress = assetHandler.loadAssets()
         if (progress == Progress(1f)) {
             DI.finishInitAfterAssetsAreLoaded()
+            menuEventBus.emit(LoadingFinished)
             Game.setScreen<MainMenuScreen>()
         } else {
             batch.use(gameCamera) {

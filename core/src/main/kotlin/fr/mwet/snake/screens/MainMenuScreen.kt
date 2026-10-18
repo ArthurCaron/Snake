@@ -18,6 +18,7 @@ import fr.mwet.snake.assets.I18N
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.events.MenuEvent
+import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.render.Palette
@@ -60,7 +61,7 @@ class MainMenuScreen(
         onClick {
             audioSettings.toggleSound()
             refreshAudioButtons()
-            menuEventBus.emit(MenuEvent.SoundToggled)
+            menuEventBus.emit(SoundToggled)
         }
     }
     private val musicButton = TextButton("", styles.smallButton).apply {
@@ -68,7 +69,7 @@ class MainMenuScreen(
         onClick {
             audioSettings.toggleMusic()
             refreshAudioButtons()
-            menuEventBus.emit(MenuEvent.MusicToggled)
+            menuEventBus.emit(MusicToggled)
         }
     }
     private val bestScoreLabel = Label("", styles.info)
@@ -126,8 +127,8 @@ class MainMenuScreen(
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
-            MenuEvent.PlayGameClicked -> playButton.startGame()
-            MenuEvent.SoundToggled, MenuEvent.MusicToggled -> {}
+            PlayGameClicked -> playButton.startGame()
+            LoadingFinished, SoundToggled, MusicToggled -> {}
         }
     }
 
@@ -151,7 +152,7 @@ class MainMenuScreen(
         )
         musicButton.setPosition(
             stageViewport.worldWidth - musicButton.width - 24f,
-            stageViewport.worldHeight - musicButton.height - 24f,
+            soundButton.y - musicButton.height - 24f,
         )
     }
 }
@@ -207,7 +208,7 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus) {
             addAction(action)
         }
 
-        onClick { menuEventBus.emit(MenuEvent.PlayGameClicked) }
+        onClick { menuEventBus.emit(PlayGameClicked) }
         onEnter { replaceHoverAction(scaleTo(1.25f, 1.25f, 0.3f, elasticOut)) }
         onExit {
             if (clicked.not()) {

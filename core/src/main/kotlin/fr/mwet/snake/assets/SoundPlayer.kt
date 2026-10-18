@@ -7,8 +7,8 @@ import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.save.settings.AudioSettings
 
-private const val MUSIC_VOLUME = 0.5f
-private const val MOVE_VOLUME = 0.25f
+private const val MUSIC_VOLUME = 0.1f
+private const val MOVE_VOLUME = 0.1f
 
 class SoundPlayer(
     private val soundHandler: SoundHandler,
@@ -32,6 +32,12 @@ class SoundPlayer(
 
     override fun onEvent(event: MenuEvent) {
         when (event) {
+            MenuEvent.LoadingFinished -> {
+                musicHandler.music.isLooping = true
+                musicHandler.music.volume = MUSIC_VOLUME
+                updateMusicPlayback()
+            }
+
             MenuEvent.PlayGameClicked -> {
                 playButtonPressed()
             }
@@ -42,16 +48,18 @@ class SoundPlayer(
 
             MenuEvent.MusicToggled -> {
                 playButtonPressed()
-
-                val music = musicHandler.music
-                if (audioSettings.musicOn) {
-                    music.isLooping = true
-                    music.volume = MUSIC_VOLUME
-                    if (!music.isPlaying) music.play()
-                } else {
-                    music.pause()
-                }
+                updateMusicPlayback()
             }
+        }
+    }
+
+    private fun updateMusicPlayback() {
+        val music = musicHandler.music
+
+        if (audioSettings.musicOn) {
+            if (!music.isPlaying) music.play()
+        } else {
+            music.pause()
         }
     }
 
