@@ -167,6 +167,6 @@ Thumbs.db
 **/resource-config.json
 
 ## Game data
-/save_data/metadata/highscores.json
+/save_data/metadata/highscore.json
 /save_data/settings/keymappings.json
 /save_data/settings/user_preferences.json
