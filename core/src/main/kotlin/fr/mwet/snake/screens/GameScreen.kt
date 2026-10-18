@@ -16,7 +16,7 @@ import fr.mwet.snake.render.DisintegratingSnakeRenderer
 import fr.mwet.snake.render.FoodRenderer
 import fr.mwet.snake.render.Palette
 import fr.mwet.snake.render.SnakeRenderer
-import fr.mwet.snake.save.metadata.BestScore
+import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.ui.GameUiStyles
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
@@ -37,7 +37,7 @@ class GameScreen(
     private val gameCamera: OrthographicCamera,
     private val gameWorld: GameWorld,
     styles: GameUiStyles,
-    private val bestScore: BestScore,
+    private val metadataRepository: MetadataRepository,
 ) : GameEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
     private val stageViewport = StageViewport().also {
         Game.addViewport(it)
@@ -95,7 +95,7 @@ class GameScreen(
     override fun render(delta: Float) {
         gameWorld.update(delta)
         if (gameWorld.state != gameState) onStateChanged(gameWorld.state)
-        hud.show(gameWorld.score, bestScore.value)
+        hud.show(gameWorld.score, metadataRepository.metadata.highScore.score)
 
         gameViewport.apply(true)
         batch.use(gameCamera) {
@@ -126,8 +126,8 @@ class GameScreen(
     }
 
     private fun showEndOverlay(won: Boolean, delay: Float) {
-        val isNewRecord = bestScore.submit(gameWorld.score)
-        endOverlay.show(won, gameWorld.score, bestScore.value, isNewRecord, delay)
+        val isNewHighScore = metadataRepository.submitHighScore(gameWorld.score)
+        endOverlay.show(won, gameWorld.score, metadataRepository.metadata.highScore.score, isNewHighScore, delay)
     }
 
     override fun pause() {

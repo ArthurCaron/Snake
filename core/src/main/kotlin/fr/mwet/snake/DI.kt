@@ -22,7 +22,6 @@ import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.SwipeInputProcessor
-import fr.mwet.snake.save.metadata.BestScore
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.serialization.FileTextStore
 import fr.mwet.snake.save.serialization.JsonStore
@@ -61,10 +60,6 @@ object DI : Context() {
 
         val settings = withBindSingleton { settingsRepository.load() }
         val keymapping = withBindSingleton<Keymappings> { settings.keymappings }
-
-        val metadata = withBindSingleton { metadataRepository.load() }
-        val highScores = withBindSingleton { metadata.highScores }
-        val bestScore = withBindSingleton { BestScore(metadataRepository, metadata) }
 
         // Assets
         val assetManager = withBindSingleton<AssetManager> { AssetManager() }
@@ -115,6 +110,9 @@ object DI : Context() {
         // Save system
         val keymapping = inject<Keymappings>()
 
+        // Repositories
+        val metadataRepository = inject<MetadataRepository>()
+
         // Assets
         val fontHandler = inject<FontHandler>()
         val textureHandler = inject<TextureHandler>()
@@ -134,7 +132,6 @@ object DI : Context() {
 
         // UI
         val gameUiStyles = withBindSingleton { GameUiStyles(fontHandler, textureHandler) }
-        val bestScore = inject<BestScore>()
 
         // Game World
         val gameWorld = withBindSingleton<GameWorld> { GameWorld(gameEventBus) }
@@ -152,7 +149,7 @@ object DI : Context() {
                 batch = spriteBatch,
                 gameViewport = gameViewport,
                 gameCamera = camera,
-                bestScore = bestScore,
+                metadataRepository = metadataRepository,
                 audioSettings = audioSettings,
             )
         }
@@ -164,7 +161,7 @@ object DI : Context() {
                 gameCamera = camera,
                 gameWorld = gameWorld,
                 styles = gameUiStyles,
-                bestScore = bestScore,
+                metadataRepository = metadataRepository,
             )
         }
 

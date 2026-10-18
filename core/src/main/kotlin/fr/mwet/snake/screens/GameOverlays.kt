@@ -57,7 +57,7 @@ class EndOverlay(styles: GameUiStyles, onPlayAgain: () -> Unit, onMainMenu: () -
     private val title = Label("", styles.title)
     private val score = Label("", styles.label)
     private val best = Label("", styles.label)
-    private val newRecord = Label(I18N.newRecord(), styles.label)
+    private val newHighScore = Label(I18N.newHighScore(), styles.label)
     private val playAgain = TextButton(I18N.playAgain(), styles.button).apply {
         pad(8f, 24f, 8f, 24f)
         onClick { onPlayAgain() }
@@ -74,7 +74,7 @@ class EndOverlay(styles: GameUiStyles, onPlayAgain: () -> Unit, onMainMenu: () -
         add(title).row()
         add(score).row()
         add(best).row()
-        add(newRecord).row()
+        add(newHighScore).row()
         add(playAgain).fillX().row()
         add(mainMenu).fillX()
     }
@@ -86,11 +86,11 @@ class EndOverlay(styles: GameUiStyles, onPlayAgain: () -> Unit, onMainMenu: () -
         add(panel)
     }
 
-    fun show(won: Boolean, score: Int, best: Int, isNewRecord: Boolean, delaySeconds: Float) {
+    fun show(won: Boolean, score: Int, best: Int, isNewHighScore: Boolean, delaySeconds: Float) {
         title.setText(if (won) I18N.victory() else I18N.gameOver())
         this.score.setText(I18N.score(score))
         this.best.setText(I18N.best(best))
-        newRecord.isVisible = isNewRecord
+        newHighScore.isVisible = isNewHighScore
         actor.clearActions()
         actor.isVisible = false
         actor.color.a = 0f

@@ -1,34 +1,36 @@
 package fr.mwet.snake.save.metadata
 
-import fr.mwet.snake.save.metadata.serializable.DefaultHighScores
+import fr.mwet.snake.save.metadata.serializable.CURRENT_VERSION
 import fr.mwet.snake.save.metadata.serializable.HighScoreSave
-import fr.mwet.snake.save.metadata.serializable.HighScoresSave
 import fr.mwet.snake.save.serialization.JsonStore
 
 private const val ROOT_FOLDER = "metadata"
-private const val HIGH_SCORE_FILE = "${ROOT_FOLDER}/highscores.json"
+private const val HIGH_SCORE_FILE = "${ROOT_FOLDER}/highscore.json"
+
+data class Metadata(val highScore: HighScore)
+class HighScore(val score: Int)
 
 class MetadataRepository(private val jsonStore: JsonStore) {
-    fun load(): Metadata {
-        val highScoresSave = jsonStore.readOrCreate(HIGH_SCORE_FILE) { DefaultHighScores.defaultHighScores() }
-        val metadata = Metadata(
-            HighScores(
-                highScores = highScoresSave.highScores.map { it.toHighScore() }
-            )
-        )
-        save(metadata)
+    var metadata = load()
+        private set
 
+    fun submitHighScore(score: Int): Boolean {
+        if (score <= metadata.highScore.score) return false
+        save(Metadata(HighScore(score)))
+        return true
+    }
+
+    private fun load(): Metadata {
+        val highScoreSave = jsonStore.readOrCreate(HIGH_SCORE_FILE) { HighScoreSave(0, 0) }
+        val metadata = Metadata(HighScore(highScoreSave.score))
+        save(metadata)
         return metadata
     }
 
-    fun save(metadata: Metadata) {
-        jsonStore.write(HIGH_SCORE_FILE, metadata.highScores.toSerializable())
+    private fun save(metadata: Metadata) {
+        this.metadata = metadata
+        jsonStore.write(HIGH_SCORE_FILE, metadata.highScore.toSerializable())
     }
 
-    private fun HighScoreSave.toHighScore() = HighScore(name, score)
-
-    private fun HighScores.toSerializable() =
-        HighScoresSave(DefaultHighScores.defaultHighScores().version, highScores.map { it.toSerializable() })
-
-    private fun HighScore.toSerializable() = HighScoreSave(name, score)
+    private fun HighScore.toSerializable() = HighScoreSave(CURRENT_VERSION, score)
 }

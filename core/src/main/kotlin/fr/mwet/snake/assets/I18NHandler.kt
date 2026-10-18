@@ -36,7 +36,7 @@ enum class I18N : BundleLine {
     mainMenu,
     gameOver,
     victory,
-    newRecord,
+    newHighScore,
     playAgain;
 
     override val bundle: I18NBundle

@@ -22,7 +22,7 @@ import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.render.Palette
-import fr.mwet.snake.save.metadata.BestScore
+import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.settings.AudioSettings
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
@@ -44,7 +44,7 @@ class MainMenuScreen(
     private val batch: SpriteBatch,
     private val gameViewport: GameViewport,
     private val gameCamera: OrthographicCamera,
-    private val bestScore: BestScore,
+    private val metadataRepository: MetadataRepository,
     private val audioSettings: AudioSettings,
 ) : MenuEventListener, KtxScreen, DisposableRegistry by DisposableContainer() {
     private val stageViewport = StageViewport().also {
@@ -141,7 +141,7 @@ class MainMenuScreen(
     }
 
     private fun updateBestScoreLabel() {
-        bestScoreLabel.setText(I18N.best(bestScore.value))
+        bestScoreLabel.setText(I18N.best(metadataRepository.metadata.highScore.score))
         bestScoreLabel.pack()
     }
 
