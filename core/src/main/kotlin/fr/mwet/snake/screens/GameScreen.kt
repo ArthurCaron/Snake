@@ -54,7 +54,10 @@ class GameScreen(
     private val pauseOverlay = PauseOverlay(
         styles,
         onResume = { gameWorld.resume() },
-        onMainMenu = { Game.setScreen<MainMenuScreen>() },
+        onMainMenu = {
+            metadataRepository.submitHighScore(gameWorld.score)
+            Game.setScreen<MainMenuScreen>()
+        },
     )
     private val endOverlay = EndOverlay(
         styles,
