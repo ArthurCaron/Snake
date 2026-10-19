@@ -28,8 +28,44 @@ Use `./gradlew` on macOS or Linux, `gradlew.bat` on Windows.
 
 ## Publish the web version
 
-- GitHub Pages: every push to `master` builds and deploys the game with `.github/workflows/publish-web.yml`. One-time setup: repository Settings > Pages > Source: "GitHub Actions". The game is then at https://arthurcaron.github.io/Snake/ (subject to your repository visibility and GitHub plan).
-- Any other static host, or itch.io (HTML game): `./gradlew teavm:webZip`, then upload `teavm/build/dist/Snake-web.zip`.
+The game is published on itch.io as an HTML game. The GitHub repository stays private.
+
+`./gradlew teavm:webZip` builds `teavm/build/dist/Snake-web.zip`, with `index.html` at the root, the layout itch.io expects.
+
+### Automatic: GitHub Action
+
+The `itch` branch is the published version. Every push to `itch` (or a manual run of the workflow on it, from the Actions tab) builds the zip and pushes it with butler, by `.github/workflows/publish-itch.yml`. A push to `master` publishes nothing.
+
+To publish what is on `master`:
+
+```
+git push origin master:itch
+```
+
+To publish an older state, push its commit instead: `git push --force origin <commit>:itch`.
+
+One-time setup:
+
+1. On itch.io, create the project: Kind of project "HTML", then save it once as a draft.
+2. On itch.io, Settings > API keys: generate a key.
+3. On GitHub, repository Settings > Secrets and variables > Actions:
+   - secret `BUTLER_API_KEY`: the API key;
+   - variable `ITCH_USER`: your itch.io user name;
+   - variable `ITCH_GAME`: the project name in its URL (`https://<user>.itch.io/<game>`).
+4. Push the `itch` branch, or run the workflow by hand on it.
+5. On the first push only, edit the project on itch.io: check "This file will be played in the browser" on the `html5` upload, set the viewport size, and check "Mobile friendly".
+
+### Manual: butler on your machine
+
+1. Install butler: https://itch.io/docs/butler/installing.html, or install the itch app, which ships it.
+2. Log in once: `butler login`.
+3. Build the zip: `./gradlew teavm:webZip` (`gradlew.bat` on Windows).
+4. Push it: `butler push teavm/build/dist/Snake-web.zip <user>/<game>:html5`.
+5. Check the upload: `butler status <user>/<game>:html5`.
+
+butler only uploads the files that changed. The `html5` channel name is free: keep the same one on every push, so itch.io updates the same upload.
+
+Without butler, upload `Snake-web.zip` by hand on the project's edit page.
 
 ## Icons
 
