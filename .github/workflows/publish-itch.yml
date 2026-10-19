@@ -1,0 +1,31 @@
+name: Publish to itch.io
+
+on:
+  push:
+    branches: [itch]
+  workflow_dispatch:
+
+concurrency:
+  group: itch
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew teavm:webZip
+      - name: Install butler
+        run: |
+          curl -sSL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip -d butler
+          chmod +x butler/butler
+      - name: Push to itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: butler/butler push teavm/build/dist/Snake-web.zip "${{ vars.ITCH_USER }}/${{ vars.ITCH_GAME }}:html5" --userversion "${{ github.sha }}"
