@@ -34,17 +34,27 @@ The game is published on itch.io as an HTML game. The GitHub repository stays pr
 
 ### Automatic: GitHub Action
 
-The `itch` branch is the published version. Every push to `itch` (or a manual run of the workflow on it, from the Actions tab) builds the zip and pushes it with butler, by `.github/workflows/publish-itch.yml`. A push to `master` publishes nothing.
+The `itch` branch is the published version. Every push to `itch` builds the zip and pushes it with butler, by `.github/workflows/publish-itch.yml`. A push to `master` publishes nothing.
 
-To publish what is on `master`:
+#### Publish from `master`
 
-```
-git push origin master:itch
-```
+1. Make sure that your local `master` is the version to publish: `git checkout master`, then `git pull`.
+2. Push `master` to the `itch` branch of GitHub:
+
+   ```
+   git push origin master:itch
+   ```
+
+   This command does not need a local `itch` branch. The first time, it creates the `itch` branch on GitHub. After that, it moves `itch` forward to `master`.
+3. On GitHub, open the Actions tab and follow the "Publish to itch.io" run. When it is green, the new version is on itch.io.
+
+If the push is refused as "non-fast-forward", `itch` has a commit that `master` does not have. Look at it with `git log master..origin/itch` before you overwrite it with `git push --force origin master:itch`.
 
 To publish an older state, push its commit instead: `git push --force origin <commit>:itch`.
 
-One-time setup:
+To publish again without a new commit, run the workflow by hand: Actions tab > "Publish to itch.io" > Run workflow, with the `itch` branch selected.
+
+#### One-time setup
 
 1. On itch.io, create the project: Kind of project "HTML", then save it once as a draft.
 2. On itch.io, Settings > API keys: generate a key.
@@ -52,8 +62,8 @@ One-time setup:
    - secret `BUTLER_API_KEY`: the API key;
    - variable `ITCH_USER`: your itch.io user name;
    - variable `ITCH_GAME`: the project name in its URL (`https://<user>.itch.io/<game>`).
-4. Push the `itch` branch, or run the workflow by hand on it.
-5. On the first push only, edit the project on itch.io: check "This file will be played in the browser" on the `html5` upload, set the viewport size, and check "Mobile friendly".
+4. Publish from `master` once, as above.
+5. On the first publication only, edit the project on itch.io: check "This file will be played in the browser" on the `html5` upload, set the viewport size, and check "Mobile friendly".
 
 ### Manual: butler on your machine
 
