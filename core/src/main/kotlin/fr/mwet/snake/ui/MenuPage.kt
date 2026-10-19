@@ -4,12 +4,10 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Disposable
 import fr.mwet.snake.assets.I18N
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
-import ktx.actors.onClick
 
 class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> Unit) : Disposable {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
@@ -63,9 +61,4 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
             return true
         }
     }
-}
-
-fun UiStyles.textButton(text: String, onClick: () -> Unit) = TextButton(text, button).apply {
-    pad(8f, 24f, 8f, 24f)
-    onClick { onClick() }
 }

@@ -3,7 +3,6 @@ package fr.mwet.snake.assets
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
@@ -26,7 +25,7 @@ private const val FRENCH_CHARS = "ÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸàâäçéèê
 class FontHandler(assetManager: AssetManager) {
     private val characters = FreeTypeFontGenerator.DEFAULT_CHARS + FRENCH_CHARS
 
-    val titleFont: BitmapFont by assetManager.loadAsset(
+    val snekTitleFont: BitmapFont by assetManager.loadAsset(
         AssetDescriptor(
             TITLE_FONT_ASSET,
             BitmapFont::class.java,
@@ -39,7 +38,7 @@ class FontHandler(assetManager: AssetManager) {
         )
     )
 
-    val uiFont: BitmapFont by assetManager.loadAsset(
+    val smallFont: BitmapFont by assetManager.loadAsset(
         AssetDescriptor(
             UI_FONT_ASSET,
             BitmapFont::class.java,
@@ -51,7 +50,7 @@ class FontHandler(assetManager: AssetManager) {
         )
     )
 
-    val buttonFont: BitmapFont by assetManager.loadAsset(
+    val bigFont: BitmapFont by assetManager.loadAsset(
         AssetDescriptor(
             BUTTON_FONT_ASSET,
             BitmapFont::class.java,

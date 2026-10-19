@@ -11,16 +11,39 @@ import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.render.Palette
 
 class UiStyles(fontHandler: FontHandler, textureHandler: TextureHandler) {
-    val label = Label.LabelStyle(fontHandler.uiFont, Palette.text)
-    val title = Label.LabelStyle(fontHandler.buttonFont, Palette.text)
+    val mainTitle = Label.LabelStyle(fontHandler.snekTitleFont, Palette.text)
+    val title = Label.LabelStyle(fontHandler.bigFont, Palette.text)
+    val label = Label.LabelStyle(fontHandler.smallFont, Palette.text)
 
     val panel = textureHandler.ninePatch(fill = Palette.background)
     val dim = textureHandler.rectangleTexture(1, 1, Palette.dim).toDrawable()
 
+    val playButton = TextButton.TextButtonStyle().apply {
+        up = textureHandler.rectangleWithBorderTexture(
+            width = 256,
+            height = 96,
+            border = 4,
+            fill = Palette.background,
+            borderColor = Palette.border,
+        ).toDrawable()
+
+        down = textureHandler.rectangleWithBorderTexture(
+            width = 256,
+            height = 96,
+            border = 4,
+            fill = Palette.accent,
+            borderColor = Palette.border,
+        ).toDrawable()
+
+        font = fontHandler.bigFont
+        fontColor = Palette.text
+        downFontColor = Palette.text
+    }
+
     val button = TextButton.TextButtonStyle().apply {
         up = textureHandler.ninePatch(fill = Palette.background)
         down = textureHandler.ninePatch(fill = Palette.accent)
-        font = fontHandler.uiFont
+        font = fontHandler.smallFont
         fontColor = Palette.text
     }
 }

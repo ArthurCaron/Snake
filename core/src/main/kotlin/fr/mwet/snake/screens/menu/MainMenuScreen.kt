@@ -1,49 +1,41 @@
 package fr.mwet.snake.screens.menu
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.GameViewport
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.FontHandler
-import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.inputs.GeneralInputProcessor
-import fr.mwet.snake.inputs.InputRouter
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.settings.SettingsRepository
+import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiLayer
 import fr.mwet.snake.utils.WORLD_HEIGHT
 import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.app.KtxScreen
 
 class MainMenuScreen(
+    private val kit: UiKit,
     menuEventBus: MenuEventBus,
-    fontHandler: FontHandler,
-    textureHandler: TextureHandler,
-    batch: SpriteBatch,
-    gameViewport: GameViewport,
     private val metadataRepository: MetadataRepository,
     settingsRepository: SettingsRepository,
-    private val input: InputRouter,
     private val menuInput: GeneralInputProcessor,
     navigator: Navigator,
 ) : MenuEventListener, KtxScreen {
-    private val worldLayer = WorldLayer(batch, gameViewport)
-    private val uiLayer = UiLayer(batch)
-    private val background = Background(textureHandler)
-    private val ui = MainMenuUi(fontHandler, textureHandler, uiLayer.stage, menuEventBus, navigator, settingsRepository)
+    private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
+    private val uiLayer = UiLayer(kit.batch)
+    private val background = Background(kit.textures)
+    private val ui = MainMenuUi(kit, uiLayer.stage, menuEventBus, navigator, settingsRepository)
 
     override fun show() {
-        input.add(menuInput, uiLayer.stage)
+        kit.input.add(menuInput, uiLayer.stage)
         ui.onShow(metadataRepository.metadata.highestScore.score)
     }
 
     override fun hide() {
-        input.remove(menuInput, uiLayer.stage)
+        kit.input.remove(menuInput, uiLayer.stage)
         ui.onHide()
     }
 

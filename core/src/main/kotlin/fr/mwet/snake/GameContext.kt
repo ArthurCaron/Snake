@@ -32,26 +32,18 @@ class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator, langua
     private val generalInput = GeneralInputProcessor(boot.settingsRepository, menuEvents)
 
     val mainMenuScreen = MainMenuScreen(
+        kit = kit,
         menuEventBus = menuEvents,
-        fontHandler = assets.fonts,
-        textureHandler = assets.textures,
-        batch = boot.batch,
-        gameViewport = boot.gameViewport,
         metadataRepository = boot.metadataRepository,
         settingsRepository = boot.settingsRepository,
-        input = boot.input,
         menuInput = generalInput,
         navigator = navigator,
     )
 
     val gameScreen = GameScreen(
-        textureHandler = assets.textures,
-        batch = boot.batch,
-        gameViewport = boot.gameViewport,
+        kit = kit,
         world = world,
-        styles = styles,
         metadataRepository = boot.metadataRepository,
-        input = boot.input,
         gameInput = gameInput,
         swipeInput = swipeInput,
         navigator = navigator,
