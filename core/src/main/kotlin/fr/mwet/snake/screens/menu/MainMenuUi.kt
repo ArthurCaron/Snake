@@ -10,14 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.FontHandler
 import fr.mwet.snake.assets.I18N
-import fr.mwet.snake.assets.TextureHandler
-import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
-import fr.mwet.snake.render.Palette
 import fr.mwet.snake.save.settings.SettingsRepository
+import fr.mwet.snake.ui.UiKit
+import fr.mwet.snake.ui.UiStyles
+import fr.mwet.snake.ui.textButton
 import ktx.actors.onClick
 import ktx.actors.onEnter
 import ktx.actors.onExit
@@ -26,31 +25,29 @@ private const val MARGIN = 24f
 private const val TITLE_WIDTH_RATIO = 0.70f
 
 class MainMenuUi(
-    fontHandler: FontHandler,
-    textureHandler: TextureHandler,
+    kit: UiKit,
     stage: Stage,
     menuEventBus: MenuEventBus,
     navigator: Navigator,
     private val settingsRepository: SettingsRepository,
 ) {
-    private val styles = Styles(fontHandler, textureHandler)
-    private val title = MainMenuTitle(styles)
-    private val playButton = PlayButton(styles, menuEventBus, navigator)
-    private val bestScoreLabel = Label("", styles.info)
-    private val soundButton = smallButton("") {
+    private val title = MainMenuTitle(kit.styles)
+    private val playButton = PlayButton(kit.styles, menuEventBus, navigator)
+    private val bestScoreLabel = Label("", kit.styles.label)
+    private val soundButton = kit.styles.button.textButton("") {
         settingsRepository.toggleSound()
         refreshAudioButtons()
         menuEventBus.emit(SoundToggled)
     }
-    private val musicButton = smallButton("") {
+    private val musicButton = kit.styles.button.textButton("") {
         settingsRepository.toggleMusic()
         refreshAudioButtons()
         menuEventBus.emit(MusicToggled)
     }
     private val secondaryButtons = Table().apply {
         defaults().space(MARGIN)
-        add(smallButton(I18N.highscore()) { navigator.goToScores() })
-        add(smallButton(I18N.settings()) { navigator.goToSettings() })
+        add(kit.styles.button.textButton(I18N.highscore()) { navigator.goToScores() })
+        add(kit.styles.button.textButton(I18N.settings()) { navigator.goToSettings() })
     }
 
     init {
@@ -95,11 +92,6 @@ class MainMenuUi(
         musicButton.setText(if (settingsRepository.musicOn) I18N.musicOn() else I18N.musicOff())
     }
 
-    private fun smallButton(text: String, onClick: () -> Unit) = TextButton(text, styles.smallButton).apply {
-        pad(8f, 24f, 8f, 24f)
-        onClick { onClick() }
-    }
-
     private fun updateBestScoreLabel(bestScore: Int) {
         bestScoreLabel.setText(I18N.best(bestScore))
         bestScoreLabel.pack()
@@ -107,8 +99,8 @@ class MainMenuUi(
 
 }
 
-private class MainMenuTitle(styles: Styles) {
-    val actor = Label("Snek", styles.title).apply {
+private class MainMenuTitle(uiStyles: UiStyles) {
+    val actor = Label("Snek", uiStyles.mainTitle).apply {
         setAlignment(Align.center)
         setOrigin(Align.center)
     }
@@ -130,11 +122,15 @@ private class MainMenuTitle(styles: Styles) {
     }
 }
 
-private class PlayButton(styles: Styles, menuEventBus: MenuEventBus, private val navigator: Navigator) {
+private class PlayButton(
+    uiStyles: UiStyles,
+    menuEventBus: MenuEventBus,
+    private val navigator: Navigator
+) {
     private var clicked = false
     private var hoverAction: Action? = null
 
-    val actor = TextButton(I18N.play(), styles.playButton).apply {
+    val actor = TextButton(I18N.play(), uiStyles.playButton).apply {
         setOrigin(Align.center)
 
         val replaceHoverAction = { action: Action ->
@@ -173,36 +169,5 @@ private class PlayButton(styles: Styles, menuEventBus: MenuEventBus, private val
         hoverAction = null
         actor.setScale(1f)
         actor.setColor(1f, 1f, 1f, 1f)
-    }
-}
-
-private class Styles(fontHandler: FontHandler, textureHandler: TextureHandler) {
-    val title = Label.LabelStyle(fontHandler.titleFont, Palette.text)
-    val info = Label.LabelStyle(fontHandler.uiFont, Palette.text)
-
-    val playButton = TextButton.TextButtonStyle().apply {
-        up = textureHandler.rectangleWithBorderTexture(
-            width = 256,
-            height = 96,
-            border = 4,
-            fill = Palette.background,
-            borderColor = Palette.border,
-        ).toDrawable()
-
-        down = textureHandler.rectangleWithBorderTexture(
-            width = 256,
-            height = 96,
-            border = 4,
-            fill = Palette.accent,
-            borderColor = Palette.border,
-        ).toDrawable()
-
-        font = fontHandler.buttonFont
-        fontColor = Palette.text
-        downFontColor = Palette.text
-    }
-
-    val smallButton = TextButton.TextButtonStyle(playButton).apply {
-        font = fontHandler.uiFont
     }
 }

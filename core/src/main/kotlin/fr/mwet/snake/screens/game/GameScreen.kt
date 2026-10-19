@@ -1,49 +1,41 @@
 package fr.mwet.snake.screens.game
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.GameViewport
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameInputProcessor
-import fr.mwet.snake.inputs.InputRouter
 import fr.mwet.snake.inputs.SwipeInputProcessor
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
-import fr.mwet.snake.ui.UiStyles
+import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiLayer
 import ktx.app.KtxScreen
 
 class GameScreen(
-    textureHandler: TextureHandler,
-    batch: SpriteBatch,
-    gameViewport: GameViewport,
+    private val kit: UiKit,
     private val world: GameWorld,
-    styles: UiStyles,
     private val metadataRepository: MetadataRepository,
-    private val input: InputRouter,
     private val gameInput: GameInputProcessor,
     private val swipeInput: SwipeInputProcessor,
     private val navigator: Navigator,
 ) : KtxScreen, GameEventListener {
-    private val worldLayer = WorldLayer(batch, gameViewport)
-    private val uiLayer = UiLayer(batch)
-    private val board = BoardRenderer(textureHandler, world)
-    private val ui = GameUi(styles, uiLayer.stage, UiActions())
+    private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
+    private val uiLayer = UiLayer(kit.batch)
+    private val board = BoardRenderer(kit.textures, world)
+    private val ui = GameUi(kit.styles, uiLayer.stage, UiActions())
     private var gameState: GameState? = null
 
     override fun show() {
-        input.add(gameInput, swipeInput, uiLayer.stage)
+        kit.input.add(gameInput, swipeInput, uiLayer.stage)
         startNewGame()
     }
 
     override fun hide() {
-        input.remove(gameInput, swipeInput, uiLayer.stage)
+        kit.input.remove(gameInput, swipeInput, uiLayer.stage)
         ui.onHide()
     }
 
