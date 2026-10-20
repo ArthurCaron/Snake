@@ -2,7 +2,7 @@ package fr.mwet.snake.screens.scores
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.I18N
+import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit

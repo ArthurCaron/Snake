@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import fr.mwet.snake.assets.I18N
+import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.ui.UiStyles
 import ktx.actors.onClick
 

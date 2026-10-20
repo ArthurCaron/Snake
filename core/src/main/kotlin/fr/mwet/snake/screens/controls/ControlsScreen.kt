@@ -4,7 +4,7 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.I18N
+import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.inputs.KeyNames

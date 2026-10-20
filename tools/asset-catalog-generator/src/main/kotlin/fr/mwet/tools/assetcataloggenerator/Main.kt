@@ -4,8 +4,10 @@ import fr.mwet.tools.assetcataloggenerator.reader.AssetCatalogItem
 import fr.mwet.tools.assetcataloggenerator.reader.AtlasRegionCatalogItem
 import fr.mwet.tools.assetcataloggenerator.reader.readAtlasRegionCatalogItems
 import fr.mwet.tools.assetcataloggenerator.reader.readFileCatalogItems
+import fr.mwet.tools.assetcataloggenerator.reader.readTranslationKeys
 import fr.mwet.tools.assetcataloggenerator.renderer.AssetCatalogNode
 import fr.mwet.tools.assetcataloggenerator.renderer.renderAssetCatalog
+import fr.mwet.tools.assetcataloggenerator.renderer.renderI18N
 import fr.mwet.tools.assetcataloggenerator.renderer.renderTextureAssets
 import java.nio.file.Files
 import java.nio.file.Path
@@ -47,6 +49,11 @@ fun main(args: Array<String>) {
         objectName = "FontAssets",
         items = readFileCatalogItems(inputDir, "fonts", setOf("ttf"), nested = true),
     )
+
+    val translationsPath = inputDir.resolve("i18n/translations.properties")
+    if (Files.isRegularFile(translationsPath)) {
+        Files.writeString(outputDir.resolve("I18N.kt"), renderI18N(packageName, readTranslationKeys(translationsPath)))
+    }
 }
 
 private fun writeAssetCatalog(

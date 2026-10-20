@@ -1,9 +1,9 @@
 package fr.mwet.snake.screens.settings
 
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.I18N
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
+import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
