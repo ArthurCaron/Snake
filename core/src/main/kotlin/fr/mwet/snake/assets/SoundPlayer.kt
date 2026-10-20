@@ -26,7 +26,6 @@ class SoundPlayer(
             Lost -> playLost()
             Won -> playWon()
             Paused, Resumed -> playPauseToggled()
-            Pause, GoBackToMainMenu -> {}
         }
     }
 

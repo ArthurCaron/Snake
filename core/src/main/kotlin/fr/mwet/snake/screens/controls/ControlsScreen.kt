@@ -1,6 +1,5 @@
 package fr.mwet.snake.screens.controls
 
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -12,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.inputs.GameActionId
+import fr.mwet.snake.inputs.BackCommand
 import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.save.settings.Keymappings
@@ -42,8 +42,8 @@ class ControlsScreen(
         gameRow(GameActionId.GoRight, I18N.actionGoRight()),
         gameRow(GameActionId.GoDown, I18N.actionGoDown()),
         gameRow(GameActionId.GoLeft, I18N.actionGoLeft()),
-        gameRow(GameActionId.Pause, I18N.actionPause()),
-        gameRow(GameActionId.GoBackToMainMenu, I18N.actionBack()),
+        generalRow(GeneralActionId.Pause, I18N.actionPause()),
+        generalRow(GeneralActionId.Back, I18N.actionBack()),
         generalRow(GeneralActionId.StartGame, I18N.actionStartGame()),
     )
     private val keyCapture = KeyCapture()
@@ -155,7 +155,9 @@ class ControlsScreen(
 
     private inner class KeyCapture : InputAdapter() {
         override fun keyDown(keycode: Int): Boolean {
-            if (keycode != Input.Keys.ESCAPE && keycode != Input.Keys.BACK) bind(keycode)
+            val backKeys = settingsRepository.settings.keymappings.general
+                .firstOrNull { it.action == BackCommand }?.keys.orEmpty()
+            if (keycode !in backKeys) bind(keycode)
             stopCapture()
             refresh()
             return true

@@ -8,7 +8,6 @@ import fr.mwet.snake.events.MenuEventBusImpl
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
-import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.TouchInputProcessor
 import fr.mwet.snake.screens.controls.ControlsScreen
@@ -24,20 +23,18 @@ class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigato
     private val gameEvents: GameEventBus = GameEventBusImpl()
     val menuEvents: MenuEventBus = MenuEventBusImpl()
     private val styles = UiStyles(assets.fonts, assets.textures)
-    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, styles, boot.input)
+    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, styles, boot.input, boot.settingsRepository)
     private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
     private val world = GameWorld(gameEvents)
-    private val gameCommandContext = GameCommandContext(world, gameEvents)
+    private val gameCommandContext = GameCommandContext(world)
     private val gameInput = GameInputProcessor(boot.settingsRepository, gameCommandContext)
     private val touchInput = TouchInputProcessor(gameCommandContext)
-    private val generalInput = GeneralInputProcessor(boot.settingsRepository, menuEvents)
 
     val mainMenuScreen = MainMenuScreen(
         kit = kit,
         menuEventBus = menuEvents,
         metadataRepository = boot.metadataRepository,
         settingsRepository = boot.settingsRepository,
-        menuInput = generalInput,
         navigator = navigator,
     )
 
@@ -59,6 +56,5 @@ class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigato
         gameEvents.listen(soundPlayer)
         menuEvents.listen(soundPlayer)
         menuEvents.listen(mainMenuScreen)
-        gameEvents.listen(gameScreen)
     }
 }

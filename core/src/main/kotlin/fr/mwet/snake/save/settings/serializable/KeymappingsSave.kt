@@ -60,8 +60,6 @@ class GeneralKeymappingSave() {
 
 object DefaultKeymappings {
     fun defaultGame(keysArePhysical: Boolean) = arrayListOf(
-        GameKeymappingSave(GameActionId.GoBackToMainMenu, arrayListOf(Input.Keys.ESCAPE, Input.Keys.BACK)),
-        GameKeymappingSave(GameActionId.Pause, arrayListOf(Input.Keys.SPACE)),
         GameKeymappingSave(GameActionId.GoUp, letterKeys(keysArePhysical, qwerty = Input.Keys.W, azerty = Input.Keys.Z) + Input.Keys.UP),
         GameKeymappingSave(GameActionId.GoRight, arrayListOf(Input.Keys.D, Input.Keys.RIGHT)),
         GameKeymappingSave(GameActionId.GoDown, arrayListOf(Input.Keys.S, Input.Keys.DOWN)),
@@ -69,7 +67,9 @@ object DefaultKeymappings {
     )
 
     fun defaultGeneral() = arrayListOf(
-        GeneralKeymappingSave(GeneralActionId.StartGame, arrayListOf(Input.Keys.ENTER)),
+        GeneralKeymappingSave(GeneralActionId.StartGame, arrayListOf(Input.Keys.ENTER, Input.Keys.NUMPAD_ENTER)),
+        GeneralKeymappingSave(GeneralActionId.Pause, arrayListOf(Input.Keys.SPACE)),
+        GeneralKeymappingSave(GeneralActionId.Back, arrayListOf(Input.Keys.ESCAPE, Input.Keys.BACK)),
     )
 
     fun defaultKeymappings(keysArePhysical: Boolean) = KeymappingsSave(
