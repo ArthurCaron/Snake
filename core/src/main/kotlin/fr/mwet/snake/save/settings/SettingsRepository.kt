@@ -9,7 +9,8 @@ private const val ROOT_FOLDER = "settings"
 private const val KEYMAPPINGS_FILE = "${ROOT_FOLDER}/keymappings.json"
 private const val USER_PREFERENCES_FILE = "${ROOT_FOLDER}/user_preferences.json"
 
-class SettingsRepository(private val jsonStore: JsonStore) {
+class SettingsRepository(private val jsonStore: JsonStore, private val keysArePhysical: Boolean) {
+    private val defaultKeymappingsSave = DefaultKeymappings.defaultKeymappings(keysArePhysical)
     var version = 0
         private set
     var settings = load()
@@ -39,8 +40,8 @@ class SettingsRepository(private val jsonStore: JsonStore) {
     }
 
     private fun load(): Settings {
-        val keymappingsSave = jsonStore.readOrCreate(KEYMAPPINGS_FILE) { DefaultKeymappings.defaultKeymappings() }
-        keymappingsSave.restoreDefaults()
+        val keymappingsSave = jsonStore.readOrCreate(KEYMAPPINGS_FILE) { DefaultKeymappings.defaultKeymappings(keysArePhysical) }
+        keymappingsSave.restoreDefaults(defaultKeymappingsSave)
 
         val userPreferencesSave =
             jsonStore.readOrCreate(USER_PREFERENCES_FILE) { DefaultUserPreferences.defaultUserPreferences() }
@@ -63,7 +64,7 @@ class SettingsRepository(private val jsonStore: JsonStore) {
         return settings
     }
 
-    private fun defaultKeymappings(): Keymappings = DefaultKeymappings.defaultKeymappings().let { defaults ->
+    private fun defaultKeymappings(): Keymappings = defaultKeymappingsSave.let { defaults ->
         Keymappings(
             game = defaults.game.map { it.toKeymapping() },
             general = defaults.general.map { it.toKeymapping() },
@@ -81,7 +82,7 @@ class SettingsRepository(private val jsonStore: JsonStore) {
     private fun GeneralKeymappingSave.toKeymapping() = GeneralKeymapping(action.generalCommand, keys)
 
     private fun Keymappings.toSerializable() = KeymappingsSave(
-        version = DefaultKeymappings.defaultKeymappings().version,
+        version = defaultKeymappingsSave.version,
         game = game.map { it.toSerializable() },
         general = general.map { it.toSerializable() },
     )
