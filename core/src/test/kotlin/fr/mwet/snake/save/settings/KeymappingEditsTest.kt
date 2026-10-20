@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 
 class KeymappingEditsTest {
     @Test
-    fun `rebinding replaces the keys of the action and takes the key away from the other actions`() {
+    fun `adding a key keeps the keys of the action and takes the key away from the other actions`() {
         val keymappings = Keymappings(
             game = listOf(
                 GameKeymapping(GoUpCommand, listOf(Keys.W, Keys.UP)),
@@ -16,10 +16,9 @@ class KeymappingEditsTest {
             ),
         )
 
-        val rebound = keymappings.rebindGame(GoLeftCommand, Keys.W)
+        val edited = keymappings.addGameKey(GoLeftCommand, Keys.W)
 
-        assertEquals(listOf(Keys.UP), rebound.game.single { it.action == GoUpCommand }.keys)
-        assertEquals(listOf(Keys.W), rebound.game.single { it.action == GoLeftCommand }.keys)
+        assertEquals(listOf(Keys.UP), edited.game.single { it.action == GoUpCommand }.keys)
+        assertEquals(listOf(Keys.A, Keys.W), edited.game.single { it.action == GoLeftCommand }.keys)
     }
 }
-
