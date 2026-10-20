@@ -45,6 +45,7 @@ class TextureHandler(assetManager: AssetManager) :
 
     private fun createRectangle(key: RectangleKey): Texture {
         val pixmap = Pixmap(key.width, key.height, Format.RGBA8888)
+        pixmap.setBlending(Pixmap.Blending.None)
 
         pixmap.setColor(key.borderColor)
         pixmap.fillRectangle(0, 0, key.width, key.height)
