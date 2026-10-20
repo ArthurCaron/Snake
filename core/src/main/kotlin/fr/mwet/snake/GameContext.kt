@@ -9,6 +9,7 @@ import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralInputProcessor
+import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.SwipeInputProcessor
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.game.GameScreen
@@ -19,7 +20,7 @@ import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiStyles
 
-class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator, languages: LanguageSwitcher) {
+class GameContext(boot: Boot, assets: LoadedAssets, keyNames: KeyNames, navigator: Navigator, languages: LanguageSwitcher) {
     private val gameEvents: GameEventBus = GameEventBusImpl()
     val menuEvents: MenuEventBus = MenuEventBusImpl()
     private val styles = UiStyles(assets.fonts, assets.textures)
@@ -51,7 +52,7 @@ class GameContext(boot: Boot, assets: LoadedAssets, navigator: Navigator, langua
 
     val scoresScreen = ScoresScreen(kit, boot.metadataRepository, navigator)
     val settingsScreen = SettingsScreen(kit, boot.settingsRepository, menuEvents, navigator)
-    val controlsScreen = ControlsScreen(kit, boot.settingsRepository, navigator)
+    val controlsScreen = ControlsScreen(kit, boot.settingsRepository, keyNames, navigator)
     val languageScreen = LanguageScreen(kit, boot.settingsRepository, languages, navigator)
 
     init {
