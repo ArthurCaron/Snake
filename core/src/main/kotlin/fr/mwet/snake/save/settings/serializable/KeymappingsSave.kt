@@ -17,11 +17,11 @@ class KeymappingsSave() {
         this.general = ArrayList(general)
     }
 
-    fun restoreDefaults() {
-        version = if (version == NO_VERSION) DefaultKeymappings.defaultKeymappings().version else version
+    fun restoreDefaults(defaults: KeymappingsSave) {
+        version = if (version == NO_VERSION) defaults.version else version
 
         val gameMap = game.associate { it.action to it.keys }.toMutableMap()
-        DefaultKeymappings.defaultKeymappings().game.forEach {
+        defaults.game.forEach {
             if (gameMap.doesNotContainKey(it.action)) {
                 gameMap[it.action] = it.keys
             }
@@ -29,7 +29,7 @@ class KeymappingsSave() {
         game = ArrayList(gameMap.map { GameKeymappingSave(it.key, it.value) })
 
         val generalMap = general.associate { it.action to it.keys }.toMutableMap()
-        DefaultKeymappings.defaultKeymappings().general.forEach {
+        defaults.general.forEach {
             if (generalMap.doesNotContainKey(it.action)) {
                 generalMap[it.action] = it.keys
             }
@@ -59,22 +59,25 @@ class GeneralKeymappingSave() {
 }
 
 object DefaultKeymappings {
-    fun defaultGame() = arrayListOf(
+    fun defaultGame(keysArePhysical: Boolean) = arrayListOf(
         GameKeymappingSave(GameActionId.GoBackToMainMenu, arrayListOf(Input.Keys.ESCAPE, Input.Keys.BACK)),
         GameKeymappingSave(GameActionId.Pause, arrayListOf(Input.Keys.SPACE)),
-        GameKeymappingSave(GameActionId.GoUp, arrayListOf(Input.Keys.Z, Input.Keys.W, Input.Keys.UP)),
+        GameKeymappingSave(GameActionId.GoUp, letterKeys(keysArePhysical, qwerty = Input.Keys.W, azerty = Input.Keys.Z) + Input.Keys.UP),
         GameKeymappingSave(GameActionId.GoRight, arrayListOf(Input.Keys.D, Input.Keys.RIGHT)),
         GameKeymappingSave(GameActionId.GoDown, arrayListOf(Input.Keys.S, Input.Keys.DOWN)),
-        GameKeymappingSave(GameActionId.GoLeft, arrayListOf(Input.Keys.Q, Input.Keys.A, Input.Keys.LEFT)),
+        GameKeymappingSave(GameActionId.GoLeft, letterKeys(keysArePhysical, qwerty = Input.Keys.A, azerty = Input.Keys.Q) + Input.Keys.LEFT),
     )
 
     fun defaultGeneral() = arrayListOf(
         GeneralKeymappingSave(GeneralActionId.StartGame, arrayListOf(Input.Keys.ENTER)),
     )
 
-    fun defaultKeymappings() = KeymappingsSave(
+    fun defaultKeymappings(keysArePhysical: Boolean) = KeymappingsSave(
         version = 0,
-        game = defaultGame(),
+        game = defaultGame(keysArePhysical),
         general = defaultGeneral(),
     )
+
+    private fun letterKeys(keysArePhysical: Boolean, qwerty: Int, azerty: Int): List<Int> =
+        if (keysArePhysical) listOf(qwerty) else listOf(qwerty, azerty)
 }
