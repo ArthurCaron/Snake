@@ -3,7 +3,7 @@ package fr.mwet.snake.screens.language
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import fr.mwet.snake.LanguageSwitcher
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.I18N
+import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.ui.MenuPage

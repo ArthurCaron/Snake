@@ -5,7 +5,7 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Disposable
-import fr.mwet.snake.assets.I18N
+import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
 
