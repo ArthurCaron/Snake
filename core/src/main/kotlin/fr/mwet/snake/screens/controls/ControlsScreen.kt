@@ -7,6 +7,7 @@ import fr.mwet.snake.Navigator
 import fr.mwet.snake.assets.I18N
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
+import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.save.settings.Keymappings
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.save.settings.rebindGame
@@ -19,7 +20,12 @@ import ktx.app.KtxScreen
 private const val NO_KEY = "-"
 private const val KEYS_COLUMN_MIN_WIDTH = 240f
 
-class ControlsScreen(private val kit: UiKit, private val settingsRepository: SettingsRepository, navigator: Navigator) : KtxScreen {
+class ControlsScreen(
+    private val kit: UiKit,
+    private val settingsRepository: SettingsRepository,
+    private val keyNames: KeyNames,
+    navigator: Navigator,
+) : KtxScreen {
     private val page = MenuPage(kit, I18N.controls(), onBack = navigator::goToSettings)
     private val rows = listOf(
         gameRow(GameActionId.GoUp, I18N.actionGoUp()),
@@ -91,7 +97,7 @@ class ControlsScreen(private val kit: UiKit, private val settingsRepository: Set
     }
 
     private fun keyNames(keys: List<Int>) =
-        if (keys.isEmpty()) NO_KEY else keys.joinToString(", ") { Input.Keys.toString(it) ?: "?" }
+        if (keys.isEmpty()) NO_KEY else keys.joinToString(", ") { keyNames.nameOf(it) ?: "?" }
 
     private fun gameRow(id: GameActionId, title: String) = ActionRow(
         title = title,

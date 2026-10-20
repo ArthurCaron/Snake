@@ -3,6 +3,8 @@ package fr.mwet.snake
 import fr.mwet.snake.events.MenuEvent.LoadingFinished
 import com.badlogic.gdx.Gdx
 import fr.mwet.snake.assets.loadTranslations
+import fr.mwet.snake.inputs.KeyNames
+import fr.mwet.snake.inputs.LibGdxKeyNames
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.game.GameScreen
@@ -15,7 +17,10 @@ import fr.mwet.snake.utils.SplashWorker
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
-class SnakeGame(private val splashWorker: SplashWorker? = null) : KtxGame<KtxScreen>(), Navigator, LanguageSwitcher {
+class SnakeGame(
+    private val splashWorker: SplashWorker? = null,
+    private val keyNames: KeyNames = LibGdxKeyNames,
+) : KtxGame<KtxScreen>(), Navigator, LanguageSwitcher {
     private lateinit var boot: Boot
     private lateinit var assets: LoadedAssets
 
@@ -29,7 +34,7 @@ class SnakeGame(private val splashWorker: SplashWorker? = null) : KtxGame<KtxScr
     private fun onAssetsLoaded(assets: LoadedAssets) {
         this.assets = assets
         loadTranslations(boot.settingsRepository.language.locale())
-        val context = GameContext(boot, assets, navigator = this, languages = this)
+        val context = GameContext(boot, assets, keyNames, navigator = this, languages = this)
         registerScreens(context)
         context.menuEvents.emit(LoadingFinished)
         goToMainMenu()
@@ -41,7 +46,7 @@ class SnakeGame(private val splashWorker: SplashWorker? = null) : KtxGame<KtxScr
         Gdx.app.postRunnable {
             loadTranslations(language.locale())
             val oldScreens = unregisterScreens()
-            registerScreens(GameContext(boot, assets, navigator = this, languages = this))
+            registerScreens(GameContext(boot, assets, keyNames, navigator = this, languages = this))
             goToLanguage()
             oldScreens.forEach { it.dispose() }
         }
