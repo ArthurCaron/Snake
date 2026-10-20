@@ -1,14 +1,11 @@
 package fr.mwet.snake.screens.game
 
-import com.badlogic.gdx.Input
-import com.badlogic.gdx.InputAdapter
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.events.GameEvent
-import fr.mwet.snake.events.GameEvent.*
-import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameInputProcessor
+import fr.mwet.snake.inputs.GeneralCommandContext
+import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.inputs.TouchInputProcessor
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
@@ -24,21 +21,40 @@ class GameScreen(
     private val gameInput: GameInputProcessor,
     private val touchInput: TouchInputProcessor,
     private val navigator: Navigator,
-) : KtxScreen, GameEventListener {
+) : KtxScreen {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
     private val board = BoardRenderer(kit.textures, world)
     private val ui = GameUi(kit.styles, uiLayer.stage, UiActions())
-    private val pauseKeys = PauseKeys()
+    private val menuInput = GeneralInputProcessor(
+        kit.settingsRepository, GeneralCommandContext(
+            onStartGame = {
+                if (world.state == GameState.Paused) {
+                    world.resume()
+                    true
+                } else false
+            },
+            onBack = {
+                back()
+                true
+            },
+            onPause = {
+                if (world.isOver) false else {
+                    togglePause()
+                    true
+                }
+            },
+        )
+    )
     private var gameState: GameState? = null
 
     override fun show() {
-        kit.input.add(pauseKeys, gameInput, uiLayer.stage, touchInput)
+        kit.input.add(menuInput, gameInput, uiLayer.stage, touchInput)
         startNewGame()
     }
 
     override fun hide() {
-        kit.input.remove(pauseKeys, gameInput, uiLayer.stage, touchInput)
+        kit.input.remove(menuInput, gameInput, uiLayer.stage, touchInput)
         ui.onHide()
     }
 
@@ -64,14 +80,6 @@ class GameScreen(
         uiLayer.dispose()
     }
 
-    override fun onEvent(event: GameEvent) {
-        when (event) {
-            GoBackToMainMenu -> back()
-            Pause -> togglePause()
-            FoodEaten, SnakeMoved, Lost, Won, Paused, Resumed -> {}
-        }
-    }
-
     private fun startNewGame() {
         world.newGame()
         board.reset()
@@ -85,6 +93,7 @@ class GameScreen(
                 board.disintegrate()
                 setEndGameResult()
             }
+
             GameState.Won -> setEndGameResult()
             GameState.Ready, GameState.Playing, GameState.Paused -> {}
         }
@@ -110,15 +119,6 @@ class GameScreen(
     private fun returnToMainMenu() {
         if (world.state == GameState.Paused) metadataRepository.submitHighScore(world.score)
         navigator.goToMainMenu()
-    }
-
-    private inner class PauseKeys : InputAdapter() {
-        override fun keyDown(keycode: Int): Boolean {
-            if (world.state != GameState.Paused) return false
-            if (keycode != Input.Keys.ENTER && keycode != Input.Keys.NUMPAD_ENTER) return false
-            world.resume()
-            return true
-        }
     }
 
     private inner class UiActions : GameUiActions {

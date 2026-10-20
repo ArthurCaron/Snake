@@ -5,7 +5,7 @@ import fr.mwet.snake.inputs.GeneralCommand
 
 fun Keymappings.addGameKey(action: GameCommand, key: Int) = Keymappings(
     game = game.map { if (it.action == action) it.copy(keys = it.keys - key + key) else it.copy(keys = it.keys - key) },
-    general = general,
+    general = general.map { it.copy(keys = it.keys - key) },
 )
 
 fun Keymappings.removeGameKey(action: GameCommand, key: Int) = Keymappings(
@@ -14,7 +14,7 @@ fun Keymappings.removeGameKey(action: GameCommand, key: Int) = Keymappings(
 )
 
 fun Keymappings.addGeneralKey(action: GeneralCommand, key: Int) = Keymappings(
-    game = game,
+    game = game.map { it.copy(keys = it.keys - key) },
     general = general.map { if (it.action == action) it.copy(keys = it.keys - key + key) else it.copy(keys = it.keys - key) },
 )
 

@@ -1,11 +1,11 @@
 package fr.mwet.snake.ui
 
-import com.badlogic.gdx.Input
-import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Disposable
 import fr.mwet.snake.generated.assets.I18N
+import fr.mwet.snake.inputs.GeneralCommandContext
+import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
 
@@ -13,7 +13,14 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val boardBackground = Background(kit.textures)
     private val uiLayer = UiLayer(kit.batch)
-    private val backKeys = BackKeys()
+    private val menuInput = GeneralInputProcessor(
+        kit.settingsRepository, GeneralCommandContext(
+            onBack = {
+                onBack()
+                true
+            },
+        )
+    )
 
     val content = Table().apply { defaults().space(12f) }
 
@@ -33,11 +40,11 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
     }
 
     fun show() {
-        kit.input.add(backKeys, uiLayer.stage)
+        kit.input.add(menuInput, uiLayer.stage)
     }
 
     fun hide() {
-        kit.input.remove(backKeys, uiLayer.stage)
+        kit.input.remove(menuInput, uiLayer.stage)
     }
 
     fun resize(width: Int, height: Int) {
@@ -52,13 +59,5 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
 
     override fun dispose() {
         uiLayer.dispose()
-    }
-
-    private inner class BackKeys : InputAdapter() {
-        override fun keyDown(keycode: Int): Boolean {
-            if (keycode != Input.Keys.ESCAPE && keycode != Input.Keys.BACK) return false
-            onBack()
-            return true
-        }
     }
 }

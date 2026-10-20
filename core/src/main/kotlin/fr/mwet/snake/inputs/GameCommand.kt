@@ -1,13 +1,9 @@
 package fr.mwet.snake.inputs
 
-import fr.mwet.snake.events.GameEvent
-import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.utils.Direction
 
 enum class GameActionId(val gameCommand: GameCommand) {
     Null(NullGameCommand),
-    GoBackToMainMenu(GoBackToMainMenuCommand),
-    Pause(PauseCommand),
     GoUp(GoUpCommand),
     GoRight(GoRightCommand),
     GoDown(GoDownCommand),
@@ -16,8 +12,6 @@ enum class GameActionId(val gameCommand: GameCommand) {
     companion object {
         fun from(gameCommand: GameCommand) = when (gameCommand) {
             NullGameCommand -> Null
-            GoBackToMainMenuCommand -> GoBackToMainMenu
-            PauseCommand -> Pause
             GoUpCommand -> GoUp
             GoRightCommand -> GoRight
             GoDownCommand -> GoDown
@@ -30,10 +24,7 @@ sealed interface GameCommand {
     fun execute(context: GameCommandContext)
 }
 
-class GameCommandContext(
-    val targetActor: TargetActor,
-    val gameEventBus: GameEventBus,
-)
+class GameCommandContext(val targetActor: TargetActor)
 
 interface TargetActor {
     fun setDirection(newDirection: Direction)
@@ -41,18 +32,6 @@ interface TargetActor {
 
 object NullGameCommand : GameCommand {
     override fun execute(context: GameCommandContext) {}
-}
-
-object GoBackToMainMenuCommand : GameCommand {
-    override fun execute(context: GameCommandContext) {
-        context.gameEventBus.emit(GameEvent.GoBackToMainMenu)
-    }
-}
-
-object PauseCommand : GameCommand {
-    override fun execute(context: GameCommandContext) {
-        context.gameEventBus.emit(GameEvent.Pause)
-    }
 }
 
 object GoUpCommand : GameCommand {
