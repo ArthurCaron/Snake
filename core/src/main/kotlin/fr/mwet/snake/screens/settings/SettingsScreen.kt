@@ -1,5 +1,7 @@
 package fr.mwet.snake.screens.settings
 
+import com.badlogic.gdx.Application.ApplicationType.Android
+import com.badlogic.gdx.Gdx
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
@@ -33,7 +35,7 @@ class SettingsScreen(
     init {
         page.content.add(soundButton).fillX().row()
         page.content.add(musicButton).fillX().row()
-        page.content.add(controlsButton).fillX().row()
+        if (Gdx.app.type != Android) page.content.add(controlsButton).fillX().row()
         page.content.add(languageButton).fillX().row()
     }
 
