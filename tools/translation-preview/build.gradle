@@ -1,0 +1,25 @@
+apply plugin: 'application'
+
+eclipse.project.name = appName + '-translation-preview'
+
+sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
+
+tasks.named('processResources') {
+  dependsOn(rootProject.tasks.named('prepareAssets'))
+}
+
+application.mainClass = 'fr.mwet.tools.translationpreview.MainKt'
+
+dependencies {
+  implementation project(':core')
+  implementation project(':tools:asset-catalog-generator')
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+}
+
+run {
+  workingDir = rootProject.projectDir
+  if (System.properties['os.name'].toLowerCase().contains('mac')) jvmArgs += "-XstartOnFirstThread"
+}
