@@ -4,7 +4,7 @@ import fr.mwet.tools.assetcataloggenerator.reader.AssetCatalogItem
 import fr.mwet.tools.assetcataloggenerator.reader.AtlasRegionCatalogItem
 import fr.mwet.tools.assetcataloggenerator.reader.readAtlasRegionCatalogItems
 import fr.mwet.tools.assetcataloggenerator.reader.readFileCatalogItems
-import fr.mwet.tools.assetcataloggenerator.reader.readTranslationKeys
+import fr.mwet.tools.assetcataloggenerator.reader.readTranslationTable
 import fr.mwet.tools.assetcataloggenerator.renderer.AssetCatalogNode
 import fr.mwet.tools.assetcataloggenerator.renderer.renderAssetCatalog
 import fr.mwet.tools.assetcataloggenerator.renderer.renderI18N
@@ -14,7 +14,7 @@ import java.nio.file.Path
 
 
 fun main(args: Array<String>) {
-    val (inputDir, outputDir, packageName) = Args.from(args).apply { validate() }
+    val (inputDir, outputDir, packageName, translationsFile) = Args.from(args).apply { validate() }
 
     val textureAtlasPath = "textures/textures.atlas"
     val textureRegionItems = readAtlasRegionCatalogItems(inputDir.resolve(textureAtlasPath))
@@ -50,9 +50,9 @@ fun main(args: Array<String>) {
         items = readFileCatalogItems(inputDir, "fonts", setOf("ttf"), nested = true),
     )
 
-    val translationsPath = inputDir.resolve("i18n/translations.properties")
-    if (Files.isRegularFile(translationsPath)) {
-        Files.writeString(outputDir.resolve("I18N.kt"), renderI18N(packageName, readTranslationKeys(translationsPath)))
+    if (translationsFile != null) {
+        val keys = readTranslationTable(translationsFile).rows.map { it.key }
+        Files.writeString(outputDir.resolve("I18N.kt"), renderI18N(packageName, keys))
     }
 }
 

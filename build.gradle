@@ -105,7 +105,7 @@ tasks.register('syncRootRuntimeAssets', Sync) {
   includeEmptyDirs = false
 }
 
-def copiedAssetFolders = ['fonts', 'i18n', 'music', 'sounds']
+def copiedAssetFolders = ['fonts', 'music', 'sounds']
 
 copiedAssetFolders.each { folder ->
   tasks.register("sync${folder.capitalize()}Assets", Sync) {
@@ -140,10 +140,11 @@ tasks.register('texturePacker') {
 
 tasks.register('prepareAssets') {
   dependsOn(tasks.named('syncRuntimeAssets'))
+  dependsOn(':core:generateTranslations')
   dependsOn(tasks.named('texturePacker'))
 }
 
-configure(subprojects - project(':android')) {
+configure(subprojects - project(':android') - project(':tools:asset-catalog-generator')) {
   tasks.named('generateAssetList') {
     dependsOn(rootProject.tasks.named('prepareAssets'))
   }

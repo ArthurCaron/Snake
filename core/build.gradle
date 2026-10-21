@@ -29,12 +29,28 @@ sourceSets {
   }
 }
 
+def translationsTable = rootProject.file("sourceAssets/i18n/translations.csv")
+
+tasks.register("generateTranslations", JavaExec) {
+  dependsOn(":tools:asset-catalog-generator:classes")
+
+  def outputDir = rootProject.file("assets/i18n")
+  inputs.file(translationsTable)
+  outputs.dir(outputDir)
+
+  classpath = project(":tools:asset-catalog-generator").sourceSets.main.runtimeClasspath
+  mainClass.set("fr.mwet.tools.assetcataloggenerator.translations.TranslationsMainKt")
+
+  args("--input", translationsTable.absolutePath, "--output", outputDir.absolutePath)
+}
+
 tasks.register("generateAssetCatalog", JavaExec) {
   dependsOn(rootProject.tasks.named("prepareAssets"))
   dependsOn(":tools:asset-catalog-generator:classes")
 
   inputs.dir(rootProject.file("assets"))
   inputs.file(rootProject.file("assets/textures/textures.atlas"))
+  inputs.file(translationsTable)
   outputs.dir(generatedAssetCatalogDir)
 
   classpath = project(":tools:asset-catalog-generator").sourceSets.main.runtimeClasspath
@@ -42,6 +58,7 @@ tasks.register("generateAssetCatalog", JavaExec) {
 
   args(
     "--input", rootProject.file("assets").absolutePath,
+    "--translations", translationsTable.absolutePath,
     "--output", generatedAssetCatalogDir.get().asFile.absolutePath,
     "--package", "fr.mwet.snake.generated.assets",
   )
@@ -49,8 +66,4 @@ tasks.register("generateAssetCatalog", JavaExec) {
 
 tasks.named("compileKotlin") {
   dependsOn("generateAssetCatalog")
-}
-
-tasks.named("test") {
-  inputs.dir(rootProject.file("sourceAssets/i18n"))
 }

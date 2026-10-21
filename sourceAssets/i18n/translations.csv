@@ -1,0 +1,34 @@
+key,en,fr
+play,Play!,Jouer !
+highscore,High scores,Meilleurs scores
+settings,Settings,Paramètres
+settingsSound,Sound,Volume
+soundOn,Sound: on,Son : activé
+soundOff,Sound: off,Son : coupé
+musicOn,Music: on,Musique: activée
+musicOff,Music: off,Musique: coupée
+score,Score: {0},Score : {0}
+best,Best: {0},Record : {0}
+tapToStart,"Tap a side, swipe, or press an arrow key to start","Touche un côté, glisse, ou appuie sur une flèche pour commencer"
+paused,Paused,Pause
+resume,Resume,Reprendre
+mainMenu,Main menu,Menu principal
+gameOver,Game over,Perdu !
+victory,You win!,Gagné !
+newHighScore,New highscore!,Nouveau record !
+playAgain,Play again,Rejouer
+back,Back,Retour
+noScores,No score yet,Aucun score pour le moment
+controls,Controls,Commandes
+resetControls,Reset controls,Réinitialiser
+pressAKey,Press a key (Esc to cancel),Appuie sur une touche (Échap pour annuler)
+actionGoUp,Up,Haut
+actionGoRight,Right,Droite
+actionGoDown,Down,Bas
+actionGoLeft,Left,Gauche
+actionPause,Pause,Pause
+actionBack,Back,Retour
+actionStartGame,Start / resume game,Lancer / reprendre la partie
+language,Language,Langue
+languageSystem,Device language,Langue de l'appareil
+ready,Ready?,Prêt ?
