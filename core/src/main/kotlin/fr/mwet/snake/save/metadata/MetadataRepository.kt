@@ -4,10 +4,10 @@ import fr.mwet.snake.save.metadata.serializable.CURRENT_VERSION
 import fr.mwet.snake.save.metadata.serializable.HighScoreSave
 import fr.mwet.snake.save.metadata.serializable.HighScoresSave
 import fr.mwet.snake.save.serialization.JsonStore
+import fr.mwet.snake.tuning.GameplayTuning.HIGH_SCORES_KEPT
 
 private const val ROOT_FOLDER = "metadata"
 private const val HIGH_SCORES_FILE = "${ROOT_FOLDER}/highscores.json"
-private const val MAX_HIGH_SCORES = 10
 
 data class Metadata(val highScores: List<HighScore>) {
     val highestScore: HighScore get() = highScores.firstOrNull() ?: HighScore(0)
@@ -24,7 +24,7 @@ class MetadataRepository(private val jsonStore: JsonStore) {
         val isNewHighScore = score > metadata.highestScore.score
         val highScores = (metadata.highScores + HighScore(score))
             .sortedByDescending { it.score }
-            .take(MAX_HIGH_SCORES)
+            .take(HIGH_SCORES_KEPT)
         save(metadata.copy(highScores = highScores))
         return isNewHighScore
     }
@@ -35,7 +35,7 @@ class MetadataRepository(private val jsonStore: JsonStore) {
             highScoresSave.highScores
                 .map { HighScore(it.score) }
                 .sortedByDescending { it.score }
-                .take(MAX_HIGH_SCORES)
+                .take(HIGH_SCORES_KEPT)
         )
         save(metadata)
         return metadata

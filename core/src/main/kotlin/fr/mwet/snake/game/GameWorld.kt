@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.events.GameEvent.*
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.TargetActor
+import fr.mwet.snake.tuning.GameplayTuning.MAX_TICKS_PER_SECOND
+import fr.mwet.snake.tuning.GameplayTuning.SCORE_PER_FOOD
+import fr.mwet.snake.tuning.GameplayTuning.START_TICKS_PER_SECOND
+import fr.mwet.snake.tuning.GameplayTuning.TICKS_PER_SECOND_GAINED_PER_FOOD
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.Direction
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
-
-private const val START_TICKS_PER_SECOND = 5f
-private const val TICKS_PER_SECOND_GAINED_PER_FOOD = 0.15f
-private const val MAX_TICKS_PER_SECOND = 12f
 
 class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
     val ticker = Ticker(START_TICKS_PER_SECOND)
@@ -76,7 +76,7 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
         gameEventBus.emit(SnakeMoved)
 
         if (willEatFood) {
-            score++
+            score += SCORE_PER_FOOD
             gameEventBus.emit(FoodEaten)
             ticker.speedUp(TICKS_PER_SECOND_GAINED_PER_FOOD, MAX_TICKS_PER_SECOND)
             resetFood()

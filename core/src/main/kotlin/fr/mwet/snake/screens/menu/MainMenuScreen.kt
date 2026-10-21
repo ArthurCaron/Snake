@@ -11,10 +11,10 @@ import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.settings.SettingsRepository
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiLayer
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
 import ktx.app.KtxScreen
 
 class MainMenuScreen(

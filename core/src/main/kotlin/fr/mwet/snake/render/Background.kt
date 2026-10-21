@@ -2,8 +2,8 @@ package fr.mwet.snake.render
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.assets.TextureHandler
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 
 class Background(textureHandler: TextureHandler) : WorldDrawable {
     private val texture =

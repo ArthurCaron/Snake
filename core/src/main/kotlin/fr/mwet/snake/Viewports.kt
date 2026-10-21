@@ -3,8 +3,8 @@ package fr.mwet.snake
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 
 private const val UI_REFERENCE_SHORT_SIDE = 900f
 

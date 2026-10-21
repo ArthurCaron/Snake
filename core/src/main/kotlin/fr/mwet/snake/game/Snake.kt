@@ -2,18 +2,21 @@ package fr.mwet.snake.game
 
 import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.inputs.TargetActor
+import fr.mwet.snake.tuning.GameplayTuning.START_DIRECTION
+import fr.mwet.snake.tuning.GameplayTuning.START_TAIL_X
+import fr.mwet.snake.tuning.GameplayTuning.START_TAIL_Y
+import fr.mwet.snake.tuning.InputTuning.MAX_PENDING_DIRECTIONS
 import fr.mwet.snake.utils.Direction
 import fr.mwet.snake.utils.collidesWith
 import fr.mwet.snake.utils.move
 import ktx.assets.pool
 
-private val initialDirection = Direction.UP
-private val initialTailPosition = Vector2(4f, 3f)
+private val initialDirection = START_DIRECTION
+private val initialTailPosition = Vector2(START_TAIL_X, START_TAIL_Y)
 private val initialHeadPosition = Vector2(
     initialTailPosition.x + initialDirection.directionX,
     initialTailPosition.y + initialDirection.directionY
 )
-private const val MAX_PENDING_DIRECTIONS = 2
 
 class Snake : TargetActor {
     private val segmentPool = SegmentPool()
