@@ -6,14 +6,14 @@ import fr.mwet.snake.tuning.AnimationTuning.SNAKE_COLOR_SEGMENT_DELAY
 import fr.mwet.snake.tuning.Palette
 
 class SnakeColors {
-    private val from = Color(Palette.snake)
-    private val to = Color(Palette.snake)
+    private val from = Color(Palette.snakeBody)
+    private val to = Color(Palette.snakeBody)
     private val scratch = Color()
     private var elapsed = Float.MAX_VALUE
 
     fun reset() {
-        from.set(Palette.snake)
-        to.set(Palette.snake)
+        from.set(Palette.snakeBody)
+        to.set(Palette.snakeBody)
         elapsed = Float.MAX_VALUE
     }
 

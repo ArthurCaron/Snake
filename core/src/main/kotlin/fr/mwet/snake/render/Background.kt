@@ -24,7 +24,7 @@ class Background(textureHandler: TextureHandler, private val settingsRepository:
     override fun draw(batch: SpriteBatch, delta: Float) {
         batch.visibleWorld(visible)
         val ground = ground()
-        batch.color = Palette.surround
+        batch.color = Palette.boardSurround
         for (x in floor(visible.x / TILE_CELLS).toInt() until ceil((visible.x + visible.width) / TILE_CELLS).toInt()) {
             for (y in floor(visible.y / TILE_CELLS).toInt() until ceil((visible.y + visible.height) / TILE_CELLS).toInt()) {
                 batch.draw(ground, x * TILE_CELLS, y * TILE_CELLS, TILE_CELLS, TILE_CELLS)

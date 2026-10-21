@@ -37,7 +37,7 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
     private val pupil = skin.snakePupil
     private val glow = skin.glow
     private val headMark = skin.snakeHeadMark
-    private val mark = Palette.markShape.region(skin)
+    private val mark = SnakeLook.markShape.region(skin)
 
     val colors = SnakeColors()
 
@@ -59,7 +59,7 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
         eTime += delta
         colors.update(delta)
 
-        if (Palette.snakeGlow > 0f) drawGlow(batch)
+        if (SnakeLook.glow > 0f) drawGlow(batch)
         batch.color = Palette.snakeShadow
         drawLayer(batch, base, SHADOW_X, SHADOW_Y, tinted = false)
         drawLayer(batch, base, 0f, 0f, tinted = true)
@@ -75,7 +75,7 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
             var segment: Segment? = snake.head
             while (segment != null) {
                 val color = colors.at(index)
-                batch.setColor(color.r, color.g, color.b, Palette.snakeGlow)
+                batch.setColor(color.r, color.g, color.b, SnakeLook.glow)
                 batch.draw(glow, segment.position.x + (1f - GLOW_SIZE) / 2, segment.position.y + (1f - GLOW_SIZE) / 2, GLOW_SIZE, GLOW_SIZE)
                 segment = segment.next
                 index++
@@ -102,7 +102,7 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
     }
 
     private fun drawMarks(batch: SpriteBatch) {
-        batch.color = Palette.marks
+        batch.color = Palette.snakeMarks
         val head = snake.head
         val facing = snake.currentDirection
         drawMark(

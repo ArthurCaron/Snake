@@ -1103,6 +1103,10 @@ def generate(name, out):
     icon.save(icons / "logo.icns")
 
     (out / "palette.json").write_text(json.dumps(kotlin_palette(p), indent=2) + "\n")
+    kotlin = out / "kotlin"
+    kotlin.mkdir(parents=True, exist_ok=True)
+    for file_name, source in kotlin_sources(p).items():
+        (kotlin / file_name).write_text(source)
 
     if "post" in p:
         POST[p["post"]](out)
@@ -1335,29 +1339,43 @@ def kotlin_palette(p):
     return palette
 
 
-def install(name, out):
-    p = PALETTES[name]
-    skin = ROOT / "sourceAssets/textures/game/skin"
-    if skin.exists():
-        shutil.rmtree(skin)
-    shutil.copytree(out / "textures/game/skin", skin)
-    for file in ("SplashScreen.png", "LoadingAssets.png"):
-        shutil.copy(out / "root" / file, ROOT / "sourceAssets/root" / file)
-    icons = out / "icons"
-    for size in (16, 32, 64, 128):
-        shutil.copy(icons / f"icon{size}.png", ROOT / f"lwjgl3/src/main/resources/icon{size}.png")
-    for density in ("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"):
-        shutil.copy(icons / f"drawable-{density}/ic_launcher.png", ROOT / f"android/res/drawable-{density}/ic_launcher.png")
-    for file in ("logo.png", "logo.ico", "logo.icns"):
-        shutil.copy(icons / file, ROOT / "lwjgl3/icons" / file)
-    shutil.copy(icons / "favicon.ico", ROOT / "sourceAssets/web/favicon.ico")
+def kotlin_sources(p):
+    k = kotlin_palette(p)
+
+    def color(value):
+        return f'Color.valueOf("{value.lstrip("#")}")'
+    fruits = "".join(f"\n        FruitStyle(FruitKind.{kind.capitalize()}, {color(c)})," for kind, c in k["fruits"])
+    header = "package fr.mwet.snake.render\n\nimport com.badlogic.gdx.graphics.Color\n\n"
+    return {
+        "StyleColors.kt": header + f"""object StyleColors {{
+    val clear: Color = {color(k["clear"])}
+    val outline: Color = {color(k["outline"])}
+    val text: Color = {color(k["text"])}
+    val primary: Color = {color(k["primary"])}
+    val surround: Color = {color(k["surround"])}
+}}
+""",
+        "SnakeLook.kt": header + f"""object SnakeLook {{
+    val body: Color = {color(k["snake"])}
+    val marks: Color = {color(k["marks"])}
+    val markShape = MarkShape.{k["markShape"].capitalize()}
+    val takesFruitColor = {str(k["snakeTakesFruitColor"]).lower()}
+    val glow = {k["snakeGlow"]}f
+}}
+""",
+        "FruitLook.kt": header + f"""object FruitLook {{
+    val fruits: Array<FruitStyle> = arrayOf({fruits}
+    )
+    val glow = {k["fruitGlow"]}f
+}}
+""",
+    }
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("styles", nargs="*", default=list(PALETTES))
-    parser.add_argument("--out", type=Path, default=ROOT / "sourceAssets/styles")
-    parser.add_argument("--install", help="copy this style into the game")
+    parser.add_argument("--out", type=Path, default=ROOT / "tools/style-generator/out")
     args = parser.parse_args()
     for name in args.styles:
         generate(name, args.out / name)
@@ -1366,9 +1384,6 @@ def main():
     preview.overview(args.out / "previews", list(PALETTES)).save(args.out / "previews/all.png")
     preview.marks_sheet(args.out, ["desert", "laser"]).save(args.out / "previews/marks.png")
     preview.fruits_sheet(args.out, list(PALETTES)).save(args.out / "previews/fruits.png")
-    if args.install:
-        install(args.install, args.out / args.install)
-        print(f"installed {args.install}")
     preview.grounds_sheet(args.out, list(PALETTES)).save(args.out / "previews/grounds.png")
 
 

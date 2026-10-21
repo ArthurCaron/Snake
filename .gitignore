@@ -173,4 +173,5 @@ Thumbs.db
 
 ## Style generator:
 /.venv/
+/tools/style-generator/out/
 __pycache__/

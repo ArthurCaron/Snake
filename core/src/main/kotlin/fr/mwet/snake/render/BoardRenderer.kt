@@ -49,7 +49,7 @@ class BoardRenderer(
 
     private fun onFoodEaten() {
         lastFood.set(world.food.position)
-        if (Palette.snakeTakesFruitColor) snake.colors.change(food.color)
+        if (SnakeLook.takesFruitColor) snake.colors.change(food.color)
         food.nextFruit()
     }
 

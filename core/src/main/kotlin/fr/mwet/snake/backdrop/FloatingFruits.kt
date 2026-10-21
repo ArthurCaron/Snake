@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.render.Background
+import fr.mwet.snake.render.FruitLook
 import fr.mwet.snake.render.WorldDrawable
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.COLOR
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.FRUIT_COUNT
@@ -16,7 +17,6 @@ import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.ROTATION_SPEED
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.SWAY
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
-import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.utils.resetColor
 import fr.mwet.snake.utils.setTint
 import kotlin.math.sqrt
@@ -33,8 +33,8 @@ private const val UNSCALED = 1f
 
 // Strawberries rise slowly, sway and tilt, and come back from the bottom when they leave the top.
 class FloatingFruits(textures: TextureHandler, private val background: Background) : WorldDrawable {
-    private val sprites = Palette.fruits.map { it.kind.sprites(textures.game.skin) }
-    private val fruit = IntArray(FRUIT_COUNT) { MathUtils.random(Palette.fruits.size - 1) }
+    private val sprites = FruitLook.fruits.map { it.kind.sprites(textures.game.skin) }
+    private val fruit = IntArray(FRUIT_COUNT) { MathUtils.random(FruitLook.fruits.size - 1) }
     private val x = FloatArray(FRUIT_COUNT) { MathUtils.random(0f, WORLD_WIDTH) }
     private val y = FloatArray(FRUIT_COUNT) { MathUtils.random(START_MIN_Y, WORLD_HEIGHT) }
     private val speed = FloatArray(FRUIT_COUNT) { MathUtils.random(MIN_SPEED, MAX_SPEED) }
@@ -56,7 +56,7 @@ class FloatingFruits(textures: TextureHandler, private val background: Backgroun
             // x keeps the rest position, and the fruit oscillates around it.
             val sway = MathUtils.sin(time + phase[i]) * SWAY
             val rotation = MathUtils.sin(time * ROTATION_SPEED + phase[i]) * ROTATION_DEGREES
-            val tint = Palette.fruits[fruit[i]].color
+            val tint = FruitLook.fruits[fruit[i]].color
             val sprite = sprites[fruit[i]]
             batch.setTint(tint, COLOR.a)
             // Rotate around the centre of the sprite.

@@ -1,6 +1,5 @@
 package fr.mwet.snake.ui
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -33,9 +32,6 @@ object UiStyle {
     const val MUSIC_OFF = "musicOff"
 }
 
-private const val DIM_ALPHA = 0.55f
-private const val LIGHT_DIM_ALPHA = 0.3f
-
 fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler): Skin = skin {
     val smallFont = fonts.font(theme, FontRole.Small)
     val bigFont = fonts.font(theme, FontRole.Big)
@@ -44,27 +40,27 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     val buttonDown = ui.buttonDown.toNinePatch()
     label {
         font = smallFont
-        fontColor = Palette.text
+        fontColor = Palette.label
     }
     label(UiStyle.TITLE) {
         font = bigFont
-        fontColor = Palette.text
+        fontColor = Palette.title
     }
     label(UiStyle.HIGHLIGHT) {
         font = smallFont
-        fontColor = Palette.primary
+        fontColor = Palette.highlight
     }
     textButton {
         up = button
         down = buttonDown
         font = smallFont
-        fontColor = Palette.text
+        fontColor = Palette.buttonLabel
     }
     textButton(UiStyle.BIG) {
         up = ui.buttonPrimary.toNinePatch()
         down = ui.buttonPrimaryDown.toNinePatch()
         font = bigFont
-        fontColor = Palette.text
+        fontColor = Palette.bigButtonLabel
     }
     imageButton(UiStyle.PAUSE) {
         up = button
@@ -93,13 +89,11 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     }
     add(UiStyle.LOGO, ui.logo, TextureRegion::class.java)
     add(UiStyle.PANEL, ui.panel.toNinePatch(), Drawable::class.java)
-    add(UiStyle.DIM, textures.rectangleTexture(1, 1, Palette.outline.withAlpha(DIM_ALPHA)).toDrawable(), Drawable::class.java)
-    add(UiStyle.LIGHT_DIM, textures.rectangleTexture(1, 1, Palette.outline.withAlpha(LIGHT_DIM_ALPHA)).toDrawable(), Drawable::class.java)
+    add(UiStyle.DIM, textures.rectangleTexture(1, 1, Palette.pauseDim).toDrawable(), Drawable::class.java)
+    add(UiStyle.LIGHT_DIM, textures.rectangleTexture(1, 1, Palette.readyDim).toDrawable(), Drawable::class.java)
 }
 
 private fun AtlasRegion.toNinePatch(): NinePatchDrawable {
     val split = findValue("split")!!
     return NinePatchDrawable(NinePatch(this, split[0], split[1], split[2], split[3]))
 }
-
-private fun Color.withAlpha(alpha: Float) = Color(r, g, b, alpha)

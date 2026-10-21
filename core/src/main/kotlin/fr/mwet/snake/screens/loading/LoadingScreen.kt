@@ -37,7 +37,7 @@ class LoadingScreen(
             return
         }
 
-        ScreenUtils.clear(Palette.clear)
+        ScreenUtils.clear(Palette.screenClear)
         gameViewport.apply()
         batch.use(gameViewport.camera) {
             progressBar.render(it, assetLoading.progress)
@@ -63,17 +63,17 @@ class ProgressBar(barWidth: Float, barHeight: Float) : Disposable {
     val texture = run {
         // Create loading segment part, use Pixmap to generate the texture
         val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888).apply {
-            setColor(Palette.text)
+            setColor(Palette.loadingBarPixel)
             fill()
         }
         Texture(pixmap).also { pixmap.dispose() }
     }
 
     fun render(batch: SpriteBatch, progress: Progress) {
-        batch.setColor(Palette.outline.r, Palette.outline.g, Palette.outline.b, 0.6f)
+        batch.color = Palette.loadingBarTrack
         batch.draw(texture, position, fullSize)
 
-        batch.color = Palette.primary
+        batch.color = Palette.loadingBarFill
         batch.draw(texture, position, size.move(progress.value * fullSize.x, fullSize.y))
     }
 
