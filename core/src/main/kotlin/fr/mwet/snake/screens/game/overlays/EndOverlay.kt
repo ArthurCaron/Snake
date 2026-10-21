@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import fr.mwet.snake.generated.assets.I18N
+import fr.mwet.snake.tuning.AnimationTuning.END_OVERLAY_FADE_IN_DURATION
 import fr.mwet.snake.ui.UiStyle
 import fr.mwet.snake.ui.menuButton
 import ktx.scene2d.label
@@ -48,7 +49,7 @@ class EndOverlay(onPlayAgain: () -> Unit, onMainMenu: () -> Unit) {
             Actions.sequence(
                 Actions.delay(delaySeconds),
                 Actions.show(),
-                Actions.fadeIn(0.3f)
+                Actions.fadeIn(END_OVERLAY_FADE_IN_DURATION)
             )
         )
     }

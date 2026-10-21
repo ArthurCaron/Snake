@@ -6,8 +6,7 @@ import fr.mwet.snake.screens.game.overlays.EndOverlay
 import fr.mwet.snake.screens.game.overlays.GameHud
 import fr.mwet.snake.screens.game.overlays.PauseOverlay
 import fr.mwet.snake.screens.game.overlays.ReadyPrompt
-
-private const val LOST_OVERLAY_DELAY = 1f
+import fr.mwet.snake.tuning.AnimationTuning.LOST_OVERLAY_DELAY
 
 interface GameUiActions {
     fun pause()

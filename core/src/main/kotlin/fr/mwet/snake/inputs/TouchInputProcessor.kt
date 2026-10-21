@@ -1,10 +1,10 @@
 package fr.mwet.snake.inputs
 
 import com.badlogic.gdx.Gdx
+import fr.mwet.snake.tuning.InputTuning.SWIPE_THRESHOLD_SCREEN_RATIO
 import ktx.app.KtxInputAdapter
 import kotlin.math.abs
 
-private const val SWIPE_THRESHOLD_SCREEN_RATIO = 0.05f
 private const val NO_POINTER = -1
 
 class TouchInputProcessor(private val context: GameCommandContext) : KtxInputAdapter {

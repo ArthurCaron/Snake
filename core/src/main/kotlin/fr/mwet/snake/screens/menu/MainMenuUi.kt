@@ -13,6 +13,10 @@ import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
+import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_CLICK_DELAY
+import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_IN_DURATION
+import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
+import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
 import fr.mwet.snake.ui.UiStyle
 import fr.mwet.snake.ui.menuButton
 import ktx.actors.onClick
@@ -143,10 +147,10 @@ private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navi
         }
 
         onClick { menuEventBus.emit(PlayGameClicked) }
-        onEnter { replaceHoverAction(scaleTo(1.25f, 1.25f, 0.3f, elasticOut)) }
+        onEnter { replaceHoverAction(scaleTo(PLAY_BUTTON_HOVER_SCALE, PLAY_BUTTON_HOVER_SCALE, PLAY_BUTTON_HOVER_IN_DURATION, elasticOut)) }
         onExit {
             if (clicked.not()) {
-                replaceHoverAction(scaleTo(1f, 1f, 0.5f, elasticOut))
+                replaceHoverAction(scaleTo(1f, 1f, PLAY_BUTTON_HOVER_OUT_DURATION, elasticOut))
             }
         }
     }
@@ -157,7 +161,7 @@ private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navi
 
         actor.addAction(
             sequence(
-                delay(0.3f),
+                delay(PLAY_BUTTON_CLICK_DELAY),
                 Actions.run { navigator.goToGame() },
             ),
         )

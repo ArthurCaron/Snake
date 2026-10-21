@@ -10,6 +10,8 @@ import fr.mwet.snake.GameViewport
 import fr.mwet.snake.LoadedAssets
 import fr.mwet.snake.Progress
 import fr.mwet.snake.render.Palette
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.*
 import ktx.app.KtxScreen
 import com.badlogic.gdx.utils.Disposable

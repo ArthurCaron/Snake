@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.game.Snake
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.VectorPool
 import kotlin.random.Random
 

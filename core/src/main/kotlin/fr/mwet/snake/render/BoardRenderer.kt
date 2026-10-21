@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
 
 private const val GRID_ALPHA = 0.05f

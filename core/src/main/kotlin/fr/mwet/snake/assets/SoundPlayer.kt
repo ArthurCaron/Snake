@@ -6,9 +6,8 @@ import fr.mwet.snake.events.GameEventListener
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEventListener
 import fr.mwet.snake.save.settings.SettingsRepository
-
-private const val MUSIC_VOLUME = 0.1f
-private const val MOVE_VOLUME = 0.1f
+import fr.mwet.snake.tuning.AudioTuning.DEFAULT_MUSIC_VOLUME
+import fr.mwet.snake.tuning.AudioTuning.DEFAULT_SOUND_VOLUME
 
 class SoundPlayer(
     private val soundHandler: SoundHandler,
@@ -33,7 +32,7 @@ class SoundPlayer(
         when (event) {
             MenuEvent.LoadingFinished -> {
                 musicHandler.music.isLooping = true
-                musicHandler.music.volume = MUSIC_VOLUME
+                musicHandler.music.volume = DEFAULT_MUSIC_VOLUME
                 updateMusicPlayback()
             }
 
@@ -70,7 +69,7 @@ class SoundPlayer(
     fun playMove() {
         if (!settingsRepository.soundOn) return
         soundHandler.moveSound.stop()
-        moveId = soundHandler.moveSound.play(MOVE_VOLUME)
+        moveId = soundHandler.moveSound.play(DEFAULT_SOUND_VOLUME)
     }
 
     fun playEat() {

@@ -12,8 +12,8 @@ import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.serialization.PreferencesTextStore
 import fr.mwet.snake.save.serialization.TextStore
 import fr.mwet.snake.save.settings.SettingsRepository
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 

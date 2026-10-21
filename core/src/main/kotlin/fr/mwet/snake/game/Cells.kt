@@ -1,8 +1,8 @@
 package fr.mwet.snake.game
 
 import com.badlogic.gdx.math.Vector2
-import fr.mwet.snake.utils.WORLD_HEIGHT
-import fr.mwet.snake.utils.WORLD_WIDTH
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.doesNotContain
 
 class Cells {
