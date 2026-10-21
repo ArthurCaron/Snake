@@ -5,6 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.tuning.AnimationTuning.END_OVERLAY_FADE_IN_DURATION
+import fr.mwet.snake.ui.UiMetrics.OVERLAY_SPACE
+import fr.mwet.snake.ui.UiMetrics.PANEL_PAD
 import fr.mwet.snake.ui.UiStyle
 import fr.mwet.snake.ui.Widgets
 import ktx.scene2d.label
@@ -24,8 +26,8 @@ class EndOverlay(widgets: Widgets, onPlayAgain: () -> Unit, onMainMenu: () -> Un
             background(UiStyle.DIM)
             table {
                 background(UiStyle.PANEL)
-                pad(32f)
-                defaults().space(16f)
+                pad(PANEL_PAD)
+                defaults().space(OVERLAY_SPACE)
                 title = label("", UiStyle.TITLE) { it.row() }
                 score = label("") { it.row() }
                 best = label("") { it.row() }

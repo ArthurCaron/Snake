@@ -19,6 +19,13 @@ import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_CLICK_DELAY
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_IN_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
+import fr.mwet.snake.ui.UiMetrics.MENU_BEST_SCORE_GAP
+import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_GAP
+import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_WIDTH_RATIO
+import fr.mwet.snake.ui.UiMetrics.PLAY_BUTTON_PAD_BOTTOM
+import fr.mwet.snake.ui.UiMetrics.PLAY_BUTTON_PAD_SIDE
+import fr.mwet.snake.ui.UiMetrics.PLAY_BUTTON_PAD_TOP
+import fr.mwet.snake.ui.UiMetrics.SCREEN_MARGIN
 import fr.mwet.snake.ui.UiStyle
 import fr.mwet.snake.ui.Widgets
 import ktx.actors.onEnter
@@ -31,8 +38,6 @@ import ktx.scene2d.label
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
 
-private const val MARGIN = 24f
-private const val TITLE_WIDTH_RATIO = 0.70f
 
 class MainMenuUi(
     stage: Stage,
@@ -52,19 +57,19 @@ class MainMenuUi(
             stage.actors {
                 table {
                     setFillParent(true)
-                    actor(title.actor) { it.padBottom(48f).row() }
-                    actor(playButton.actor) { it.padBottom(MARGIN).row() }
-                    bestScoreLabel = label("") { it.padBottom(32f).row() }
+                    actor(title.actor) { it.padBottom(MENU_TITLE_GAP).row() }
+                    actor(playButton.actor) { it.padBottom(SCREEN_MARGIN).row() }
+                    bestScoreLabel = label("") { it.padBottom(MENU_BEST_SCORE_GAP).row() }
                     table {
-                        defaults().space(MARGIN)
+                        defaults().space(SCREEN_MARGIN)
                         menuButton(I18N.highscore(), onClick = navigator::goToScores)
                         menuButton(I18N.settings(), onClick = navigator::goToSettings)
                     }
                 }
                 table {
                     setFillParent(true)
-                    top().right().pad(MARGIN)
-                    defaults().right().space(MARGIN)
+                    top().right().pad(SCREEN_MARGIN)
+                    defaults().right().space(SCREEN_MARGIN)
                     soundButton = iconButton(UiStyle.SOUND_ON, onClick = ::toggleSound) { it.row() }
                     musicButton = iconButton(UiStyle.MUSIC_ON, onClick = ::toggleMusic)
                 }
@@ -125,7 +130,7 @@ private class MainMenuTitle {
     }
 
     fun fit(boardWidth: Float) {
-        val width = boardWidth * TITLE_WIDTH_RATIO
+        val width = boardWidth * MENU_TITLE_WIDTH_RATIO
         val region = logo.region
         logo.setMinSize(width, width * region.regionHeight / region.regionWidth)
         actor.invalidateHierarchy()
@@ -144,7 +149,7 @@ private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navi
     private var hoverAction: Action? = null
 
     val actor = widgets.menuButton(I18N.play(), onClick = { menuEventBus.emit(PlayGameClicked) }, style = UiStyle.BIG) {
-        pad(20f, 72f, 30f, 72f)
+        pad(PLAY_BUTTON_PAD_TOP, PLAY_BUTTON_PAD_SIDE, PLAY_BUTTON_PAD_BOTTOM, PLAY_BUTTON_PAD_SIDE)
         setOrigin(Align.center)
 
         val replaceHoverAction = { action: Action ->

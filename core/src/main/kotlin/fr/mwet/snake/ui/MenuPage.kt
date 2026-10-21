@@ -5,6 +5,9 @@ import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.inputs.GeneralCommandContext
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.render.WorldLayer
+import fr.mwet.snake.ui.UiMetrics.PAGE_CONTENT_SPACE
+import fr.mwet.snake.ui.UiMetrics.PAGE_SPACE
+import fr.mwet.snake.ui.UiMetrics.PANEL_PAD
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.actors
 import ktx.scene2d.label
@@ -32,11 +35,11 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
                     setFillParent(true)
                     table {
                         background(UiStyle.PANEL)
-                        pad(32f)
-                        defaults().space(24f)
+                        pad(PANEL_PAD)
+                        defaults().space(PAGE_SPACE)
                         label(title, UiStyle.TITLE) { it.row() }
                         content = table { it.row() }
-                        content.defaults().space(12f)
+                        content.defaults().space(PAGE_CONTENT_SPACE)
                         menuButton(I18N.back(), onClick = onBack)
                     }
                 }

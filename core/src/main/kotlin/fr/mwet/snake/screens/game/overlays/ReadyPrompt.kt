@@ -3,6 +3,8 @@ package fr.mwet.snake.screens.game.overlays
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.generated.assets.I18N
+import fr.mwet.snake.ui.UiMetrics.READY_TEXT_SIDE_PAD
+import fr.mwet.snake.ui.UiMetrics.READY_TITLE_GAP
 import fr.mwet.snake.ui.UiStyle
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
@@ -13,11 +15,11 @@ class ReadyPrompt {
         setFillParent(true)
         touchable = Touchable.disabled
         background(UiStyle.LIGHT_DIM)
-        label(I18N.ready(), UiStyle.TITLE) { it.padBottom(24f).row() }
+        label(I18N.ready(), UiStyle.TITLE) { it.padBottom(READY_TITLE_GAP).row() }
         label(I18N.tapToStart()) {
             wrap = true
             setAlignment(Align.center)
-            it.growX().padLeft(32f).padRight(32f)
+            it.growX().padLeft(READY_TEXT_SIDE_PAD).padRight(READY_TEXT_SIDE_PAD)
         }
     }
 }

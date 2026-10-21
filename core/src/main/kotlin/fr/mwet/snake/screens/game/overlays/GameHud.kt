@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import fr.mwet.snake.generated.assets.I18N
+import fr.mwet.snake.ui.UiMetrics.HUD_PAD
 import fr.mwet.snake.ui.UiStyle
 import fr.mwet.snake.ui.Widgets
 import ktx.scene2d.label
@@ -20,7 +21,7 @@ class GameHud(widgets: Widgets, onPause: () -> Unit) {
     val actor = with(widgets) {
         scene2d.table {
             setFillParent(true)
-            top().pad(16f)
+            top().pad(HUD_PAD)
             scoreLabel = label("") {
                 touchable = Touchable.disabled
                 it.expandX().left()

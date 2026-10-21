@@ -21,6 +21,12 @@ import fr.mwet.snake.save.settings.removeGameKey
 import fr.mwet.snake.save.settings.removeGeneralKey
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
+import fr.mwet.snake.ui.UiMetrics.CONTROLS_LABEL_GAP
+import fr.mwet.snake.ui.UiMetrics.CONTROLS_RESET_GAP
+import fr.mwet.snake.ui.UiMetrics.KEY_FRAME_PAD_X
+import fr.mwet.snake.ui.UiMetrics.KEY_FRAME_PAD_Y
+import fr.mwet.snake.ui.UiMetrics.REMOVE_KEY_GAP
+import fr.mwet.snake.ui.UiMetrics.SMALL_BUTTON_PAD_SIDE
 import fr.mwet.snake.ui.UiStyle
 import ktx.app.KtxScreen
 import ktx.scene2d.actor
@@ -31,7 +37,6 @@ import ktx.scene2d.table
 private const val NO_KEY = "-"
 private const val ADD_KEY = "+"
 private const val REMOVE_KEY = "x"
-private const val REMOVE_KEY_GAP = 8f
 
 class ControlsScreen(
     private val kit: UiKit,
@@ -106,7 +111,7 @@ class ControlsScreen(
             clearChildren()
             actionRows.forEach { row ->
                 val keys = row.keys(keymappings)
-                actor(row.titleLabel) { it.left().padRight(12f) }
+                actor(row.titleLabel) { it.left().padRight(CONTROLS_LABEL_GAP) }
                 when {
                     row == capturing -> label(I18N.pressAKey()) { it.left().colspan(keyColumns) }
                     keys.isEmpty() -> label(NO_KEY) { it.left().colspan(keyColumns) }
@@ -117,18 +122,18 @@ class ControlsScreen(
                 }
                 actor(row.addButton) { it.row() }
             }
-            actor(resetButton) { it.colspan(keyColumns + 2).padTop(12f) }
+            actor(resetButton) { it.colspan(keyColumns + 2).padTop(CONTROLS_RESET_GAP) }
         }
     }
 
-    private fun removeKeyButton(onClick: () -> Unit) = kit.widgets.menuButton(REMOVE_KEY, onClick).apply { pad(0f, 8f, 0f, 8f) }
+    private fun removeKeyButton(onClick: () -> Unit) = kit.widgets.menuButton(REMOVE_KEY, onClick).apply { pad(0f, SMALL_BUTTON_PAD_SIDE, 0f, SMALL_BUTTON_PAD_SIDE) }
 
     private fun keyFrame(row: ActionRow, key: Int): Table {
         val removeButton = removeKeyButton { remove(row, key) }
         return scene2d.table {
             background(UiStyle.PANEL)
             touchable = Touchable.enabled
-            pad(4f, 12f, 4f, 12f)
+            pad(KEY_FRAME_PAD_Y, KEY_FRAME_PAD_X, KEY_FRAME_PAD_Y, KEY_FRAME_PAD_X)
             label(keyNames.nameOf(key) ?: "?")
             addListener(RevealOnHover(add(), removeButton))
         }

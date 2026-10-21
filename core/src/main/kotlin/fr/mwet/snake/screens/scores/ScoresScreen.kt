@@ -5,6 +5,7 @@ import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
+import fr.mwet.snake.ui.UiMetrics.SCORE_RANK_GAP
 import ktx.app.KtxScreen
 import ktx.scene2d.label
 
@@ -33,7 +34,7 @@ class ScoresScreen(kit: UiKit, private val metadataRepository: MetadataRepositor
                 return
             }
             highScores.forEachIndexed { index, highScore ->
-                label("${index + 1}.") { it.right().padRight(32f) }
+                label("${index + 1}.") { it.right().padRight(SCORE_RANK_GAP) }
                 label(highScore.score.toString()) { it.right().row() }
             }
         }
