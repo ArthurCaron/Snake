@@ -8,9 +8,11 @@ data class Args(
     val inputDir: Path,
     val outputDir: Path,
     val packageName: String,
+    val translationsFile: Path?,
 ) {
     fun validate() {
         require(Files.isDirectory(inputDir)) { "Input directory does not exist: $inputDir" }
+        require(translationsFile == null || Files.isRegularFile(translationsFile)) { "Translations file does not exist: $translationsFile" }
         if (Files.exists(outputDir)) {
             outputDir.toFile().deleteRecursively()
         }
@@ -37,7 +39,9 @@ data class Args(
             val inputDir = of(input).toAbsolutePath().normalize()
             val outputDir = of(output).toAbsolutePath().normalize().resolve(packageName.replace('.', '/'))
 
-            return Args(inputDir, outputDir, packageName)
+            val translationsFile = options["translations"]?.let { of(it).toAbsolutePath().normalize() }
+
+            return Args(inputDir, outputDir, packageName, translationsFile)
         }
     }
 }
