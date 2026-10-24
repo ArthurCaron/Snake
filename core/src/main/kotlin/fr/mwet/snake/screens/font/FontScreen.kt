@@ -15,20 +15,21 @@ import ktx.app.KtxScreen
 
 class FontScreen(
     kit: UiKit,
-    private val fonts: FontHandler,
+    fonts: FontHandler,
     private val settingsRepository: SettingsRepository,
     private val switcher: FontSwitcher,
     navigator: Navigator,
 ) : KtxScreen {
     private val page = MenuPage(kit, I18N.font(), onBack = navigator::goToSettings)
     private val buttons: Map<FontTheme, TextButton> = FontTheme.entries.associateWith { theme ->
-        page.content.menuButton(theme.displayName, onClick = { choose(theme) }) { it.fillX().row() }
+        page.content.menuButton(theme.displayName, onClick = { choose(theme) }) {
+            style = TextButton.TextButtonStyle(style).apply { font = fonts.font(theme, FontRole.Small) }
+            it.fillX().row()
+        }
     }
-    private var previewsLoaded = false
 
     override fun show() {
         page.show()
-        if (!previewsLoaded) loadPreviews()
         buttons.forEach { (theme, button) ->
             button.setText(if (theme == settingsRepository.fontTheme) "> ${theme.displayName} <" else theme.displayName)
         }
@@ -41,13 +42,6 @@ class FontScreen(
     override fun render(delta: Float) = page.render(delta)
 
     override fun dispose() = page.dispose()
-
-    private fun loadPreviews() {
-        buttons.forEach { (theme, button) ->
-            button.style = TextButton.TextButtonStyle(button.style).apply { font = fonts.font(theme, FontRole.Small) }
-        }
-        previewsLoaded = true
-    }
 
     private fun choose(theme: FontTheme) {
         if (theme != settingsRepository.fontTheme) switcher.applyFontTheme(theme)
