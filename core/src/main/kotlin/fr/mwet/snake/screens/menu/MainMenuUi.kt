@@ -19,7 +19,6 @@ import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
 import fr.mwet.snake.ui.UiStyle
 import fr.mwet.snake.ui.menuButton
-import ktx.actors.onClick
 import ktx.actors.onEnter
 import ktx.actors.onExit
 import ktx.scene2d.actor
@@ -27,7 +26,6 @@ import ktx.scene2d.actors
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
-import ktx.scene2d.textButton
 
 private const val MARGIN = 24f
 private const val TITLE_WIDTH_RATIO = 0.70f
@@ -137,7 +135,8 @@ private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navi
     private var clicked = false
     private var hoverAction: Action? = null
 
-    val actor = scene2d.textButton(I18N.play(), UiStyle.BIG) {
+    val actor = menuButton(I18N.play(), onClick = { menuEventBus.emit(PlayGameClicked) }, style = UiStyle.BIG) {
+        pad(0f)
         setOrigin(Align.center)
 
         val replaceHoverAction = { action: Action ->
@@ -146,7 +145,6 @@ private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navi
             addAction(action)
         }
 
-        onClick { menuEventBus.emit(PlayGameClicked) }
         onEnter { replaceHoverAction(scaleTo(PLAY_BUTTON_HOVER_SCALE, PLAY_BUTTON_HOVER_SCALE, PLAY_BUTTON_HOVER_IN_DURATION, elasticOut)) }
         onExit {
             if (clicked.not()) {
