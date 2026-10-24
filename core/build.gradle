@@ -19,6 +19,7 @@ dependencies {
   }
 
   testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+  testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
 }
 
 def generatedAssetCatalogDir = layout.buildDirectory.dir("generated/source/assetCatalog/kotlin")

@@ -7,6 +7,7 @@ import fr.mwet.snake.screens.game.overlays.GameHud
 import fr.mwet.snake.screens.game.overlays.PauseOverlay
 import fr.mwet.snake.screens.game.overlays.ReadyPrompt
 import fr.mwet.snake.tuning.AnimationTuning.LOST_OVERLAY_DELAY
+import fr.mwet.snake.ui.Widgets
 
 interface GameUiActions {
     fun pause()
@@ -15,11 +16,11 @@ interface GameUiActions {
     fun mainMenu()
 }
 
-class GameUi(stage: Stage, actions: GameUiActions) {
+class GameUi(stage: Stage, actions: GameUiActions, widgets: Widgets) {
     private val readyPrompt = ReadyPrompt()
-    private val hud = GameHud(onPause = actions::pause)
-    private val pauseOverlay = PauseOverlay(onResume = actions::resume, onMainMenu = actions::mainMenu)
-    private val endOverlay = EndOverlay(onPlayAgain = actions::playAgain, onMainMenu = actions::mainMenu)
+    private val hud = GameHud(widgets, onPause = actions::pause)
+    private val pauseOverlay = PauseOverlay(widgets, onResume = actions::resume, onMainMenu = actions::mainMenu)
+    private val endOverlay = EndOverlay(widgets, onPlayAgain = actions::playAgain, onMainMenu = actions::mainMenu)
 
     init {
         stage.addActor(readyPrompt.actor)

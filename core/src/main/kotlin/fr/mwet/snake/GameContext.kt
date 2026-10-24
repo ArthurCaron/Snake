@@ -5,6 +5,7 @@ import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventBusImpl
+import fr.mwet.snake.events.MenuEvent.ButtonActivated
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
@@ -18,6 +19,7 @@ import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.ui.UiKit
+import fr.mwet.snake.ui.Widgets
 import fr.mwet.snake.ui.createUiSkin
 import ktx.scene2d.Scene2DSkin
 
@@ -35,7 +37,8 @@ class GameContext(
 
     private val gameEvents: GameEventBus = GameEventBusImpl()
     val menuEvents: MenuEventBus = MenuEventBusImpl()
-    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, boot.input, boot.settingsRepository)
+    private val widgets = Widgets { menuEvents.emit(ButtonActivated) }
+    private val kit = UiKit(boot.batch, boot.gameViewport, assets.textures, boot.input, boot.settingsRepository, widgets)
     private val soundPlayer = SoundPlayer(assets.sounds, assets.music, boot.settingsRepository)
     private val world = GameWorld(gameEvents)
     private val gameCommandContext = GameCommandContext(world)

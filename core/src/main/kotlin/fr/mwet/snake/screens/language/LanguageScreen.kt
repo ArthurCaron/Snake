@@ -8,7 +8,6 @@ import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
-import fr.mwet.snake.ui.menuButton
 import ktx.app.KtxScreen
 
 class LanguageScreen(
@@ -18,8 +17,10 @@ class LanguageScreen(
     navigator: Navigator,
 ) : KtxScreen {
     private val page = MenuPage(kit, I18N.language(), onBack = navigator::goToSettings)
-    private val buttons: Map<Language, TextButton> = Language.entries.associateWith { language ->
-        page.content.menuButton("", onClick = { choose(language) }) { it.fillX().row() }
+    private val buttons: Map<Language, TextButton> = with(kit.widgets) {
+        Language.entries.associateWith { language ->
+            page.content.menuButton("", onClick = { choose(language) }) { it.fillX().row() }
+        }
     }
 
     override fun show() {

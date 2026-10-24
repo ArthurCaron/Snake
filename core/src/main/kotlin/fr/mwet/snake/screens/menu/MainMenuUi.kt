@@ -18,7 +18,7 @@ import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_IN_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
 import fr.mwet.snake.ui.UiStyle
-import fr.mwet.snake.ui.menuButton
+import fr.mwet.snake.ui.Widgets
 import ktx.actors.onEnter
 import ktx.actors.onExit
 import ktx.scene2d.actor
@@ -35,32 +35,35 @@ class MainMenuUi(
     private val menuEventBus: MenuEventBus,
     navigator: Navigator,
     private val settingsRepository: SettingsRepository,
+    widgets: Widgets,
 ) {
     private val title = MainMenuTitle()
-    private val playButton = PlayButton(menuEventBus, navigator)
+    private val playButton = PlayButton(menuEventBus, navigator, widgets)
     private var bestScoreLabel: Label
     private var soundButton: TextButton
     private var musicButton: TextButton
 
     init {
-        stage.actors {
-            table {
-                setFillParent(true)
-                actor(title.actor) { it.padBottom(48f).row() }
-                actor(playButton.actor) { it.padBottom(MARGIN).row() }
-                bestScoreLabel = label("") { it.padBottom(32f).row() }
+        with(widgets) {
+            stage.actors {
                 table {
-                    defaults().space(MARGIN)
-                    menuButton(I18N.highscore(), onClick = navigator::goToScores)
-                    menuButton(I18N.settings(), onClick = navigator::goToSettings)
+                    setFillParent(true)
+                    actor(title.actor) { it.padBottom(48f).row() }
+                    actor(playButton.actor) { it.padBottom(MARGIN).row() }
+                    bestScoreLabel = label("") { it.padBottom(32f).row() }
+                    table {
+                        defaults().space(MARGIN)
+                        menuButton(I18N.highscore(), onClick = navigator::goToScores)
+                        menuButton(I18N.settings(), onClick = navigator::goToSettings)
+                    }
                 }
-            }
-            table {
-                setFillParent(true)
-                top().right().pad(MARGIN)
-                defaults().right().space(MARGIN)
-                soundButton = menuButton("", onClick = ::toggleSound) { it.row() }
-                musicButton = menuButton("", onClick = ::toggleMusic)
+                table {
+                    setFillParent(true)
+                    top().right().pad(MARGIN)
+                    defaults().right().space(MARGIN)
+                    soundButton = menuButton("", onClick = ::toggleSound) { it.row() }
+                    musicButton = menuButton("", onClick = ::toggleMusic)
+                }
             }
         }
     }
@@ -131,11 +134,11 @@ private class MainMenuTitle {
     }
 }
 
-private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navigator) {
+private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navigator, widgets: Widgets) {
     private var clicked = false
     private var hoverAction: Action? = null
 
-    val actor = menuButton(I18N.play(), onClick = { menuEventBus.emit(PlayGameClicked) }, style = UiStyle.BIG) {
+    val actor = widgets.menuButton(I18N.play(), onClick = { menuEventBus.emit(PlayGameClicked) }, style = UiStyle.BIG) {
         pad(0f)
         setOrigin(Align.center)
 
