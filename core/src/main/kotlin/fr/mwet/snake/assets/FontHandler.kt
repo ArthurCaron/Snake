@@ -15,19 +15,16 @@ import fr.mwet.snake.tuning.FontTuning.TITLE_BORDER
 import fr.mwet.snake.tuning.FontTuning.TITLE_CHARS
 import fr.mwet.snake.tuning.FontTuning.TITLE_SIZE
 
-class FontHandler(private val assetManager: AssetManager, initialTheme: FontTheme) {
-    init {
-        FontRole.entries.forEach { assetManager.load(descriptor(initialTheme, it)) }
+class FontHandler(private val assetManager: AssetManager) {
+    private val descriptors = FontTheme.entries.associateWith { theme ->
+        FontRole.entries.associateWith { role -> descriptor(theme, role) }
     }
 
-    fun font(theme: FontTheme, role: FontRole): BitmapFont {
-        val descriptor = descriptor(theme, role)
-        if (!assetManager.isLoaded(descriptor.fileName, BitmapFont::class.java)) {
-            assetManager.load(descriptor)
-            assetManager.finishLoadingAsset<BitmapFont>(descriptor)
-        }
-        return assetManager.get(descriptor)
+    init {
+        descriptors.values.forEach { roles -> roles.values.forEach(assetManager::load) }
     }
+
+    fun font(theme: FontTheme, role: FontRole): BitmapFont = assetManager.get(descriptors.getValue(theme).getValue(role))
 }
 
 private fun descriptor(theme: FontTheme, role: FontRole) = AssetDescriptor(
