@@ -6,31 +6,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.tuning.AnimationTuning.END_OVERLAY_FADE_IN_DURATION
 import fr.mwet.snake.ui.UiStyle
-import fr.mwet.snake.ui.menuButton
+import fr.mwet.snake.ui.Widgets
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
 
-class EndOverlay(onPlayAgain: () -> Unit, onMainMenu: () -> Unit) {
+class EndOverlay(widgets: Widgets, onPlayAgain: () -> Unit, onMainMenu: () -> Unit) {
     private var title: Label
     private var score: Label
     private var best: Label
     private var newHighScore: Label
 
-    val actor = scene2d.table {
-        setFillParent(true)
-        touchable = Touchable.enabled
-        background(UiStyle.DIM)
-        table {
-            background(UiStyle.PANEL)
-            pad(32f)
-            defaults().space(16f)
-            title = label("", UiStyle.TITLE) { it.row() }
-            score = label("") { it.row() }
-            best = label("") { it.row() }
-            newHighScore = label(I18N.newHighScore()) { it.row() }
-            menuButton(I18N.playAgain(), onClick = onPlayAgain) { it.fillX().row() }
-            menuButton(I18N.mainMenu(), onClick = onMainMenu) { it.fillX() }
+    val actor = with(widgets) {
+        scene2d.table {
+            setFillParent(true)
+            touchable = Touchable.enabled
+            background(UiStyle.DIM)
+            table {
+                background(UiStyle.PANEL)
+                pad(32f)
+                defaults().space(16f)
+                title = label("", UiStyle.TITLE) { it.row() }
+                score = label("") { it.row() }
+                best = label("") { it.row() }
+                newHighScore = label(I18N.newHighScore()) { it.row() }
+                menuButton(I18N.playAgain(), onClick = onPlayAgain) { it.fillX().row() }
+                menuButton(I18N.mainMenu(), onClick = onMainMenu) { it.fillX() }
+            }
         }
     }
 

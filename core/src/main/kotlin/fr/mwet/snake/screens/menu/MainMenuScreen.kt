@@ -27,11 +27,11 @@ class MainMenuScreen(
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
     private val background = Background(kit.textures)
-    private val ui = MainMenuUi(uiLayer.stage, menuEventBus, navigator, settingsRepository)
+    private val ui = MainMenuUi(uiLayer.stage, menuEventBus, navigator, settingsRepository, kit.widgets)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
             onStartGame = {
-                menuEventBus.emit(PlayGameClicked)
+                kit.widgets.activateButtonAction { menuEventBus.emit(PlayGameClicked) }
                 true
             },
         )
@@ -65,7 +65,7 @@ class MainMenuScreen(
     override fun onEvent(event: MenuEvent) {
         when (event) {
             PlayGameClicked -> ui.startGame()
-            LoadingFinished, SoundToggled, MusicToggled -> {}
+            LoadingFinished, SoundToggled, MusicToggled, ButtonActivated -> {}
         }
     }
 }

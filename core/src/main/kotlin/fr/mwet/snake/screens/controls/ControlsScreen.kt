@@ -22,7 +22,6 @@ import fr.mwet.snake.save.settings.removeGeneralKey
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiStyle
-import fr.mwet.snake.ui.menuButton
 import ktx.app.KtxScreen
 import ktx.scene2d.actor
 import ktx.scene2d.label
@@ -54,7 +53,7 @@ class ControlsScreen(
     private var capturing: ActionRow? = null
 
     private val removeKeyWidth = REMOVE_KEY_GAP + removeKeyButton {}.prefWidth
-    private val resetButton = menuButton(I18N.resetControls(), onClick = ::resetControls)
+    private val resetButton = kit.widgets.menuButton(I18N.resetControls(), onClick = ::resetControls)
 
     override fun show() {
         page.show()
@@ -122,7 +121,7 @@ class ControlsScreen(
         }
     }
 
-    private fun removeKeyButton(onClick: () -> Unit) = menuButton(REMOVE_KEY, onClick).apply { pad(0f, 8f, 0f, 8f) }
+    private fun removeKeyButton(onClick: () -> Unit) = kit.widgets.menuButton(REMOVE_KEY, onClick).apply { pad(0f, 8f, 0f, 8f) }
 
     private fun keyFrame(row: ActionRow, key: Int): Table {
         val removeButton = removeKeyButton { remove(row, key) }
@@ -156,7 +155,7 @@ class ControlsScreen(
         val removeKey: (Keymappings, Int) -> Keymappings,
     ) {
         val titleLabel = scene2d.label(title)
-        val addButton = menuButton(ADD_KEY, onClick = { startCapture(this) })
+        val addButton = kit.widgets.menuButton(ADD_KEY, onClick = { startCapture(this) })
     }
 
     private inner class KeyCapture : InputAdapter() {

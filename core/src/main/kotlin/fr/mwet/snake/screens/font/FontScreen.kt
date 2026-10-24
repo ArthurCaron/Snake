@@ -10,7 +10,6 @@ import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
-import fr.mwet.snake.ui.menuButton
 import ktx.app.KtxScreen
 
 class FontScreen(
@@ -21,10 +20,12 @@ class FontScreen(
     navigator: Navigator,
 ) : KtxScreen {
     private val page = MenuPage(kit, I18N.font(), onBack = navigator::goToSettings)
-    private val buttons: Map<FontTheme, TextButton> = FontTheme.entries.associateWith { theme ->
-        page.content.menuButton(theme.displayName, onClick = { choose(theme) }) {
-            style = TextButton.TextButtonStyle(style).apply { font = fonts.font(theme, FontRole.Small) }
-            it.fillX().row()
+    private val buttons: Map<FontTheme, TextButton> = with(kit.widgets) {
+        FontTheme.entries.associateWith { theme ->
+            page.content.menuButton(theme.displayName, onClick = { choose(theme) }) {
+                style = TextButton.TextButtonStyle(style).apply { font = fonts.font(theme, FontRole.Small) }
+                it.fillX().row()
+            }
         }
     }
 

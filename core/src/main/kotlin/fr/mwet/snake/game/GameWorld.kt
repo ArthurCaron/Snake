@@ -107,5 +107,8 @@ enum class GameState {
     Playing,
     Paused,
     Lost,
-    Won,
+    Won;
+
+    fun isStopped() = this == Paused || this == Lost || this == Won
+    fun isPlaying() = this == Ready || this == Playing
 }

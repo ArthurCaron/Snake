@@ -13,5 +13,4 @@ class SoundHandler(assetManager: AssetManager) {
     val eatSound: Sound by assetManager.loadAsset(AssetDescriptor(SoundAssets.SnakeEat, Sound::class.java))
     val lostSound: Sound by assetManager.loadAsset(AssetDescriptor(SoundAssets.Lost, Sound::class.java))
     val wonSound: Sound by assetManager.loadAsset(AssetDescriptor(SoundAssets.Won, Sound::class.java))
-    val pauseSound: Sound by assetManager.loadAsset(AssetDescriptor(SoundAssets.Pause, Sound::class.java))
 }

@@ -24,7 +24,7 @@ class SoundPlayer(
             FoodEaten -> playEat()
             Lost -> playLost()
             Won -> playWon()
-            Paused, Resumed -> playPauseToggled()
+            Paused, Resumed -> {}
         }
     }
 
@@ -36,16 +36,10 @@ class SoundPlayer(
                 updateMusicPlayback()
             }
 
-            MenuEvent.PlayGameClicked -> {
-                playButtonPressed()
-            }
-
-            MenuEvent.SoundToggled -> {
-                playButtonPressed()
-            }
+            MenuEvent.ButtonActivated -> buttonPressed()
+            MenuEvent.PlayGameClicked, MenuEvent.SoundToggled -> {}
 
             MenuEvent.MusicToggled -> {
-                playButtonPressed()
                 updateMusicPlayback()
             }
         }
@@ -61,7 +55,7 @@ class SoundPlayer(
         }
     }
 
-    fun playButtonPressed() {
+    fun buttonPressed() {
         if (!settingsRepository.soundOn) return
         buttonPressedId = soundHandler.buttonPressedSound.play()
     }
@@ -85,10 +79,5 @@ class SoundPlayer(
     fun playWon() {
         if (!settingsRepository.soundOn) return
         soundHandler.wonSound.play()
-    }
-
-    fun playPauseToggled() {
-        if (!settingsRepository.soundOn) return
-        soundHandler.pauseSound.play()
     }
 }

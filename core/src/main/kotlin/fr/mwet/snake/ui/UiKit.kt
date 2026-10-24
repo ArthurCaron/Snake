@@ -12,4 +12,5 @@ class UiKit(
     val textures: TextureHandler,
     val input: InputRouter,
     val settingsRepository: SettingsRepository,
+    val widgets: Widgets,
 )

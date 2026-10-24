@@ -25,22 +25,22 @@ class GameScreen(
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
     private val board = BoardRenderer(kit.textures, world)
-    private val ui = GameUi(uiLayer.stage, UiActions())
+    private val ui = GameUi(uiLayer.stage, UiActions(), kit.widgets)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
             onStartGame = {
-                if (world.state == GameState.Paused) {
-                    world.resume()
+                if (world.state.isStopped()) {
+                    kit.widgets.activateButtonAction(::resumeGame)
                     true
                 } else false
             },
             onBack = {
-                back()
+                kit.widgets.activateButtonAction(::back)
                 true
             },
             onPause = {
                 if (world.isOver) false else {
-                    togglePause()
+                    kit.widgets.activateButtonAction(::togglePause)
                     true
                 }
             },
@@ -105,11 +105,14 @@ class GameScreen(
         ui.setEndGameResult(world.score, metadataRepository.metadata.highestScore.score, isNewHighScore)
     }
 
+    private fun resumeGame() {
+        if (world.state == GameState.Paused) world.resume()
+        if (world.state == GameState.Lost || world.state == GameState.Won) startNewGame()
+    }
+
     private fun back() {
-        when (world.state) {
-            GameState.Ready, GameState.Playing -> world.pause()
-            GameState.Paused, GameState.Lost, GameState.Won -> returnToMainMenu()
-        }
+        if (world.state.isPlaying()) world.pause()
+        if (world.state.isStopped()) returnToMainMenu()
     }
 
     private fun togglePause() {
@@ -117,7 +120,7 @@ class GameScreen(
     }
 
     private fun returnToMainMenu() {
-        if (world.state == GameState.Paused) metadataRepository.submitHighScore(world.score)
+        if (world.state.isStopped()) metadataRepository.submitHighScore(world.score)
         navigator.goToMainMenu()
     }
 

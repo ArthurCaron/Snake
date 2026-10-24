@@ -28,17 +28,19 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
         private set
 
     init {
-        uiLayer.stage.actors {
-            table {
-                setFillParent(true)
+        with(kit.widgets) {
+            uiLayer.stage.actors {
                 table {
-                    background(UiStyle.PANEL)
-                    pad(32f)
-                    defaults().space(24f)
-                    label(title, UiStyle.TITLE) { it.row() }
-                    content = table { it.row() }
-                    content.defaults().space(12f)
-                    menuButton(I18N.back(), onClick = onBack)
+                    setFillParent(true)
+                    table {
+                        background(UiStyle.PANEL)
+                        pad(32f)
+                        defaults().space(24f)
+                        label(title, UiStyle.TITLE) { it.row() }
+                        content = table { it.row() }
+                        content.defaults().space(12f)
+                        menuButton(I18N.back(), onClick = onBack)
+                    }
                 }
             }
         }
