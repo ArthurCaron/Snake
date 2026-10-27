@@ -3,6 +3,9 @@ package fr.mwet.snake.game
 import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.events.GameEventListener
+import fr.mwet.snake.tuning.GameplayTuning.START_LENGTH
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -47,5 +50,20 @@ class GameWorldTest {
         world.start()
 
         assertEquals(UpdateResult.KeepWaiting, world.ticker.update(0.11f))
+    }
+
+    @Test
+    fun `an almost won game is won with the maximum score after one tick`() {
+        val world = GameWorld(object : GameEventBus {
+            override fun listen(listener: GameEventListener) = Unit
+            override fun emit(gameEvent: GameEvent) = Unit
+        })
+        world.newGame(SnakeStart.almostWon())
+        world.start()
+
+        world.update(1f)
+
+        assertEquals(GameState.Won, world.state)
+        assertEquals((WORLD_WIDTH * WORLD_HEIGHT).toInt() - START_LENGTH, world.score)
     }
 }

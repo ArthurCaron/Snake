@@ -1,7 +1,5 @@
 package fr.mwet.snake.tuning
 
-import fr.mwet.snake.utils.Direction
-
 object GameplayTuning {
     const val WORLD_WIDTH = 16f
     const val WORLD_HEIGHT = 20f
@@ -13,7 +11,5 @@ object GameplayTuning {
     const val SCORE_PER_FOOD = 1
     const val HIGH_SCORES_KEPT = 10
 
-    val START_DIRECTION = Direction.UP
-    const val START_TAIL_X = 4f
-    const val START_TAIL_Y = 3f
+    const val START_LENGTH = 3
 }

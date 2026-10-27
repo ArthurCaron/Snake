@@ -1,5 +1,6 @@
 package fr.mwet.snake.game
 
+import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.utils.Direction
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -7,7 +8,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SnakeTest {
-    private val sut = Snake().apply { reset() }
+    private val sut = Snake().apply { arrangeAlong(listOf(Vector2(4f, 4f), Vector2(4f, 3f)), Direction.UP) }
 
     @Test
     fun `keeps a second turn given before the next tick`() {
