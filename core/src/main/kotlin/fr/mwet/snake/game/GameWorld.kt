@@ -6,6 +6,7 @@ import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.TargetActor
 import fr.mwet.snake.tuning.GameplayTuning.MAX_TICKS_PER_SECOND
 import fr.mwet.snake.tuning.GameplayTuning.SCORE_PER_FOOD
+import fr.mwet.snake.tuning.GameplayTuning.START_LENGTH
 import fr.mwet.snake.tuning.GameplayTuning.START_TICKS_PER_SECOND
 import fr.mwet.snake.tuning.GameplayTuning.TICKS_PER_SECOND_GAINED_PER_FOOD
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
@@ -26,11 +27,12 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
 
     val isOver get() = state == GameState.Lost || state == GameState.Won
 
-    fun newGame() {
+    fun newGame(start: SnakeStart = SnakeStart.random()) {
         state = GameState.Ready
-        score = 0
+        score = start.foodsAlreadyEaten * SCORE_PER_FOOD
         ticker.reset()
-        snake.reset()
+        ticker.speedUp(start.foodsAlreadyEaten * TICKS_PER_SECOND_GAINED_PER_FOOD, MAX_TICKS_PER_SECOND)
+        snake.arrangeAlong(start.segments, start.direction)
         resetFood()
     }
 

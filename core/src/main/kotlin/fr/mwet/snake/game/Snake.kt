@@ -2,38 +2,34 @@ package fr.mwet.snake.game
 
 import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.inputs.TargetActor
-import fr.mwet.snake.tuning.GameplayTuning.START_DIRECTION
-import fr.mwet.snake.tuning.GameplayTuning.START_TAIL_X
-import fr.mwet.snake.tuning.GameplayTuning.START_TAIL_Y
 import fr.mwet.snake.tuning.InputTuning.MAX_PENDING_DIRECTIONS
 import fr.mwet.snake.utils.Direction
 import fr.mwet.snake.utils.collidesWith
 import fr.mwet.snake.utils.move
 import ktx.assets.pool
 
-private val initialDirection = START_DIRECTION
-private val initialTailPosition = Vector2(START_TAIL_X, START_TAIL_Y)
-private val initialHeadPosition = Vector2(
-    initialTailPosition.x + initialDirection.directionX,
-    initialTailPosition.y + initialDirection.directionY
-)
-
 class Snake : TargetActor {
     private val segmentPool = SegmentPool()
-    val head = segmentPool.obtain(initialHeadPosition)
-    val tail = segmentPool.obtain(initialTailPosition).apply { linkPrevious(head) }
-    var currentDirection = initialDirection
+    val head = segmentPool.obtain(Vector2(-1f, -1f))
+    val tail = segmentPool.obtain(Vector2(-1f, -1f)).apply { linkPrevious(head) }
+    var currentDirection = Direction.UP
     private val pendingDirections = ArrayDeque<Direction>(MAX_PENDING_DIRECTIONS)
     val futureDirection: Direction get() = pendingDirections.firstOrNull() ?: currentDirection
     val nextHeadPosition = Vector2(-1f, -1f)
 
-    fun reset() {
-        head.position.move(initialHeadPosition)
-        tail.position.move(initialTailPosition)
+    fun arrangeAlong(segments: List<Vector2>, direction: Direction) {
         freeBodyParts()
-        tail.linkPrevious(head)
+        head.position.move(segments.first())
+        var previous = head
+        for (index in 1..<segments.lastIndex) {
+            val bodyPart = segmentPool.obtain(segments[index])
+            previous.linkNext(bodyPart)
+            previous = bodyPart
+        }
+        tail.position.move(segments.last())
+        tail.linkPrevious(previous)
         tail.stayStill = false
-        currentDirection = initialDirection
+        currentDirection = direction
         pendingDirections.clear()
         updateNextHeadPosition()
     }

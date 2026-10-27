@@ -50,6 +50,7 @@ def os = System.properties['os.name'].toLowerCase()
 
 run {
   workingDir = rootProject.projectDir
+  systemProperty 'snake.debug', 'true'
 // You can uncomment the next line if your IDE claims a build failure even when the app closed properly.
   //setIgnoreExitValue(true)
 

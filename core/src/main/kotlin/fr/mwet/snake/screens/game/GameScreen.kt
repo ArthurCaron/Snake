@@ -3,6 +3,8 @@ package fr.mwet.snake.screens.game
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
+import fr.mwet.snake.game.SnakeStart
+import fr.mwet.snake.inputs.DebugInputProcessor
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.GeneralCommandContext
 import fr.mwet.snake.inputs.GeneralInputProcessor
@@ -10,6 +12,7 @@ import fr.mwet.snake.inputs.TouchInputProcessor
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
+import fr.mwet.snake.tuning.DebugTuning
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiLayer
 import ktx.app.KtxScreen
@@ -46,15 +49,17 @@ class GameScreen(
             },
         )
     )
+    private val debugInput = DebugInputProcessor(onStartAlmostWonGame = { startNewGame(SnakeStart.almostWon()) })
     private var gameState: GameState? = null
 
     override fun show() {
         kit.input.add(menuInput, gameInput, uiLayer.stage, touchInput)
+        if (DebugTuning.ENABLED) kit.input.addFirst(debugInput)
         startNewGame()
     }
 
     override fun hide() {
-        kit.input.remove(menuInput, gameInput, uiLayer.stage, touchInput)
+        kit.input.remove(debugInput, menuInput, gameInput, uiLayer.stage, touchInput)
         ui.onHide()
     }
 
@@ -80,8 +85,8 @@ class GameScreen(
         uiLayer.dispose()
     }
 
-    private fun startNewGame() {
-        world.newGame()
+    private fun startNewGame(start: SnakeStart = SnakeStart.random()) {
+        world.newGame(start)
         board.reset()
         gameState = null
     }

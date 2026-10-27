@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run desktop" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="fr.mwet.snake.lwjgl3.Lwjgl3Launcher" />
+    <option name="VM_PARAMETERS" value="-Dsnake.debug=true" />
     <module name="Snake.lwjgl3.main" />
     <extension name="coverage">
       <pattern>
