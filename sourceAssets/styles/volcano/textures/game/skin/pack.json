@@ -1,0 +1,23 @@
+{
+	pot: true,
+	paddingX: 4,
+	paddingY: 4,
+	bleed: true,
+	bleedIterations: 4,
+	edgePadding: true,
+	duplicatePadding: true,
+	rotation: false,
+	maxWidth: 2048,
+	maxHeight: 2048,
+	stripWhitespaceX: false,
+	stripWhitespaceY: false,
+	filterMin: MipMapLinearLinear,
+	filterMag: Linear,
+	wrapX: ClampToEdge,
+	wrapY: ClampToEdge,
+	format: RGBA8888,
+	useIndexes: true,
+	premultiplyAlpha: false,
+	legacyOutput: true,
+	prettyPrint: true
+}
