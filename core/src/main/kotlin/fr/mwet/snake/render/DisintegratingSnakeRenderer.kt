@@ -15,13 +15,13 @@ class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Sna
     private var eTime = 0f
     private val vectors = VectorPool()
 
-    private val snekHeadAll = textureHandler.snekHeadAll
-    private val snakeBody = textureHandler.snekBodyStraight
-    private val snakeTail = textureHandler.snekTail
+    private val snakeHeadDead = textureHandler.game.skin.snakeHeadDead
+    private val snakeBody = textureHandler.game.skin.snakeBodyStraight
+    private val snakeTail = textureHandler.game.skin.snakeTail
     private val bodyParts = mutableListOf<DisintegratingSegment>()
 
     fun disintegrate() {
-        bodyParts.add(DisintegratingSegment(vectors.copy(snake.head.position), snekHeadAll))
+        bodyParts.add(DisintegratingSegment(vectors.copy(snake.head.position), snakeHeadDead))
         bodyParts.add(DisintegratingSegment(vectors.copy(snake.tail.position), snakeTail))
 
         var segment: Segment? = snake.head.next

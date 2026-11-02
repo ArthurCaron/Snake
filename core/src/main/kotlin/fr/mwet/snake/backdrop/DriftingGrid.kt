@@ -23,7 +23,7 @@ private const val MARGIN_CELLS = 1
 // The board grid drifts down and to the right while its opacity pulses slowly.
 class DriftingGrid(textures: TextureHandler) : WorldDrawable {
     private val background = Background(textures)
-    private val cell = textures.gridCell
+    private val cell = textures.game.skin.gridCell
     private var time = 0f
 
     override fun draw(batch: SpriteBatch, delta: Float) {

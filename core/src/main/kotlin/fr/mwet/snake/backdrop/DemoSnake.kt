@@ -2,6 +2,7 @@ package fr.mwet.snake.backdrop
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.GameEventBusImpl
@@ -9,6 +10,7 @@ import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldDrawable
+import fr.mwet.snake.render.visibleWorld
 import fr.mwet.snake.tuning.BackdropTuning.DemoSnake.DIM_COLOR
 import fr.mwet.snake.tuning.BackdropTuning.DemoSnake.RESTART_DELAY
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
@@ -27,6 +29,7 @@ class DemoSnake(textures: TextureHandler) : WorldDrawable {
     private val pixel = textures.rectangleTexture(1, 1, Color.WHITE)
     // The head position at the last decision. NO_HEAD forces a decision on the first frame.
     private val lastHead = Vector2(NO_HEAD, NO_HEAD)
+    private val visible = Rectangle()
     private var overSince = 0f
 
     init {
@@ -47,9 +50,10 @@ class DemoSnake(textures: TextureHandler) : WorldDrawable {
         world.update(delta)
 
         board.draw(batch, delta)
-        // Dim the board with the background colour, partly opaque.
+        // Dim the whole screen, the board and the ground around it, partly opaque.
         batch.color = DIM_COLOR
-        batch.draw(pixel, 0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+        batch.visibleWorld(visible)
+        batch.draw(pixel, visible.x, visible.y, visible.width, visible.height)
         batch.resetColor()
     }
 

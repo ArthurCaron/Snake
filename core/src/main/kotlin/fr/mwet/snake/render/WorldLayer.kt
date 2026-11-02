@@ -1,6 +1,11 @@
 package fr.mwet.snake.render
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.HdpiUtils
+import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector3
 import fr.mwet.snake.GameViewport
 import ktx.graphics.use
 
@@ -9,12 +14,37 @@ interface WorldDrawable {
 }
 
 class WorldLayer(private val batch: SpriteBatch, private val viewport: GameViewport) {
+    private val fullScreen = Matrix4()
+
     fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
     }
 
     fun render(drawable: WorldDrawable, delta: Float) {
-        viewport.apply()
-        batch.use(viewport.camera) { drawable.draw(it, delta) }
+        val screenWidth = Gdx.graphics.width
+        val screenHeight = Gdx.graphics.height
+        val unitsPerPixel = viewport.worldWidth / viewport.screenWidth
+        fullScreen.setToOrtho2D(
+            -viewport.screenX * unitsPerPixel,
+            -viewport.screenY * unitsPerPixel,
+            screenWidth * unitsPerPixel,
+            screenHeight * unitsPerPixel,
+        )
+        HdpiUtils.glViewport(0, 0, screenWidth, screenHeight)
+        batch.use(fullScreen) { drawable.draw(it, delta) }
     }
+}
+
+private val inverseProjection = Matrix4()
+private val corner = Vector3()
+
+// The part of the world that the batch shows, read back from its projection. Inside WorldLayer.render it is the whole
+// screen: the board, plus the bands that FitViewport leaves around it.
+fun SpriteBatch.visibleWorld(out: Rectangle): Rectangle {
+    inverseProjection.set(projectionMatrix).inv()
+    corner.set(-1f, -1f, 0f).prj(inverseProjection)
+    val left = corner.x
+    val bottom = corner.y
+    corner.set(1f, 1f, 0f).prj(inverseProjection)
+    return out.set(left, bottom, corner.x - left, corner.y - bottom)
 }

@@ -11,6 +11,7 @@ enum class FontTheme(
     val smallSize: Int,
     val bigSize: Int,
 ) {
+    Lilita("lilita", "Lilita One", FontAssets.Lilitaone.LilitaOneRegular, FontAssets.Lilitaone.LilitaOneRegular, false, 38, 64),
     Classic("classic", "Chewy + Fredoka", FontAssets.Chewy.ChewyRegular, FontAssets.Fredoka.FredokaRegular, false, 36, 60),
     Silkscreen("silkscreen", "Silkscreen", FontAssets.Silkscreen.SilkscreenBold, FontAssets.Silkscreen.SilkscreenRegular, true, 32, 64),
     PixelifySans("pixelify", "Pixelify Sans", FontAssets.Pixelifysans.PixelifySansVariable, FontAssets.Pixelifysans.PixelifySansVariable, true, 36, 64),

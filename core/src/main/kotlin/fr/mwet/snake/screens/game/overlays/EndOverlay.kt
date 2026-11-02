@@ -29,7 +29,7 @@ class EndOverlay(widgets: Widgets, onPlayAgain: () -> Unit, onMainMenu: () -> Un
                 title = label("", UiStyle.TITLE) { it.row() }
                 score = label("") { it.row() }
                 best = label("") { it.row() }
-                newHighScore = label(I18N.newHighScore()) { it.row() }
+                newHighScore = label(I18N.newHighScore(), UiStyle.HIGHLIGHT) { it.row() }
                 menuButton(I18N.playAgain(), onClick = onPlayAgain) { it.fillX().row() }
                 menuButton(I18N.mainMenu(), onClick = onMainMenu) { it.fillX() }
             }

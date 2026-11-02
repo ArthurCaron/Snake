@@ -5,6 +5,8 @@ import com.badlogic.gdx.backends.headless.HeadlessFiles
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.scene2d.Scene2DSkin
@@ -15,11 +17,14 @@ import kotlin.test.assertEquals
 
 class WidgetsTest {
     @Test
-    fun `both button helpers report one activation after the action and ignore disabled or cancelled clicks`() {
+    fun `button helpers report one activation after the action and ignore disabled or cancelled clicks`() {
         val previousFiles = Gdx.files
         Gdx.files = HeadlessFiles()
         val font = BitmapFont(BitmapFont.BitmapFontData(), TextureRegion(), false)
-        val skin = Skin().apply { add("default", TextButton.TextButtonStyle().apply { this.font = font }) }
+        val skin = Skin().apply {
+            add("default", TextButton.TextButtonStyle().apply { this.font = font })
+            add("icon", ImageButton.ImageButtonStyle())
+        }
         Scene2DSkin.defaultSkin = skin
         try {
             val calls = mutableListOf<String>()
@@ -27,8 +32,9 @@ class WidgetsTest {
             val standalone = widgets.menuButton("Standalone", onClick = { calls += "action" })
             val table = scene2d.table {}
             val nested = with(widgets) { table.menuButton("Nested", onClick = { calls += "action" }) }
+            val icon = with(widgets) { table.iconButton("icon", onClick = { calls += "action" }) }
 
-            for (button in listOf(standalone, nested)) {
+            for (button in listOf(standalone, nested, icon)) {
                 button.setBounds(0f, 0f, 100f, 50f)
                 button.click()
                 assertEquals(listOf("action", "activated"), calls)
@@ -59,7 +65,7 @@ class WidgetsTest {
     }
 }
 
-private fun TextButton.click(releaseX: Float = 10f) {
+private fun Button.click(releaseX: Float = 10f) {
     fire(InputEvent().apply {
         type = InputEvent.Type.touchDown
         touchFocus = false

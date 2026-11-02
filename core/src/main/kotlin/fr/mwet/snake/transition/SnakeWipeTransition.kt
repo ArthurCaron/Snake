@@ -2,8 +2,8 @@ package fr.mwet.snake.transition
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.tuning.TransitionTuning.WIPE_CELLS_ON_SHORT_SIDE
+import fr.mwet.snake.tuning.TransitionTuning.WIPE_COLOR
 import fr.mwet.snake.tuning.TransitionTuning.WIPE_SECONDS
 import kotlin.math.ceil
 
@@ -20,7 +20,7 @@ class SnakeWipeTransition(private val pixel: Texture) : ScreenTransition {
         val reached = (t * total).toInt()
         val first = if (coming) reached else 0
         val last = if (coming) total else reached
-        batch.color = Palette.accent
+        batch.color = WIPE_COLOR
         for (index in first until last) {
             val row = index / columns
             val inRow = index % columns

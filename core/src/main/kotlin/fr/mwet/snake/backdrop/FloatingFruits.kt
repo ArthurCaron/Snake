@@ -32,7 +32,7 @@ private const val UNSCALED = 1f
 // Strawberries rise slowly, sway and tilt, and come back from the bottom when they leave the top.
 class FloatingFruits(textures: TextureHandler) : WorldDrawable {
     private val background = Background(textures)
-    private val fruit = textures.strawberry
+    private val fruit = textures.game.skin.fruit
     private val x = FloatArray(FRUIT_COUNT) { MathUtils.random(0f, WORLD_WIDTH) }
     private val y = FloatArray(FRUIT_COUNT) { MathUtils.random(START_MIN_Y, WORLD_HEIGHT) }
     private val speed = FloatArray(FRUIT_COUNT) { MathUtils.random(MIN_SPEED, MAX_SPEED) }

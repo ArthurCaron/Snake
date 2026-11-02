@@ -39,7 +39,7 @@ class UserPreferencesSave() {
 }
 
 object DefaultUserPreferences {
-    val fontTheme: FontTheme = FontTheme.Classic
+    val fontTheme: FontTheme = FontTheme.Lilita
 
     fun defaultUserPreferences() = UserPreferencesSave(
         version = 0,

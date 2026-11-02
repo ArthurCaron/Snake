@@ -17,6 +17,7 @@ import fr.mwet.snake.utils.draw
 import fr.mwet.snake.utils.move
 import fr.mwet.snake.utils.resetColor
 import ktx.app.KtxScreen
+import com.badlogic.gdx.utils.ScreenUtils
 import ktx.graphics.use
 
 
@@ -27,7 +28,7 @@ class LoadingScreen(
     private val onLoaded: (LoadedAssets) -> Unit,
 ) : KtxScreen {
     private val progressBar = ProgressBar(barWidth = 6f, barHeight = 0.5f)
-    private val loadingText = LoadingText(textWidth = 3f, textHeight = 3f * 16 / 200f)
+    private val loadingText = LoadingText(textWidth = 8f, textHeight = 8f * 120 / 1500f)
 
     override fun render(delta: Float) {
         val assets = assetLoading.update()
@@ -36,6 +37,7 @@ class LoadingScreen(
             return
         }
 
+        ScreenUtils.clear(Palette.clear)
         gameViewport.apply()
         batch.use(gameViewport.camera) {
             progressBar.render(it, assetLoading.progress)
@@ -68,10 +70,10 @@ class ProgressBar(barWidth: Float, barHeight: Float) : Disposable {
     }
 
     fun render(batch: SpriteBatch, progress: Progress) {
-        batch.resetColor(0.2f)
+        batch.setColor(Palette.outline.r, Palette.outline.g, Palette.outline.b, 0.6f)
         batch.draw(texture, position, fullSize)
 
-        batch.setColor(0.4f, 0.4f, 1f, 1f)
+        batch.color = Palette.primary
         batch.draw(texture, position, size.move(progress.value * fullSize.x, fullSize.y))
     }
 
@@ -81,7 +83,7 @@ class ProgressBar(barWidth: Float, barHeight: Float) : Disposable {
 }
 
 class LoadingText(textWidth: Float, textHeight: Float) : Disposable {
-    private val position = Vector2((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f)
+    private val position = Vector2((WORLD_WIDTH - textWidth) * 0.5f, (WORLD_HEIGHT - textHeight) * 0.5f + 1f)
     private val size = Vector2(textWidth, textHeight)
 
     val texture = Texture(Gdx.files.internal("LoadingAssets.png")).apply {

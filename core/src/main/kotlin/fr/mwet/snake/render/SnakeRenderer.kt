@@ -5,14 +5,18 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.game.Snake
+import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.utils.Direction
 import fr.mwet.snake.utils.Direction.*
+import fr.mwet.snake.utils.resetColor
+import fr.mwet.snake.tuning.RenderTuning.Snake.SHADOW_X
+import fr.mwet.snake.tuning.RenderTuning.Snake.SHADOW_Y
 
 class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
-    private val snekBodyStraight = textureHandler.snekBodyStraight
-    private val snekBodyTurn = textureHandler.snekBodyTurn
-    private val snekHeadAll = textureHandler.snekHeadAll
-    private val snekTail = textureHandler.snekTail
+    private val snekBodyStraight = textureHandler.game.skin.snakeBodyStraight
+    private val snekBodyTurn = textureHandler.game.skin.snakeBodyTurn
+    private val snekHeadAll = textureHandler.game.skin.snakeHead
+    private val snekTail = textureHandler.game.skin.snakeTail
 
     private class DirectionPair(val first: Direction, val second: Direction) {
         fun matches(first: Direction, second: Direction): Boolean =
@@ -25,10 +29,21 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
     private val leftUp = DirectionPair(LEFT, UP)
 
     private var eTime = 0f
+    private var offsetX = 0f
+    private var offsetY = 0f
 
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
 
+        batch.color = Palette.snakeShadow
+        drawSnake(batch, SHADOW_X, SHADOW_Y)
+        batch.resetColor()
+        drawSnake(batch, 0f, 0f)
+    }
+
+    private fun drawSnake(batch: SpriteBatch, x: Float, y: Float) {
+        offsetX = x
+        offsetY = y
         var segment: Segment? = snake.head
         while (segment != null) {
             when (segment) {
@@ -58,7 +73,7 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
     }
 
     private fun drawRotated(batch: SpriteBatch, segment: Segment, texture: AtlasRegion, angle: Float) {
-        batch.draw(texture, segment.position.x, segment.position.y, 0.5f, 0.5f, 1f, 1f, 1f, 1f, angle)
+        batch.draw(texture, segment.position.x + offsetX, segment.position.y + offsetY, 0.5f, 0.5f, 1f, 1f, 1f, 1f, angle)
     }
 
     fun reset() {
@@ -68,8 +83,8 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
     private fun drawHead(batch: SpriteBatch, segment: Segment, texture: AtlasRegion) {
         batch.draw(
             texture,
-            segment.position.x,
-            segment.position.y,
+            segment.position.x + offsetX,
+            segment.position.y + offsetY,
             0.5f,
             0.5f,
             1f,
@@ -83,8 +98,8 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake) {
     private fun drawSegment(batch: SpriteBatch, segment: Segment, texture: AtlasRegion) {
         batch.draw(
             texture,
-            segment.position.x,
-            segment.position.y,
+            segment.position.x + offsetX,
+            segment.position.y + offsetY,
             0.5f,
             0.5f,
             1f,

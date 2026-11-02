@@ -4,19 +4,19 @@ import com.badlogic.gdx.graphics.Color
 
 object BackdropTuning {
     object DemoSnake {
-        val DIM_COLOR: Color = Color(Palette.background).apply { a = 0.45f }
+        val DIM_COLOR: Color = Color(Palette.outline).apply { a = 0.35f }
         const val RESTART_DELAY = 1.5f
     }
 
     object DiagonalStripes {
-        val COLOR: Color = Color(Color.GREEN).apply { a = 0.06f }
+        val COLOR: Color = Color(Palette.outline).apply { a = 0.06f }
         const val SPACING = 3f
         const val BAND = 1f
         const val CELLS_PER_SECOND = 0.3f
     }
 
     object DriftingGrid {
-        val COLOR: Color = Color.GREEN
+        val COLOR: Color = Palette.outline
         const val CELLS_PER_SECOND = 0.4f
         const val MIN_ALPHA = 0.04f
         const val MAX_ALPHA = 0.12f
@@ -24,7 +24,7 @@ object BackdropTuning {
     }
 
     object Fireflies {
-        val COLOR: Color = Color.GOLD
+        val COLOR: Color = Palette.outline
         const val MIN_BLINK_SPEED = 0.4f
         const val MAX_BLINK_SPEED = 1.1f
         const val COUNT = 18
@@ -46,7 +46,7 @@ object BackdropTuning {
     }
 
     object GameOfLife {
-        val COLOR: Color = Color.GREEN
+        val COLOR: Color = Palette.outline
         const val MIN_BRIGHTNESS = 0.02f
         const val STEP_SECONDS = 0.35f
         const val SEED_DENSITY = 0.3f
@@ -58,7 +58,7 @@ object BackdropTuning {
     }
 
     object Ripples {
-        val COLOR: Color = Color.GREEN
+        val COLOR: Color = Palette.outline
         const val MIN_VISIBLE_ALPHA = 0.005f
         const val MAX_ALPHA = 0.22f
         const val RING_FREQUENCY = 1.1f
@@ -68,7 +68,7 @@ object BackdropTuning {
     }
 
     object WanderingSnakes {
-        val COLOR: Color = Color.GREEN
+        val COLOR: Color = Palette.outline
         const val MIN_STEP_SECONDS = 0.15f
         const val MAX_STEP_SECONDS = 0.3f
         const val MIN_LENGTH = 5
@@ -80,7 +80,7 @@ object BackdropTuning {
     }
 
     object Waves {
-        val COLOR: Color = Color.GREEN
+        val COLOR: Color = Palette.outline
         const val MAX_ALPHA = 0.08f
         const val SPEED = 1.2f
         const val ROWS_PER_WAVE = 7f

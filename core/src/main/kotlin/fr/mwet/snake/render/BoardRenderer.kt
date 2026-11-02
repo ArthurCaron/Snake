@@ -12,7 +12,7 @@ import fr.mwet.snake.utils.resetColor
 
 class BoardRenderer(textureHandler: TextureHandler, private val world: GameWorld) : WorldDrawable {
     private val background = Background(textureHandler)
-    private val gridCell = textureHandler.gridCell
+    private val gridCell = textureHandler.game.skin.gridCell
     private val food = FoodRenderer(textureHandler, world.food)
     private val snake = SnakeRenderer(textureHandler, world.snake)
     private val disintegratingSnake = DisintegratingSnakeRenderer(textureHandler, world.snake)

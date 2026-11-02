@@ -9,6 +9,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
 import fr.mwet.snake.tuning.FontTheme
+import fr.mwet.snake.tuning.FontTuning.MIN_OUTLINE
+import fr.mwet.snake.tuning.FontTuning.MIN_SHADOW
+import fr.mwet.snake.tuning.FontTuning.OUTLINE_RATIO
+import fr.mwet.snake.tuning.FontTuning.SHADOW_RATIO
 import fr.mwet.snake.tuning.FontTuning.TEXT_CHARS
 import fr.mwet.snake.tuning.FontTuning.TITLE_BORDER
 import fr.mwet.snake.tuning.FontTuning.TITLE_CHARS
@@ -39,10 +43,14 @@ private fun descriptor(theme: FontTheme, role: FontRole) = AssetDescriptor(
         }
         fontParameters.characters = if (role == FontRole.SnekTitle) TITLE_CHARS else TEXT_CHARS
         fontParameters.color = Palette.fontFill
-        if (role == FontRole.SnekTitle) {
-            fontParameters.borderWidth = TITLE_BORDER
-            fontParameters.borderColor = Palette.fontOutline
-        }
+        val outline = if (role == FontRole.SnekTitle) TITLE_BORDER.toInt() else maxOf(MIN_OUTLINE, fontParameters.size / OUTLINE_RATIO)
+        fontParameters.borderWidth = outline.toFloat()
+        fontParameters.borderColor = Palette.fontOutline
+        // Thinner than the outline: a thick shadow weighs the text down on its button.
+        val shadow = if (role == FontRole.SnekTitle) outline else maxOf(MIN_SHADOW, fontParameters.size / SHADOW_RATIO)
+        fontParameters.shadowOffsetY = shadow
+        fontParameters.shadowOffsetX = shadow
+        fontParameters.shadowColor = Palette.fontShadow
         fontParameters.mono = theme.pixel
         val filter = if (theme.pixel) TextureFilter.Nearest else TextureFilter.Linear
         fontParameters.minFilter = filter

@@ -5,8 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.events.MenuEvent.*
@@ -22,7 +24,9 @@ import fr.mwet.snake.ui.Widgets
 import ktx.actors.onEnter
 import ktx.actors.onExit
 import ktx.scene2d.actor
+import ktx.scene2d.Scene2DSkin
 import ktx.scene2d.actors
+import ktx.scene2d.image
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -40,8 +44,8 @@ class MainMenuUi(
     private val title = MainMenuTitle()
     private val playButton = PlayButton(menuEventBus, navigator, widgets)
     private var bestScoreLabel: Label
-    private var soundButton: TextButton
-    private var musicButton: TextButton
+    private var soundButton: ImageButton
+    private var musicButton: ImageButton
 
     init {
         with(widgets) {
@@ -61,8 +65,8 @@ class MainMenuUi(
                     setFillParent(true)
                     top().right().pad(MARGIN)
                     defaults().right().space(MARGIN)
-                    soundButton = menuButton("", onClick = ::toggleSound) { it.row() }
-                    musicButton = menuButton("", onClick = ::toggleMusic)
+                    soundButton = iconButton(UiStyle.SOUND_ON, onClick = ::toggleSound) { it.row() }
+                    musicButton = iconButton(UiStyle.MUSIC_ON, onClick = ::toggleMusic)
                 }
             }
         }
@@ -101,8 +105,10 @@ class MainMenuUi(
     }
 
     private fun refreshAudioButtons() {
-        soundButton.setText(if (settingsRepository.soundOn) I18N.soundOn() else I18N.soundOff())
-        musicButton.setText(if (settingsRepository.musicOn) I18N.musicOn() else I18N.musicOff())
+        val style = if (settingsRepository.soundOn) UiStyle.SOUND_ON else UiStyle.SOUND_OFF
+        soundButton.style = Scene2DSkin.defaultSkin.get(style, ImageButtonStyle::class.java)
+        val musicStyle = if (settingsRepository.musicOn) UiStyle.MUSIC_ON else UiStyle.MUSIC_OFF
+        musicButton.style = Scene2DSkin.defaultSkin.get(musicStyle, ImageButtonStyle::class.java)
     }
 
     private fun updateBestScoreLabel(bestScore: Int) {
@@ -112,17 +118,16 @@ class MainMenuUi(
 }
 
 private class MainMenuTitle {
-    val actor = scene2d.label("Snek", UiStyle.LOGO) {
-        setAlignment(Align.center)
+    private val logo = Scene2DSkin.defaultSkin.getDrawable(UiStyle.LOGO) as TextureRegionDrawable
+
+    val actor = scene2d.image(logo) {
         setOrigin(Align.center)
     }
 
     fun fit(boardWidth: Float) {
-        actor.setFontScale(1f)
-        val naturalWidth = actor.prefWidth
-        if (naturalWidth > 0f) {
-            actor.setFontScale(boardWidth * TITLE_WIDTH_RATIO / naturalWidth)
-        }
+        val width = boardWidth * TITLE_WIDTH_RATIO
+        val region = logo.region
+        logo.setMinSize(width, width * region.regionHeight / region.regionWidth)
         actor.invalidateHierarchy()
     }
 
@@ -139,7 +144,7 @@ private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navi
     private var hoverAction: Action? = null
 
     val actor = widgets.menuButton(I18N.play(), onClick = { menuEventBus.emit(PlayGameClicked) }, style = UiStyle.BIG) {
-        pad(0f)
+        pad(20f, 72f, 30f, 72f)
         setOrigin(Align.center)
 
         val replaceHoverAction = { action: Action ->

@@ -8,7 +8,7 @@ import fr.mwet.snake.tuning.AnimationTuning.FOOD_FRAME_DURATION
 
 class FoodRenderer(textureHandler: TextureHandler, private val food: Food) {
     private var eTime = 0f
-    private val animation = Animation(FOOD_FRAME_DURATION, textureHandler.strawberryAnimation, Animation.PlayMode.LOOP_PINGPONG)
+    private val animation = Animation(FOOD_FRAME_DURATION, textureHandler.game.skin.fruitBob, Animation.PlayMode.LOOP_PINGPONG)
 
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
