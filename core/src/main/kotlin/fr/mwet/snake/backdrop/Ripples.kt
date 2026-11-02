@@ -2,22 +2,22 @@ package fr.mwet.snake.backdrop
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.tuning.BackdropTuning.Ripples.COLOR
 import com.badlogic.gdx.math.MathUtils
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldDrawable
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
-import fr.mwet.snake.utils.hypotenuse
-import fr.mwet.snake.utils.resetColor
-import fr.mwet.snake.utils.setTint
+import fr.mwet.snake.tuning.BackdropTuning.Ripples.COLOR
 import fr.mwet.snake.tuning.BackdropTuning.Ripples.INSET
 import fr.mwet.snake.tuning.BackdropTuning.Ripples.MAX_ALPHA
 import fr.mwet.snake.tuning.BackdropTuning.Ripples.MIN_VISIBLE_ALPHA
 import fr.mwet.snake.tuning.BackdropTuning.Ripples.RING_FREQUENCY
 import fr.mwet.snake.tuning.BackdropTuning.Ripples.RING_SPEED
 import fr.mwet.snake.tuning.BackdropTuning.Ripples.SOURCE_SPEED
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
+import fr.mwet.snake.utils.hypotenuse
+import fr.mwet.snake.utils.resetColor
+import fr.mwet.snake.utils.setTint
 
 // The sources move on Lissajous curves around the centre, up to SOURCE_REACH_* of the board on each side.
 // The frequencies differ between x and y, and between the two sources, so the paths do not repeat quickly.

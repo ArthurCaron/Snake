@@ -1,7 +1,7 @@
 package fr.mwet.snake.save.metadata
 
-import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.serialization.InMemoryTextStore
+import fr.mwet.snake.save.serialization.JsonStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

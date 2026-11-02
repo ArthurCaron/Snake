@@ -6,9 +6,9 @@ import fr.mwet.snake.assets.MusicHandler
 import fr.mwet.snake.assets.SoundHandler
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.registerFontLoaders
+import fr.mwet.snake.tuning.AssetTuning.LOADING_MILLIS_PER_FRAME
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
-import fr.mwet.snake.tuning.AssetTuning.LOADING_MILLIS_PER_FRAME
 
 class AssetLoading : DisposableRegistry by DisposableContainer() {
     private val assetManager = AssetManager().apply { registerFontLoaders() }.alsoRegister()

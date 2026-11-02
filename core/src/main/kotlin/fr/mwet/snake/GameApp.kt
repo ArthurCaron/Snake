@@ -1,22 +1,22 @@
 package fr.mwet.snake
 
-import fr.mwet.snake.events.MenuEvent.LoadingFinished
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import fr.mwet.snake.assets.loadTranslations
+import fr.mwet.snake.events.MenuEvent.LoadingFinished
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.LibGdxKeyNames
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.screens.controls.ControlsScreen
-import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.screens.font.FontScreen
-import fr.mwet.snake.transition.ScreenTransitions
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
 import fr.mwet.snake.screens.loading.LoadingScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
 import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.screens.settings.SettingsScreen
+import fr.mwet.snake.transition.ScreenTransitions
+import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.utils.SplashWorker
 import ktx.app.KtxGame
 import ktx.app.KtxScreen

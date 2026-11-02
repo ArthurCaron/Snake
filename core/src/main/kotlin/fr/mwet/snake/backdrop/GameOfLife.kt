@@ -2,15 +2,11 @@ package fr.mwet.snake.backdrop
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.COLOR
 import com.badlogic.gdx.math.MathUtils
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldDrawable
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
-import fr.mwet.snake.utils.resetColor
-import fr.mwet.snake.utils.setTint
+import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.COLOR
 import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.FADE_PER_SECOND
 import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.INSET
 import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.MAX_ALPHA
@@ -19,6 +15,10 @@ import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.MIN_BRIGHTNESS
 import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.MIN_POPULATION
 import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.SEED_DENSITY
 import fr.mwet.snake.tuning.BackdropTuning.GameOfLife.STEP_SECONDS
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
+import fr.mwet.snake.utils.resetColor
+import fr.mwet.snake.utils.setTint
 
 private const val COLUMNS = WORLD_WIDTH.toInt()
 private const val ROWS = WORLD_HEIGHT.toInt()

@@ -1,12 +1,11 @@
 package fr.mwet.snake.game
 
 import com.badlogic.gdx.math.Vector2
-import fr.mwet.snake.events.GameEvent.*
+import fr.mwet.snake.events.GameEvent
 import fr.mwet.snake.events.GameEventBus
 import fr.mwet.snake.inputs.TargetActor
 import fr.mwet.snake.tuning.GameplayTuning.MAX_TICKS_PER_SECOND
 import fr.mwet.snake.tuning.GameplayTuning.SCORE_PER_FOOD
-import fr.mwet.snake.tuning.GameplayTuning.START_LENGTH
 import fr.mwet.snake.tuning.GameplayTuning.START_TICKS_PER_SECOND
 import fr.mwet.snake.tuning.GameplayTuning.TICKS_PER_SECOND_GAINED_PER_FOOD
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
@@ -45,13 +44,13 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
     fun pause() {
         if (state != GameState.Playing && state != GameState.Ready) return
         state = GameState.Paused
-        gameEventBus.emit(Paused)
+        gameEventBus.emit(GameEvent.Paused)
     }
 
     fun resume() {
         if (state != GameState.Paused) return
         state = GameState.Ready
-        gameEventBus.emit(Resumed)
+        gameEventBus.emit(GameEvent.Resumed)
     }
 
     override fun setDirection(newDirection: Direction) {
@@ -70,16 +69,16 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
 
         if (willBeOutsideWorld || willCollideWithBody) {
             state = GameState.Lost
-            gameEventBus.emit(Lost)
+            gameEventBus.emit(GameEvent.Lost)
             return
         }
 
         snake.move(eatFood = willEatFood)
-        gameEventBus.emit(SnakeMoved)
+        gameEventBus.emit(GameEvent.SnakeMoved)
 
         if (willEatFood) {
             score += SCORE_PER_FOOD
-            gameEventBus.emit(FoodEaten)
+            gameEventBus.emit(GameEvent.FoodEaten)
             ticker.speedUp(TICKS_PER_SECOND_GAINED_PER_FOOD, MAX_TICKS_PER_SECOND)
             resetFood()
         }
@@ -97,7 +96,7 @@ class GameWorld(private val gameEventBus: GameEventBus) : TargetActor {
         val newCell = cells.randomAvailableCell(snake)
         if (newCell == null) {
             state = GameState.Won
-            gameEventBus.emit(Won)
+            gameEventBus.emit(GameEvent.Won)
         } else {
             food.move(newCell.position)
         }

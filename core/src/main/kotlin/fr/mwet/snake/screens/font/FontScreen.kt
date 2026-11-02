@@ -5,9 +5,9 @@ import fr.mwet.snake.FontSwitcher
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.assets.FontHandler
 import fr.mwet.snake.assets.FontRole
-import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
+import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
 import ktx.app.KtxScreen

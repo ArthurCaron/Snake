@@ -5,9 +5,6 @@ import com.badlogic.gdx.math.MathUtils
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldDrawable
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
-import fr.mwet.snake.utils.resetColor
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.COLOR
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.FRUIT_COUNT
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.MAX_SIZE
@@ -17,6 +14,9 @@ import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.MIN_SPEED
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.ROTATION_DEGREES
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.ROTATION_SPEED
 import fr.mwet.snake.tuning.BackdropTuning.FloatingFruits.SWAY
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
+import fr.mwet.snake.utils.resetColor
 import kotlin.math.sqrt
 
 // The start y is random in [START_MIN_Y, WORLD_HEIGHT]: the screen is already full on the first frame.

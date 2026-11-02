@@ -1,8 +1,8 @@
 package fr.mwet.snake.save.settings.serializable
 
-import fr.mwet.snake.utils.NO_VERSION
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.tuning.FontTheme
+import fr.mwet.snake.utils.NO_VERSION
 
 private const val NO_LOCALE = ""
 

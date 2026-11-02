@@ -1,12 +1,17 @@
 package fr.mwet.snake.save.settings
 
 import fr.mwet.snake.backdrop.BackdropStyle
-import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.save.serialization.JsonStore
-import fr.mwet.snake.save.settings.serializable.*
+import fr.mwet.snake.save.settings.serializable.DefaultKeymappings
+import fr.mwet.snake.save.settings.serializable.DefaultUserPreferences
+import fr.mwet.snake.save.settings.serializable.GameKeymappingSave
+import fr.mwet.snake.save.settings.serializable.GeneralKeymappingSave
+import fr.mwet.snake.save.settings.serializable.KeymappingsSave
+import fr.mwet.snake.save.settings.serializable.UserPreferencesSave
 import fr.mwet.snake.transition.TransitionStyle
+import fr.mwet.snake.tuning.FontTheme
 
 private const val ROOT_FOLDER = "settings"
 private const val KEYMAPPINGS_FILE = "${ROOT_FOLDER}/keymappings.json"

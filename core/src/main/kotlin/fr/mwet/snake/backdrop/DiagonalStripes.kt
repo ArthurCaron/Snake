@@ -32,7 +32,7 @@ private val BAND_COUNT = ((WORLD_WIDTH + WORLD_HEIGHT + HORIZONTAL_THICKNESS) / 
 // Puts the upper corner of the short side at y = 0: no gap at the bottom edge of the screen.
 private val START_Y = -PERPENDICULAR_COMPONENT
 // Far enough to the left that the top end of the first band is off screen.
-private val FIRST_X = - WORLD_HEIGHT - PERPENDICULAR_COMPONENT
+private val FIRST_X = -WORLD_HEIGHT - PERPENDICULAR_COMPONENT
 // The diagonal of an H x H square crosses the full height at 45 degrees. BAND keeps the square ends
 // of the band off screen.
 private val BAND_LENGTH = WORLD_HEIGHT * SQRT_2 + BAND

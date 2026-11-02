@@ -1,8 +1,8 @@
 package fr.mwet.snake.inputs
 
 import com.badlogic.gdx.Input.Keys
-import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.serialization.InMemoryTextStore
+import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.save.settings.addGeneralKey
 import fr.mwet.snake.save.settings.removeGeneralKey

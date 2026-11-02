@@ -2,16 +2,17 @@ package fr.mwet.snake.screens.settings
 
 import com.badlogic.gdx.Application.ApplicationType.Android
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.events.MenuEvent.*
+import fr.mwet.snake.backdrop.BackdropStyle
+import fr.mwet.snake.events.MenuEvent.MusicToggled
+import fr.mwet.snake.events.MenuEvent.SoundToggled
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.save.settings.SettingsRepository
+import fr.mwet.snake.transition.TransitionStyle
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
-import fr.mwet.snake.backdrop.BackdropStyle
-import fr.mwet.snake.transition.TransitionStyle
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.app.KtxScreen
 
 class SettingsScreen(

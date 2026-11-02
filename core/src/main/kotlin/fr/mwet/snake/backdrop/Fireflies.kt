@@ -2,21 +2,21 @@ package fr.mwet.snake.backdrop
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.tuning.BackdropTuning.Fireflies.COLOR
 import com.badlogic.gdx.math.MathUtils
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldDrawable
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
-import fr.mwet.snake.utils.resetColor
-import fr.mwet.snake.utils.setTint
+import fr.mwet.snake.tuning.BackdropTuning.Fireflies.COLOR
 import fr.mwet.snake.tuning.BackdropTuning.Fireflies.COUNT
 import fr.mwet.snake.tuning.BackdropTuning.Fireflies.MAX_ALPHA
 import fr.mwet.snake.tuning.BackdropTuning.Fireflies.MAX_BLINK_SPEED
 import fr.mwet.snake.tuning.BackdropTuning.Fireflies.MAX_DRIFT
 import fr.mwet.snake.tuning.BackdropTuning.Fireflies.MIN_BLINK_SPEED
 import fr.mwet.snake.tuning.BackdropTuning.Fireflies.SIZE
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
+import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
+import fr.mwet.snake.utils.resetColor
+import fr.mwet.snake.utils.setTint
 
 private const val HALF_SIZE = SIZE / 2
 

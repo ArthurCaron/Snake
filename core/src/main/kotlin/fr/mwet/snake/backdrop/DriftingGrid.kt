@@ -5,15 +5,15 @@ import com.badlogic.gdx.math.MathUtils
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldDrawable
+import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.CELLS_PER_SECOND
+import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.COLOR
+import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.MAX_ALPHA
+import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.MIN_ALPHA
+import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.PULSE_SECONDS
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
 import fr.mwet.snake.utils.setTint
-import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.COLOR
-import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.CELLS_PER_SECOND
-import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.MAX_ALPHA
-import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.MIN_ALPHA
-import fr.mwet.snake.tuning.BackdropTuning.DriftingGrid.PULSE_SECONDS
 
 private const val CELL_SIZE = 1f
 private const val PATTERN_PERIOD = CELL_SIZE

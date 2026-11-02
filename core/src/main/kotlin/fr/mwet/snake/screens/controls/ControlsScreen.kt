@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.generated.assets.I18N
-import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.BackCommand
+import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.save.settings.Keymappings

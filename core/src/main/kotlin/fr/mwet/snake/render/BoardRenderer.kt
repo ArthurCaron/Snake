@@ -1,13 +1,12 @@
 package fr.mwet.snake.render
 
-import fr.mwet.snake.tuning.Palette
-
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
+import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.utils.resetColor
 
 

@@ -1,7 +1,7 @@
 package fr.mwet.snake.save.settings
 
-import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.serialization.InMemoryTextStore
+import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.settings.serializable.DefaultUserPreferences
 import fr.mwet.snake.tuning.FontTheme
 import kotlin.test.Test

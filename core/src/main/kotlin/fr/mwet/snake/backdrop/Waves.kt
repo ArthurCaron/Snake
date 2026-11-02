@@ -2,18 +2,18 @@ package fr.mwet.snake.backdrop
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import fr.mwet.snake.tuning.BackdropTuning.Waves.COLOR
 import com.badlogic.gdx.math.MathUtils
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.WorldDrawable
+import fr.mwet.snake.tuning.BackdropTuning.Waves.COLOR
+import fr.mwet.snake.tuning.BackdropTuning.Waves.MAX_ALPHA
+import fr.mwet.snake.tuning.BackdropTuning.Waves.ROWS_PER_WAVE
+import fr.mwet.snake.tuning.BackdropTuning.Waves.SPEED
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.resetColor
 import fr.mwet.snake.utils.setTint
-import fr.mwet.snake.tuning.BackdropTuning.Waves.MAX_ALPHA
-import fr.mwet.snake.tuning.BackdropTuning.Waves.ROWS_PER_WAVE
-import fr.mwet.snake.tuning.BackdropTuning.Waves.SPEED
 
 private const val ROW_HEIGHT = 1f
 

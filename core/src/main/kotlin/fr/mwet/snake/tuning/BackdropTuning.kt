@@ -1,8 +1,6 @@
 package fr.mwet.snake.tuning
 
 import com.badlogic.gdx.graphics.Color
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 
 object BackdropTuning {
     object DemoSnake {

@@ -8,14 +8,14 @@ import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.game.GameWorld
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.render.BoardRenderer
-import fr.mwet.snake.tuning.BackdropTuning.DemoSnake.DIM_COLOR
 import fr.mwet.snake.render.WorldDrawable
+import fr.mwet.snake.tuning.BackdropTuning.DemoSnake.DIM_COLOR
+import fr.mwet.snake.tuning.BackdropTuning.DemoSnake.RESTART_DELAY
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.utils.Direction
 import fr.mwet.snake.utils.resetColor
 import kotlin.math.abs
-import fr.mwet.snake.tuning.BackdropTuning.DemoSnake.RESTART_DELAY
 
 private const val NO_HEAD = -1f
 

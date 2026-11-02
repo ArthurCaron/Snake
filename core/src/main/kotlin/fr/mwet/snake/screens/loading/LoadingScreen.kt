@@ -5,16 +5,18 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Disposable
 import fr.mwet.snake.AssetLoading
 import fr.mwet.snake.GameViewport
 import fr.mwet.snake.LoadedAssets
 import fr.mwet.snake.Progress
-import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
-import fr.mwet.snake.utils.*
+import fr.mwet.snake.tuning.Palette
+import fr.mwet.snake.utils.draw
+import fr.mwet.snake.utils.move
+import fr.mwet.snake.utils.resetColor
 import ktx.app.KtxScreen
-import com.badlogic.gdx.utils.Disposable
 import ktx.graphics.use
 
 
