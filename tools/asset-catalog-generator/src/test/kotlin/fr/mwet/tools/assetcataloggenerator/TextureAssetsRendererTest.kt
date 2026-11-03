@@ -40,35 +40,6 @@ class TextureAssetsRendererTest {
     }
 
     @Test
-    fun `prefixes root aliases with parent group when leaf names collide`() {
-        val output = renderTextureAssets(
-            packageName = "test.assets",
-            atlasPath = "textures/test.atlas",
-            items = listOf(
-                AtlasRegionCatalogItem(
-                    item = AssetCatalogItem(
-                        groups = listOf("game", "player"),
-                        name = "head",
-                        fullPath = "game/player/head",
-                    ),
-                    frameCount = 1,
-                ),
-                AtlasRegionCatalogItem(
-                    item = AssetCatalogItem(
-                        groups = listOf("game", "enemy"),
-                        name = "head",
-                        fullPath = "game/enemy/head",
-                    ),
-                    frameCount = 1,
-                ),
-            ),
-        )
-
-        assertTrue("val playerHead: AtlasRegion get() = game.player.head" in output)
-        assertTrue("val enemyHead: AtlasRegion get() = game.enemy.head" in output)
-    }
-
-    @Test
     fun `keeps blank lines between generated texture asset sections`() {
         val output = renderTextureAssets(
             packageName = "test.assets",
@@ -96,9 +67,6 @@ class TextureAssetsRendererTest {
         assertTrue(
             """
                 |    val game: Game by lazy { Game() }
-                |
-                |    val gridCell: AtlasRegion get() = game.gridCell
-                |    val head: AtlasRegion get() = game.player.head
                 |
                 |    inner class Game {
                 |

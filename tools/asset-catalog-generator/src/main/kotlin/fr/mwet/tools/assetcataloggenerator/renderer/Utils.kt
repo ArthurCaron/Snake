@@ -22,8 +22,5 @@ fun String.escapeCharsForKotlinString(): String =
 
 fun String.toTexturePropertyName(): String = toCleanVariableName().replaceFirstChar { it.lowercase(Locale.ROOT) }
 
-fun AssetCatalogItem.textureAssetAccessPath(): String =
-    (groups.map { it.toTexturePropertyName() } + name.toTexturePropertyName()).joinToString(".")
-
 fun AssetCatalogItem.textureRegionConstantReference(): String =
     (groups + name).joinToString(separator = ".", prefix = "TextureRegions.") { it.toCleanVariableName() }
