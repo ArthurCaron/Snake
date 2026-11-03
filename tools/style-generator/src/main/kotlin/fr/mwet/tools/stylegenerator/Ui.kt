@@ -1,5 +1,6 @@
 package fr.mwet.tools.stylegenerator
 
+import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Path
 import org.jetbrains.skia.PathBuilder
 
@@ -167,4 +168,50 @@ fun iconMusic(p: Palette, on: Boolean) = Raster(ICON, ICON).apply {
     c.drawPath(shape, fill(text))
     c.drawPath(shape, stroke(text, 1.5))
     if (!on) c.drawPath(slash.snapshot(), stroke(text, 4.5))
+}
+
+private const val FLAG_WIDTH = 96
+private const val FLAG_HEIGHT = 64
+
+// A national flag on a rounded plate, outlined and shaded at the bottom like the buttons. The colors are the real ones,
+// not the style's.
+private fun flag(p: Palette, drawStripes: Canvas.(left: Double, top: Double, right: Double, bottom: Double) -> Unit) =
+    Raster(FLAG_WIDTH, FLAG_HEIGHT).apply {
+        val o = 5.0
+        val right = FLAG_WIDTH - o
+        val bottom = FLAG_HEIGHT - o
+        val shape = rect(o, o, right, bottom, 14.0)
+        canvas.drawPath(shape, stroke(col(p.outline), o * 2))
+        canvas.clipped(shape) {
+            drawStripes(o, o, right, bottom)
+            drawPath(rect(o, bottom - 7, right, bottom), fill(col(p.outline, 0.25)))
+            drawPath(rect(o + 12, o + 4, right - 12, o + 7, 1.5), fill(col("#ffffff", 0.6)))
+        }
+    }
+
+// Three vertical bands: blue, white, red.
+fun flagFrench(p: Palette) = flag(p) { left, top, right, bottom ->
+    val third = (right - left) / 3
+    for ((index, color) in listOf("#0055a4", "#ffffff", "#ef4135").withIndex()) {
+        drawPath(rect(left + third * index, top, left + third * (index + 1), bottom), fill(col(color)))
+    }
+}
+
+// The Union Jack, simplified for an icon: white and red diagonals, then the white and red cross.
+fun flagEnglish(p: Palette) = flag(p) { left, top, right, bottom ->
+    val centerX = (left + right) / 2
+    val centerY = (top + bottom) / 2
+    drawPath(rect(left, top, right, bottom), fill(col("#012169")))
+    val diagonals = path {
+        moveTo(left, top)
+        lineTo(right, bottom)
+        moveTo(right, top)
+        lineTo(left, bottom)
+    }
+    drawPath(diagonals, stroke(col("#ffffff"), 11.0))
+    drawPath(diagonals, stroke(col("#c8102e"), 4.0))
+    drawPath(rect(centerX - 8, top, centerX + 8, bottom), fill(col("#ffffff")))
+    drawPath(rect(left, centerY - 8, right, centerY + 8), fill(col("#ffffff")))
+    drawPath(rect(centerX - 4.5, top, centerX + 4.5, bottom), fill(col("#c8102e")))
+    drawPath(rect(left, centerY - 4.5, right, centerY + 4.5), fill(col("#c8102e")))
 }

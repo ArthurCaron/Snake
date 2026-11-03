@@ -54,6 +54,7 @@ class GameContext(
         menuEventBus = menuEvents,
         metadataRepository = boot.metadataRepository,
         settingsRepository = boot.settingsRepository,
+        languages = languages,
         navigator = navigator,
     )
 

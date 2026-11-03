@@ -15,6 +15,7 @@ object UiMetrics {
     const val ICON_BUTTON_PAD_TOP = UNIT * 3
     const val ICON_BUTTON_PAD_BOTTOM = UNIT * 4.5f
     const val ICON_BUTTON_PAD_SIDE = UNIT * 3.5f
+    const val FLAG_WIDTH = ICON_SIZE * 3 / 2
 
     const val SCREEN_MARGIN = UNIT * 6
     const val PANEL_PAD = UNIT * 8

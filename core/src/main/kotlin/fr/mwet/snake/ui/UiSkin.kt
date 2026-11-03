@@ -10,6 +10,7 @@ import fr.mwet.snake.assets.FontHandler
 import fr.mwet.snake.assets.FontRole
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.assets.toDrawable
+import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.tuning.Palette
 import ktx.style.imageButton
@@ -30,6 +31,8 @@ object UiStyle {
     const val SOUND_OFF = "soundOff"
     const val MUSIC_ON = "musicOn"
     const val MUSIC_OFF = "musicOff"
+
+    fun flag(language: Language) = "flag${language.name}"
 }
 
 fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler): Skin = skin {
@@ -86,6 +89,13 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
         up = button
         down = buttonDown
         imageUp = ui.iconMusicOff.toDrawable()
+    }
+    for ((language, flag) in listOf(Language.English to ui.flagEnglish, Language.French to ui.flagFrench)) {
+        imageButton(UiStyle.flag(language)) {
+            up = button
+            down = buttonDown
+            imageUp = flag.toDrawable()
+        }
     }
     add(UiStyle.LOGO, ui.logo, TextureRegion::class.java)
     add(UiStyle.PANEL, ui.panel.toNinePatch(), Drawable::class.java)

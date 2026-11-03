@@ -9,8 +9,8 @@ import fr.mwet.snake.ui.UiMetrics.PAGE_CONTENT_SPACE
 import fr.mwet.snake.ui.UiMetrics.PAGE_SPACE
 import fr.mwet.snake.ui.UiMetrics.PANEL_PAD
 import ktx.scene2d.KTableWidget
-import ktx.scene2d.actors
 import ktx.scene2d.label
+import ktx.scene2d.scene2d
 import ktx.scene2d.table
 
 class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> Unit) : Disposable {
@@ -30,20 +30,18 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
 
     init {
         with(kit.widgets) {
-            uiLayer.stage.actors {
+            uiLayer.board.addActor(scene2d.table {
+                setFillParent(true)
                 table {
-                    setFillParent(true)
-                    table {
-                        background(UiStyle.PANEL)
-                        pad(PANEL_PAD)
-                        defaults().space(PAGE_SPACE)
-                        label(title, UiStyle.TITLE) { it.row() }
-                        content = table { it.row() }
-                        content.defaults().space(PAGE_CONTENT_SPACE)
-                        menuButton(I18N.back(), onClick = onBack)
-                    }
+                    background(UiStyle.PANEL)
+                    pad(PANEL_PAD)
+                    defaults().space(PAGE_SPACE)
+                    label(title, UiStyle.TITLE) { it.row() }
+                    content = table { it.row() }
+                    content.defaults().space(PAGE_CONTENT_SPACE)
+                    menuButton(I18N.back(), onClick = onBack)
                 }
-            }
+            })
         }
     }
 
@@ -58,6 +56,7 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
     fun resize(width: Int, height: Int) {
         worldLayer.resize(width, height)
         uiLayer.resize(width, height)
+        uiLayer.fitBoard(kit.gameViewport)
     }
 
     fun render(delta: Float) {
