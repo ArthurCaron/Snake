@@ -9,7 +9,8 @@ musicOn,Music: on,Musique: activée
 musicOff,Music: off,Musique: coupée
 score,Score: {0},Score : {0}
 best,Best: {0},Record : {0}
-tapToStart,"Tap a side, swipe, or press an arrow key to start","Touche un côté, glisse, ou appuie sur une flèche pour commencer"
+readyTouch,Swipe or tap a side to start,Glisse ou touche un côté pour commencer
+readyKeys,Press a direction to start,Appuie sur une direction pour commencer
 paused,Paused,Pause
 resume,Resume,Reprendre
 mainMenu,Main menu,Menu principal

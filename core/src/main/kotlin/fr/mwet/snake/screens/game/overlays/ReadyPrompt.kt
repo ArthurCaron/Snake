@@ -1,5 +1,7 @@
 package fr.mwet.snake.screens.game.overlays
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input.Peripheral
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.generated.assets.I18N
@@ -16,7 +18,7 @@ class ReadyPrompt {
         touchable = Touchable.disabled
         background(UiStyle.LIGHT_DIM)
         label(I18N.ready(), UiStyle.TITLE) { it.padBottom(READY_TITLE_GAP).row() }
-        label(I18N.tapToStart()) {
+        label(if (Gdx.input.isPeripheralAvailable(Peripheral.MultitouchScreen)) I18N.readyTouch() else I18N.readyKeys()) {
             wrap = true
             setAlignment(Align.center)
             it.growX().padLeft(READY_TEXT_SIDE_PAD).padRight(READY_TEXT_SIDE_PAD)

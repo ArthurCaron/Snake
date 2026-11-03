@@ -1,5 +1,6 @@
 package fr.mwet.snake.screens.game
 
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import fr.mwet.snake.game.GameState
 import fr.mwet.snake.screens.game.overlays.EndOverlay
@@ -16,17 +17,22 @@ interface GameUiActions {
     fun mainMenu()
 }
 
-class GameUi(stage: Stage, actions: GameUiActions, widgets: Widgets) {
+class GameUi(stage: Stage, private val board: Group, actions: GameUiActions, widgets: Widgets) {
     private val readyPrompt = ReadyPrompt()
     private val hud = GameHud(widgets, onPause = actions::pause)
     private val pauseOverlay = PauseOverlay(widgets, onResume = actions::resume, onMainMenu = actions::mainMenu)
     private val endOverlay = EndOverlay(widgets, onPlayAgain = actions::playAgain, onMainMenu = actions::mainMenu)
 
     init {
-        stage.addActor(readyPrompt.actor)
-        stage.addActor(pauseOverlay.actor)
-        stage.addActor(endOverlay.actor)
+        board.addActor(readyPrompt.actor)
+        board.addActor(pauseOverlay.actor)
+        board.addActor(endOverlay.actor)
         stage.addActor(hud.actor)
+    }
+
+    // The HUD row sits just above the board, as wide as the board.
+    fun layout() {
+        hud.actor.setBounds(board.x, board.y + board.height, board.width, hud.height)
     }
 
     fun showState(state: GameState) {
@@ -39,6 +45,8 @@ class GameUi(stage: Stage, actions: GameUiActions, widgets: Widgets) {
             GameState.Ready, GameState.Playing, GameState.Paused -> endOverlay.hide()
         }
     }
+
+    val hudHeight: Float get() = hud.height
 
     fun showScore(score: Int, best: Int) {
         hud.show(score, best)
