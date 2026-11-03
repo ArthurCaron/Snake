@@ -2,7 +2,7 @@ package fr.mwet.snake.screens.menu
 
 import com.badlogic.gdx.math.Interpolation.elasticOut
 import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
@@ -10,10 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
+import fr.mwet.snake.LanguageSwitcher
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.generated.assets.I18N
+import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_CLICK_DELAY
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_IN_DURATION
@@ -32,7 +34,7 @@ import ktx.actors.onEnter
 import ktx.actors.onExit
 import ktx.scene2d.actor
 import ktx.scene2d.Scene2DSkin
-import ktx.scene2d.actors
+import ktx.scene2d.KTableWidget
 import ktx.scene2d.image
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
@@ -40,10 +42,11 @@ import ktx.scene2d.table
 
 
 class MainMenuUi(
-    stage: Stage,
+    board: Group,
     private val menuEventBus: MenuEventBus,
     navigator: Navigator,
     private val settingsRepository: SettingsRepository,
+    languages: LanguageSwitcher,
     widgets: Widgets,
 ) {
     private val title = MainMenuTitle()
@@ -51,29 +54,29 @@ class MainMenuUi(
     private var bestScoreLabel: Label
     private var soundButton: ImageButton
     private var musicButton: ImageButton
+    private val flags = LanguageFlags(settingsRepository, languages, widgets)
 
     init {
         with(widgets) {
-            stage.actors {
+            board.addActor(scene2d.table {
+                setFillParent(true)
+                actor(title.actor) { it.padBottom(MENU_TITLE_GAP).row() }
+                actor(playButton.actor) { it.padBottom(SCREEN_MARGIN).row() }
+                bestScoreLabel = label("") { it.padBottom(MENU_BEST_SCORE_GAP).row() }
                 table {
-                    setFillParent(true)
-                    actor(title.actor) { it.padBottom(MENU_TITLE_GAP).row() }
-                    actor(playButton.actor) { it.padBottom(SCREEN_MARGIN).row() }
-                    bestScoreLabel = label("") { it.padBottom(MENU_BEST_SCORE_GAP).row() }
-                    table {
-                        defaults().space(SCREEN_MARGIN)
-                        menuButton(I18N.highscore(), onClick = navigator::goToScores)
-                        menuButton(I18N.settings(), onClick = navigator::goToSettings)
-                    }
+                    defaults().space(SCREEN_MARGIN)
+                    menuButton(I18N.highscore(), onClick = navigator::goToScores)
+                    menuButton(I18N.settings(), onClick = navigator::goToSettings)
                 }
-                table {
-                    setFillParent(true)
-                    top().right().pad(SCREEN_MARGIN)
-                    defaults().right().space(SCREEN_MARGIN)
-                    soundButton = iconButton(UiStyle.SOUND_ON, onClick = ::toggleSound) { it.row() }
-                    musicButton = iconButton(UiStyle.MUSIC_ON, onClick = ::toggleMusic)
-                }
-            }
+            })
+            board.addActor(scene2d.table {
+                setFillParent(true)
+                top().right().pad(SCREEN_MARGIN)
+                defaults().right().space(SCREEN_MARGIN)
+                soundButton = iconButton(UiStyle.SOUND_ON, onClick = ::toggleSound) { it.row() }
+                musicButton = iconButton(UiStyle.MUSIC_ON, onClick = ::toggleMusic)
+            })
+            board.addActor(flags.actor)
         }
     }
 
@@ -82,6 +85,7 @@ class MainMenuUi(
         playButton.startAnimation()
         refreshAudioButtons()
         updateBestScoreLabel(bestScore)
+        flags.close()
     }
 
     fun onHide() {
@@ -119,6 +123,46 @@ class MainMenuUi(
     private fun updateBestScoreLabel(bestScore: Int) {
         bestScoreLabel.setText(I18N.best(bestScore))
         bestScoreLabel.pack()
+    }
+}
+
+// The flag of the current language, at the top left of the board. A click opens the flags of the other languages below it, and a
+// click on one of them switches to that language.
+private class LanguageFlags(
+    settingsRepository: SettingsRepository,
+    private val languages: LanguageSwitcher,
+    widgets: Widgets,
+) {
+    private lateinit var choices: KTableWidget
+
+    val actor = with(widgets) {
+        scene2d.table {
+            setFillParent(true)
+            top().left().pad(SCREEN_MARGIN)
+            defaults().left()
+            flagButton(UiStyle.flag(settingsRepository.language.resolved()), onClick = ::toggle) { it.row() }
+            choices = table {
+                defaults().left().padTop(SCREEN_MARGIN)
+                for (language in Language.entries) {
+                    if (language == Language.System || language == settingsRepository.language.resolved()) continue
+                    flagButton(UiStyle.flag(language), onClick = { choose(language) }) { it.row() }
+                }
+                isVisible = false
+            }
+        }
+    }
+
+    fun close() {
+        choices.isVisible = false
+    }
+
+    private fun toggle() {
+        choices.isVisible = !choices.isVisible
+    }
+
+    private fun choose(language: Language) {
+        close()
+        languages.applyLanguage(language)
     }
 }
 

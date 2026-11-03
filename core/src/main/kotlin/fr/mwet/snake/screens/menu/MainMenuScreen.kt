@@ -1,5 +1,6 @@
 package fr.mwet.snake.screens.menu
 
+import fr.mwet.snake.LanguageSwitcher
 import fr.mwet.snake.Navigator
 import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEvent.*
@@ -10,8 +11,6 @@ import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.save.settings.SettingsRepository
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
-import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiLayer
 import ktx.app.KtxScreen
@@ -21,11 +20,12 @@ class MainMenuScreen(
     menuEventBus: MenuEventBus,
     private val metadataRepository: MetadataRepository,
     settingsRepository: SettingsRepository,
+    languages: LanguageSwitcher,
     navigator: Navigator,
 ) : MenuEventListener, KtxScreen {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
-    private val ui = MainMenuUi(uiLayer.stage, menuEventBus, navigator, settingsRepository, kit.widgets)
+    private val ui = MainMenuUi(uiLayer.board, menuEventBus, navigator, settingsRepository, languages, kit.widgets)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
             onStartGame = {
@@ -48,7 +48,8 @@ class MainMenuScreen(
     override fun resize(width: Int, height: Int) {
         worldLayer.resize(width, height)
         uiLayer.resize(width, height)
-        ui.layout(boardWidth = minOf(width.toFloat(), height * WORLD_WIDTH / WORLD_HEIGHT) * uiLayer.unitsPerPixel)
+        uiLayer.fitBoard(kit.gameViewport)
+        ui.layout(boardWidth = uiLayer.board.width)
     }
 
     override fun render(delta: Float) {

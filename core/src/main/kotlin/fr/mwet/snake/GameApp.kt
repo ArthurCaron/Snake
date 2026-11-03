@@ -49,7 +49,9 @@ class GameApp(
 
     override fun applyLanguage(language: Language) {
         boot.settingsRepository.setLanguage(language)
-        rebuildScreens(prepare = { loadTranslations(language.locale()) }, show = { setScreen<LanguageScreen>() })
+        // The new screens replace the shown one in place: the language changes from the main menu and from the settings.
+        val shown = shownScreen.javaClass
+        rebuildScreens(prepare = { loadTranslations(language.locale()) }, show = { setScreen(shown) })
     }
 
     override fun applyFontTheme(theme: FontTheme) {

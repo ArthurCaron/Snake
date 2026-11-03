@@ -3,6 +3,7 @@ package fr.mwet.snake.ui
 import fr.mwet.snake.ui.UiMetrics.BUTTON_PAD_BOTTOM
 import fr.mwet.snake.ui.UiMetrics.BUTTON_PAD_SIDE
 import fr.mwet.snake.ui.UiMetrics.BUTTON_PAD_TOP
+import fr.mwet.snake.ui.UiMetrics.FLAG_WIDTH
 import fr.mwet.snake.ui.UiMetrics.ICON_BUTTON_PAD_BOTTOM
 import fr.mwet.snake.ui.UiMetrics.ICON_BUTTON_PAD_SIDE
 import fr.mwet.snake.ui.UiMetrics.ICON_BUTTON_PAD_TOP
@@ -36,6 +37,13 @@ class Widgets(private val onButtonActivated: () -> Unit) {
             pad(ICON_BUTTON_PAD_TOP, ICON_BUTTON_PAD_SIDE, ICON_BUTTON_PAD_BOTTOM, ICON_BUTTON_PAD_SIDE)
             imageCell.size(ICON_SIZE)
             onClick { if (!isDisabled) activateButtonAction(onClick) }
+            init(cell)
+        }
+
+    // An icon button with a 3:2 image, as wide as FLAG_WIDTH and as high as an icon.
+    fun <S> KWidget<S>.flagButton(style: String, onClick: () -> Unit, init: KImageButton.(S) -> Unit = {}): KImageButton =
+        iconButton(style, onClick) { cell ->
+            imageCell.size(FLAG_WIDTH, ICON_SIZE)
             init(cell)
         }
 

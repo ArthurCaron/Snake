@@ -32,6 +32,8 @@ private fun generate(name: String, out: File) {
         "iconSoundOff" to iconSound(ui, false).pixels(),
         "iconMusicOn" to iconMusic(p, true).pixels(),
         "iconMusicOff" to iconMusic(p, false).pixels(),
+        "flagEnglish" to flagEnglish(ui).pixels(),
+        "flagFrench" to flagFrench(ui).pixels(),
     )
     // Every mark shape is drawn; SnakeLook.markShape picks the one the game shows.
     for (shape in MarkShape.entries) sprites["mark${shape.title}"] = markSprite(snake, markPath(shape)).pixels()
