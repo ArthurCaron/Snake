@@ -8,7 +8,6 @@ fun renderTextureAssets(
     items: List<AtlasRegionCatalogItem>,
 ): String = buildString {
     val root = TextureAssetNode().also { root -> items.forEach { root.add(it) } }
-    val textureAssetAliases = buildTextureAssetAliases(root, items)
 
     appendLine("package $packageName")
     appendLine()
@@ -27,7 +26,6 @@ fun renderTextureAssets(
     appendLine("    )")
 
     renderProperties(root, 1)
-    renderTextureAssetAliases(textureAssetAliases, 1)
     renderNestedClasses(root, 1)
 
     appendLine("}")
@@ -51,17 +49,6 @@ private fun StringBuilder.renderProperties(node: TextureAssetNode, indentLevel: 
     val tabs = indent(indentLevel)
     node.children.values.forEach { child ->
         appendLine("${tabs}val ${child.propertyName}: ${child.className} by lazy { ${child.className}() }")
-    }
-}
-
-private fun StringBuilder.renderTextureAssetAliases(aliases: List<TextureAssetAlias>, indentLevel: Int) {
-    if (aliases.isEmpty()) return
-
-    appendLine()
-    val tabs = indent(indentLevel)
-    aliases.forEach { alias ->
-        val type = if (alias.isAnimation) "Array<AtlasRegion>" else "AtlasRegion"
-        appendLine("${tabs}val ${alias.propertyName}: $type get() = ${alias.accessPath}")
     }
 }
 
