@@ -14,9 +14,11 @@ import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
 import fr.mwet.snake.tuning.DebugTuning
+import fr.mwet.snake.ui.UiMetrics.BOARD_BOTTOM_BAND
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiLayer
 import ktx.app.KtxScreen
+import kotlin.math.ceil
 
 class GameScreen(
     private val kit: UiKit,
@@ -30,7 +32,7 @@ class GameScreen(
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
     private val board = BoardRenderer(kit.textures, world, background)
-    private val ui = GameUi(uiLayer.stage, UiActions(), kit.widgets)
+    private val ui = GameUi(uiLayer.stage, uiLayer.board, UiActions(), kit.widgets)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
             onStartGame = {
@@ -75,9 +77,14 @@ class GameScreen(
     }
 
     override fun resize(width: Int, height: Int) {
-        worldLayer.resize(width, height)
         uiLayer.resize(width, height)
+        // Keep the HUD row off the board, and balance it with a thinner band below the board.
+        worldLayer.resize(width, height, topBand = toPixels(ui.hudHeight), bottomBand = toPixels(BOARD_BOTTOM_BAND))
+        uiLayer.fitBoard(kit.gameViewport)
+        ui.layout()
     }
+
+    private fun toPixels(stageUnits: Float): Int = ceil(stageUnits / uiLayer.unitsPerPixel).toInt()
 
     override fun pause() {
         world.pause()

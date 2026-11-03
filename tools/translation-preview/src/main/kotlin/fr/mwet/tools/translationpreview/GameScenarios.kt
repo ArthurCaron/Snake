@@ -28,7 +28,10 @@ fun gameScenarios(batch: SpriteBatch, width: Int, height: Int): List<Scenario> =
 
 private fun gameScenario(name: String, batch: SpriteBatch, width: Int, height: Int, apply: GameUi.() -> Unit): Scenario {
     val layer = UiLayer(batch).apply { resize(width, height) }
-    GameUi(layer.stage, noOp<GameUiActions>(), Widgets {}).apply {
+    // No game viewport here: the board covers the whole stage.
+    layer.board.setBounds(0f, 0f, layer.width, layer.height)
+    GameUi(layer.stage, layer.board, noOp<GameUiActions>(), Widgets {}).apply {
+        layout()
         showScore(SCORE, SCORE)
         apply()
     }

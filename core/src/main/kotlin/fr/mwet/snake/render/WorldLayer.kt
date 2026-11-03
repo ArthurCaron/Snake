@@ -20,8 +20,11 @@ interface WorldDrawable {
 class WorldLayer(private val batch: SpriteBatch, private val viewport: GameViewport) {
     private val fullScreen = Matrix4()
 
-    fun resize(width: Int, height: Int) {
-        viewport.update(width, height, true)
+    // The board fits between a band of topBand pixels above it and a band of bottomBand pixels below it. The world
+    // still draws over the whole screen, bands included.
+    fun resize(width: Int, height: Int, topBand: Int = 0, bottomBand: Int = 0) {
+        viewport.update(width, height - topBand - bottomBand, true)
+        viewport.screenY += bottomBand
     }
 
     fun render(drawable: WorldDrawable, delta: Float) {

@@ -21,7 +21,12 @@ object UiMetrics {
     const val PAGE_SPACE = UNIT * 6
     const val PAGE_CONTENT_SPACE = UNIT * 3
     const val OVERLAY_SPACE = UNIT * 4
-    const val HUD_PAD = UNIT * 4
+    const val HUD_PAD = UNIT * 2
+    const val HUD_ICON_SIZE = UNIT * 7
+    const val HUD_BUTTON_PAD_TOP = UNIT * 1.5f
+    const val HUD_BUTTON_PAD_BOTTOM = UNIT * 2.5f
+    const val HUD_BUTTON_PAD_SIDE = UNIT * 2
+    const val BOARD_BOTTOM_BAND = UNIT * 4
 
     const val MENU_TITLE_WIDTH_RATIO = 0.7f
     const val MENU_TITLE_GAP = UNIT * 12
