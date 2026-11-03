@@ -1,0 +1,26 @@
+apply plugin: 'application'
+
+eclipse.project.name = appName + '-style-generator'
+
+application.mainClass = 'fr.mwet.tools.stylegenerator.MainKt'
+
+def skikoVersion = '0.144.6'
+
+// Skiko ships its native Skia library in one runtime artifact per platform: pick the one of the machine that runs Gradle.
+def skikoTarget() {
+  def os = System.getProperty('os.name').toLowerCase()
+  def arch = System.getProperty('os.arch').toLowerCase()
+  def system = os.contains('mac') ? 'macos' : os.contains('win') ? 'windows' : 'linux'
+  def cpu = arch in ['aarch64', 'arm64'] ? 'arm64' : 'x64'
+  return "$system-$cpu"
+}
+
+dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  implementation "org.jetbrains.skiko:skiko-awt:$skikoVersion"
+  runtimeOnly "org.jetbrains.skiko:skiko-awt-runtime-${skikoTarget()}:$skikoVersion"
+}
+
+run {
+  workingDir = rootProject.projectDir
+}

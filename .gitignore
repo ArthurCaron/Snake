@@ -172,6 +172,4 @@ Thumbs.db
 /save_data/settings/user_preferences.json
 
 ## Style generator:
-/.venv/
 /tools/style-generator/out/
-__pycache__/

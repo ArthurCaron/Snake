@@ -1,4 +1,0 @@
-skia-python
-pillow
-numpy
-scipy
