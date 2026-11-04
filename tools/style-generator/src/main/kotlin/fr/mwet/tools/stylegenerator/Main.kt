@@ -27,7 +27,6 @@ private fun generate(name: String, out: File) {
         "gridCell" to gridCell(p).pixels(),
         "glow" to lightGlow(),
         "iconPause" to iconPause(ui).pixels(),
-        "iconPlay" to iconPlay(ui).pixels(),
         "iconSoundOn" to iconSound(ui, true).pixels(),
         "iconSoundOff" to iconSound(ui, false).pixels(),
         "iconMusicOn" to iconMusic(p, true).pixels(),
@@ -61,8 +60,6 @@ private fun generate(name: String, out: File) {
     tile.pixels().write(skin.resolve("ground.png"))
     for ((groundName, drawGround) in GROUNDS) drawGround(p).pixels().write(skin.resolve("$groundName.png"))
     boardFrame(p).write(skin.resolve("boardFrame.png"))
-    val logo = logo(p.withLine(LineGroup.LOGO))
-    logo.pixels().write(skin.resolve("logo.png"))
     // The nine-patches. Pressed, a button takes its dark color as its face and its base color as its light strip.
     buttonImage(ui, p.button, p.buttonLight, p.buttonDark).write(skin.resolve("button.9.png"))
     buttonImage(ui, p.buttonDark, p.button, p.buttonDark, pressed = true).write(skin.resolve("buttonDown.9.png"))
@@ -77,7 +74,7 @@ private fun generate(name: String, out: File) {
     skin.resolve("pack.json").writeText(PACK_JSON)
 
     // The images that the game shows before the atlas is loaded.
-    splash(p, tile, logo).pixels().write(out.resolve("root/SplashScreen.png"))
+    splash(p, tile).pixels().write(out.resolve("root/SplashScreen.png"))
     loadingText(p).pixels().write(out.resolve("root/LoadingAssets.png"))
 
     // The launcher icons, all resized from one 512 px image. The head is drawn in one layer, in its real colors, with

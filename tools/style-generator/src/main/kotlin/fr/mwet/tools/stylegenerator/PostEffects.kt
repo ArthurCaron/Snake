@@ -146,14 +146,13 @@ private val SNAKE_STEMS = listOf("snakeHead", "snakeHeadDead", "snakeBodyStraigh
 private val FRUIT_STEMS = FruitKind.entries.flatMap { kind -> listOf("Still", "_0", "_1").map { "fruit${kind.title}$it" } }
 private val UI_STEMS = listOf(
     "button.9", "buttonDown.9", "buttonOver.9", "buttonPrimary.9", "buttonPrimaryDown.9", "buttonPrimaryOver.9", "panel.9",
-    "iconPause", "iconPlay", "iconSoundOn", "iconSoundOff", "iconMusicOn", "iconMusicOff",
+    "iconPause", "iconSoundOn", "iconSoundOff", "iconMusicOn", "iconMusicOff",
 )
-// The logo has the widest halo (radius 7), the UI the tightest (a single blur of radius 2).
+// The UI has the tightest halo: a single blur of radius 2.
 private val SNAKE_BLOOM = listOf(Bloom(2, 1.6), Bloom(5, 1.1))
 private val FRUIT_BLOOM = listOf(Bloom(2, 1.6), Bloom(6, 1.2))
 private val MARKS_BLOOM = listOf(Bloom(2, 1.4), Bloom(4, 0.8))
 private val UI_BLOOM = listOf(Bloom(2, 1.8))
-private val LOGO_BLOOM = listOf(Bloom(2, 1.0), Bloom(7, 0.6))
 
 // Draws the image over the bloom of its bright pixels.
 private fun bloomUnder(arr: Channels, bright: BooleanArray, bloom: List<Bloom>): Pixels {
@@ -199,7 +198,7 @@ private fun core(mask: BooleanArray, width: Int, height: Int, depth: Double): Bo
 }
 
 // The lines of line color become white hot inside, then the lines and the bright pixels bloom.
-// For the UI and the logo, which are not tinted by the game: the effect is drawn into the image itself.
+// For the UI, which the game does not tint: the effect is drawn into the image itself.
 private fun laser(img: Pixels, lineHex: String, bloom: List<Bloom>, coreDepth: Double): Pixels {
     val (lr, lg, lb) = rgb(lineHex)
     val arr = Channels(img)
@@ -248,8 +247,7 @@ private fun detailName(stem: String): String {
     return "${name}Detail_$index"
 }
 
-// The snake and fruit layers, the marks, then the UI and the logo. A core depth of 1.4 suits the 4 to 5 px lines;
-// the logo lines are 8 px wide, so its core is deeper (2.4).
+// The snake and fruit layers, the marks, then the UI. A core depth of 1.4 suits the 4 to 5 px lines.
 fun postLaser(out: File, p: Palette) {
     val skin = out.resolve("textures/game/skin")
     for ((stems, bloom) in listOf(SNAKE_STEMS to SNAKE_BLOOM, FRUIT_STEMS to FRUIT_BLOOM)) {
@@ -264,10 +262,6 @@ fun postLaser(out: File, p: Palette) {
         val arr = Channels(Pixels.read(file))
         bloomUnder(arr, BooleanArray(arr.width * arr.height) { arr.opaque(it) }, MARKS_BLOOM).write(file)
     }
-    for ((stems, group) in listOf(UI_STEMS to LineGroup.UI, listOf("logo") to LineGroup.LOGO)) {
-        val color = p.lineColor(group)
-        val bloom = if (group == LineGroup.UI) UI_BLOOM else LOGO_BLOOM
-        val depth = if (group == LineGroup.UI) 1.4 else 2.4
-        for (stem in stems) skin.resolve("$stem.png").rework { laser(it, color, bloom, depth) }
-    }
+    val color = p.lineColor(LineGroup.UI)
+    for (stem in UI_STEMS) skin.resolve("$stem.png").rework { laser(it, color, UI_BLOOM, 1.4) }
 }

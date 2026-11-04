@@ -70,14 +70,13 @@ fun Palette.surround(): String {
     return hex(channel(r), channel(g), channel(b))
 }
 
-// The groups of assets that can have their own outline color (lineSnake, lineFruit, lineUi, lineLogo).
-enum class LineGroup { SNAKE, FRUIT, UI, LOGO }
+// The groups of assets that can have their own outline color (lineSnake, lineFruit, lineUi).
+enum class LineGroup { SNAKE, FRUIT, UI }
 
 fun Palette.lineColor(group: LineGroup) = when (group) {
     LineGroup.SNAKE -> lineSnake
     LineGroup.FRUIT -> lineFruit
     LineGroup.UI -> lineUi
-    LineGroup.LOGO -> lineLogo
 } ?: outline
 
 // The palette that a group draws with: the same palette, with the outline of that group. Main.kt passes it to the

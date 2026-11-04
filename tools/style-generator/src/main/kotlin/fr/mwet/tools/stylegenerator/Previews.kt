@@ -335,7 +335,7 @@ private fun phone(p: Palette, tile: Image) = Raster(PHONE_W.toInt(), PHONE_H).ap
 // Darkens the whole phone with the shade color, under the menus.
 private fun Canvas.dim(p: Palette, alpha: Double) = drawRect(rectF(0.0, 0.0, PHONE_W, PHONE_H.toDouble()), fill(col(p.shadeColor(), alpha)))
 
-// The main menu: the demo snake on the board, dimmed, then the logo, the buttons and the record.
+// The main menu: the demo snake on the board, dimmed, then the title, the buttons and the record.
 private fun menuScreen(p: Palette, skin: Skin) = phone(p, skin["ground"]).apply {
     val c = canvas
     val colors = kotlinPalette(p)
@@ -343,11 +343,7 @@ private fun menuScreen(p: Palette, skin: Skin) = phone(p, skin["ground"]).apply 
     val snake = if (colors.snakeTakesFruitColor) fruits[2 % fruits.size].second else null
     c.drawBoard(p, skin, DEMO_SNAKE, 13 to 12, snakeColor = snake, fruit = fruits[3 % fruits.size])
     c.dim(p, 0.35)
-    val logo = skin["logo"]
-    // The logo is 78% of the phone width, 190 px from the top.
-    val logoW = PHONE_W * 0.78
-    val logoH = logoW * logo.height / logo.width
-    c.drawImageRect(logo, rectF((PHONE_W - logoW) / 2, 190.0, (PHONE_W + logoW) / 2, 190 + logoH), LINEAR_MIPMAP)
+    c.outlinedText("Snek", PHONE_W / 2, 330.0, 130.0, p, align = Align.CENTER)
     c.button(p, skin, "Jouer !", PHONE_W / 2, 520.0, size = 60.0, primary = true)
     c.outlinedText("Record : 42", PHONE_W / 2, 625.0, 36 * UNIT, p, align = Align.CENTER)
     c.button(p, skin, "Meilleurs scores", PHONE_W * 0.3, 700.0)

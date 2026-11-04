@@ -83,20 +83,6 @@ private fun iconCanvas(p: Palette, shape: Path) = Raster(ICON, ICON).apply {
 fun iconPause(p: Palette) = iconCanvas(p, union(rect(17.0, 14.0, 28.0, 50.0, 3.5), rect(36.0, 14.0, 47.0, 50.0, 3.5)))
 
 // The text-colored stroke rounds the corners of the triangle.
-// A triangle pointing right, its tip at (50, 32). The 13 px outline stroke reaches 6.5 px out; the 4 px text-colored
-// stroke covers 2 px of it, which leaves a 4.5 px outline like the other icons.
-fun iconPlay(p: Palette) = Raster(ICON, ICON).apply {
-    val shape = path {
-        moveTo(21.0, 13.0)
-        lineTo(50.0, 32.0)
-        lineTo(21.0, 51.0)
-        closePath()
-    }
-    canvas.drawPath(shape, stroke(col(p.outline), 13.0))
-    canvas.drawPath(shape, stroke(col(p.text), 4.0))
-    canvas.drawPath(shape, fill(col(p.text)))
-}
-
 // A loudspeaker on the left half of the icon: a box from x = 9 to 19, y = 25 to 39, and a cone that opens to x = 31,
 // y = 14 to 50.
 private fun speaker() = path {
