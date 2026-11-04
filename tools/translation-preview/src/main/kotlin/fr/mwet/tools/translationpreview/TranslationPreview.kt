@@ -55,6 +55,7 @@ class TranslationPreview(private val edits: TranslationEdits) : ApplicationAdapt
             "Controls" to context.controlsScreen,
             "Language" to context.languageScreen,
             "Font" to context.fontScreen,
+            "Dev options" to context.devOptionsScreen,
         )
         screens.values.forEach {
             it.show()

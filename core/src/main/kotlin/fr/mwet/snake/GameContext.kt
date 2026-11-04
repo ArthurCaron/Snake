@@ -13,6 +13,7 @@ import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.TouchInputProcessor
 import fr.mwet.snake.screens.controls.ControlsScreen
+import fr.mwet.snake.screens.devoptions.DevOptionsScreen
 import fr.mwet.snake.screens.font.FontScreen
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
@@ -73,6 +74,7 @@ class GameContext(
     val controlsScreen = ControlsScreen(kit, boot.settingsRepository, keyNames, navigator)
     val languageScreen = LanguageScreen(kit, boot.settingsRepository, languages, navigator)
     val fontScreen = FontScreen(kit, assets.fonts, boot.settingsRepository, fontSwitcher, navigator)
+    val devOptionsScreen = DevOptionsScreen(kit, boot.settingsRepository, navigator)
 
     init {
         gameEvents.listen(soundPlayer)

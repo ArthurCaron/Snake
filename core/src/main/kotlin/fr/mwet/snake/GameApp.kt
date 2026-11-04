@@ -8,6 +8,7 @@ import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.LibGdxKeyNames
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.screens.controls.ControlsScreen
+import fr.mwet.snake.screens.devoptions.DevOptionsScreen
 import fr.mwet.snake.screens.font.FontScreen
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
@@ -85,6 +86,8 @@ class GameApp(
 
     override fun goToFont() = navigate { setScreen<FontScreen>() }
 
+    override fun goToDevOptions() = navigate { setScreen<DevOptionsScreen>() }
+
     private fun navigate(switch: () -> Unit) {
         transitions?.start(switch) ?: switch()
     }
@@ -107,6 +110,7 @@ class GameApp(
         addScreen(context.controlsScreen)
         addScreen(context.languageScreen)
         addScreen(context.fontScreen)
+        addScreen(context.devOptionsScreen)
     }
 
     private fun unregisterScreens(): List<KtxScreen> = listOfNotNull(
@@ -117,5 +121,6 @@ class GameApp(
         removeScreen<ControlsScreen>(),
         removeScreen<LanguageScreen>(),
         removeScreen<FontScreen>(),
+        removeScreen<DevOptionsScreen>(),
     )
 }
