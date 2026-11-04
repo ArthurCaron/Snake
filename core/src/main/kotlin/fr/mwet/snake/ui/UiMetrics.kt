@@ -1,7 +1,7 @@
 package fr.mwet.snake.ui
 
 object UiMetrics {
-    const val REFERENCE_SHORT_SIDE = 900f
+    const val REFERENCE_BOARD_WIDTH = 900f
     const val UNIT = 4f
 
     const val BUTTON_PAD_TOP = UNIT * 3
