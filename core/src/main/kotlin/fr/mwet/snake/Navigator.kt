@@ -8,4 +8,5 @@ interface Navigator {
     fun goToControls()
     fun goToLanguage()
     fun goToFont()
+    fun goToDevOptions()
 }
