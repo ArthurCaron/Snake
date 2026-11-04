@@ -15,6 +15,8 @@ fun ninePatch(img: Pixels, left: Int, right: Int, top: Int, bottom: Int): Pixels
     return out
 }
 
+const val HOVER_TINT = 0.18
+
 // Pressed, the face moves down and the bevel shrinks.
 // A 72 px rounded button: the dark outline, the face in base and the darker band at the bottom in dark (the bevel, the
 // thickness of the button). Pressed, the top edge is 4 px lower and the bevel thinner, so the face looks pushed in.

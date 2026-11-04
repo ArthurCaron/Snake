@@ -145,7 +145,7 @@ private class Bloom(val radius: Int, val strength: Double)
 private val SNAKE_STEMS = listOf("snakeHead", "snakeHeadDead", "snakeBodyStraight", "snakeBodyTurn", "snakeTail")
 private val FRUIT_STEMS = FruitKind.entries.flatMap { kind -> listOf("Still", "_0", "_1").map { "fruit${kind.title}$it" } }
 private val UI_STEMS = listOf(
-    "button.9", "buttonDown.9", "buttonPrimary.9", "buttonPrimaryDown.9", "panel.9",
+    "button.9", "buttonDown.9", "buttonOver.9", "buttonPrimary.9", "buttonPrimaryDown.9", "buttonPrimaryOver.9", "panel.9",
     "iconPause", "iconPlay", "iconSoundOn", "iconSoundOff", "iconMusicOn", "iconMusicOff",
 )
 // The logo has the widest halo (radius 7), the UI the tightest (a single blur of radius 2).

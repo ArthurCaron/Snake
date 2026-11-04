@@ -69,6 +69,10 @@ private fun generate(name: String, out: File) {
     buttonImage(ui, p.primary, p.primaryLight, p.primaryDark, line = p.primary).write(skin.resolve("buttonPrimary.9.png"))
     buttonImage(ui, p.primaryDark, p.primary, p.primaryDark, pressed = true, line = p.primary)
         .write(skin.resolve("buttonPrimaryDown.9.png"))
+    // Under the mouse, the face and the bevel are HOVER_TINT of the way to white.
+    buttonImage(ui, tintHex(p.button, HOVER_TINT), p.buttonLight, tintHex(p.buttonDark, HOVER_TINT)).write(skin.resolve("buttonOver.9.png"))
+    buttonImage(ui, tintHex(p.primary, HOVER_TINT), p.primaryLight, tintHex(p.primaryDark, HOVER_TINT), line = p.primary)
+        .write(skin.resolve("buttonPrimaryOver.9.png"))
     panelImage(ui).write(skin.resolve("panel.9.png"))
     skin.resolve("pack.json").writeText(PACK_JSON)
 
