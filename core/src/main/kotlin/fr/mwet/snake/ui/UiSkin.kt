@@ -13,6 +13,7 @@ import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.tuning.Palette
+import fr.mwet.snake.ui.UiMetrics.BUTTON_PRESS_DEPTH
 import ktx.style.imageButton
 import ktx.style.label
 import ktx.style.skin
@@ -57,12 +58,14 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     textButton {
         up = button
         down = buttonDown
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         font = smallFont
         fontColor = Palette.buttonLabel
     }
     textButton(UiStyle.BIG) {
         up = ui.buttonPrimary.toNinePatch()
         down = ui.buttonPrimaryDown.toNinePatch()
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         font = bigFont
         fontColor = Palette.bigButtonLabel
     }
@@ -70,39 +73,47 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     textButton(UiStyle.KEY) {
         up = ui.buttonPrimary.toNinePatch()
         down = ui.buttonPrimaryDown.toNinePatch()
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         checked = ui.buttonPrimaryDown.toNinePatch()
+        checkedOffsetY = -BUTTON_PRESS_DEPTH
         font = smallFont
         fontColor = Palette.bigButtonLabel
     }
     imageButton(UiStyle.PAUSE) {
         up = button
         down = buttonDown
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconPause.toDrawable()
     }
     imageButton(UiStyle.SOUND_ON) {
         up = button
         down = buttonDown
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconSoundOn.toDrawable()
     }
     imageButton(UiStyle.SOUND_OFF) {
         up = button
         down = buttonDown
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconSoundOff.toDrawable()
     }
     imageButton(UiStyle.MUSIC_ON) {
         up = button
         down = buttonDown
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconMusicOn.toDrawable()
     }
     imageButton(UiStyle.MUSIC_OFF) {
         up = button
         down = buttonDown
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconMusicOff.toDrawable()
     }
     for ((language, flag) in listOf(Language.English to ui.flagEnglish, Language.French to ui.flagFrench)) {
         imageButton(UiStyle.flag(language)) {
             up = button
             down = buttonDown
+            pressedOffsetY = -BUTTON_PRESS_DEPTH
             imageUp = flag.toDrawable()
         }
     }
