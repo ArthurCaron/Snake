@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import fr.mwet.snake.LanguageSwitcher
 import fr.mwet.snake.Navigator
@@ -22,6 +21,7 @@ import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_IN_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
 import fr.mwet.snake.tuning.DebugTuning.SHOW_DEV_OPTIONS
+import fr.mwet.snake.tuning.FontTuning.TITLE_TEXT
 import fr.mwet.snake.ui.UiMetrics.MENU_BEST_SCORE_GAP
 import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_GAP
 import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_WIDTH_RATIO
@@ -36,7 +36,6 @@ import ktx.actors.onExit
 import ktx.scene2d.actor
 import ktx.scene2d.Scene2DSkin
 import ktx.scene2d.KTableWidget
-import ktx.scene2d.image
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -169,18 +168,15 @@ private class LanguageFlags(
     }
 }
 
+// The game title in the title font, as wide as MENU_TITLE_WIDTH_RATIO of the board.
 private class MainMenuTitle {
-    private val logo = Scene2DSkin.defaultSkin.getDrawable(UiStyle.LOGO) as TextureRegionDrawable
-
-    val actor = scene2d.image(logo) {
+    val actor = scene2d.label(TITLE_TEXT, UiStyle.GAME_TITLE) {
         setOrigin(Align.center)
     }
 
     fun fit(boardWidth: Float) {
-        val width = boardWidth * MENU_TITLE_WIDTH_RATIO
-        val region = logo.region
-        logo.setMinSize(width, width * region.regionHeight / region.regionWidth)
-        actor.invalidateHierarchy()
+        actor.setFontScale(1f)
+        actor.setFontScale(boardWidth * MENU_TITLE_WIDTH_RATIO / actor.prefWidth)
     }
 
     fun startAnimation() {

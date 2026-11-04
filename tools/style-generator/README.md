@@ -82,7 +82,7 @@ All the sources are in `src/main/kotlin/fr/mwet/tools/stylegenerator`.
 | `Fruits.kt` | The ten fruit kinds, their natural colors, leaves, seeds and bounce frames. |
 | `Ground.kt` | The grid cell, the checker ground and the seven other grounds, the light disc `glow.png`, the board frame. |
 | `Ui.kt` | Nine-patches (buttons, panel), the icons, the language flags. |
-| `Logo.kt` | The "SNEK" logo, the splash and loading images. |
+| `Splash.kt` | The splash and loading images. |
 | `AppIcons.kt` | The launcher icon and the `.ico` and `.icns` writers. |
 | `Outputs.kt` | The style classes (`StyleColors.kt`, `SnakeLook.kt`, `FruitLook.kt`), `palette.json`, the skin `pack.json`. |
 | `PostEffects.kt` | The post-effects of the other styles: `gameboy`, `neon`, `laser`. |
@@ -104,7 +104,7 @@ All the sources are in `src/main/kotlin/fr/mwet/tools/stylegenerator`.
 flowchart LR
     P["Palette<br/>(PALETTES)"] --> G["withLine()<br/>one palette per group"]
     G --> L["layer()<br/>base and detail"]
-    G --> D["Drawing functions<br/>Sprites, Fruits, Ground,<br/>Ui, Logo, AppIcons"]
+    G --> D["Drawing functions<br/>Sprites, Fruits, Ground,<br/>Ui, Splash, AppIcons"]
     L --> D
     D --> F["PNG files<br/>one folder per style"]
     P --> K["Outputs.kt<br/>style classes, palette.json"]
@@ -134,7 +134,6 @@ flowchart LR
 | `button*.9`, `panel.9` | 74 by 74, 98 by 98 | 72 and 96 px images with the 1 px nine-patch border. |
 | `ground*` | 512 by 512 | 8 by 8 cells, repeated over the floor. |
 | `boardFrame` | 256 by 320 | 16 by 20 cells at 16 px each, stretched over the board. |
-| `logo` | 640 by 260 | The title. |
 | `SplashScreen`, `LoadingAssets` | 640 by 400, 1500 by 120 | Before the atlas is loaded. |
 | App icon | 512 by 512 | Drawn in 128 units, then resized to every icon size. |
 
@@ -208,12 +207,12 @@ On a tinted sprite, the hue comes from the tint. To make the snake red, change `
 2. Change the colors.
 3. Run every style: the new style also appears in `all.png`, `fruits.png` and `grounds.png`.
 
-The cartoon styles change only colors. For the other looks, use the switches (`tubeButtons`, `tubeLogo`, `tubeMarks`, `tintOutline`, the glows) and a `post` effect. `laser` shows most of them.
+The cartoon styles change only colors. For the other looks, use the switches (`tubeButtons`, `tubeMarks`, `tintOutline`, the glows) and a `post` effect. `laser` shows most of them.
 
 ### Change the outline width
 
 - Snake and fruit bodies: `OUTLINE` in `Sprites.kt` (4 px). It is the visible width: `outlined()` and `fruitSprite()` stroke at `OUTLINE * 2`.
-- Every other asset has its own width next to its `stroke(...)` call: for example the eyes (6, so 3 px), the leaves (`width = 2.5`), the icons (9), the buttons and the flags (`o * 2` = 10), the panel (`o * 2` = 12), the logo (34), the app icon (10).
+- Every other asset has its own width next to its `stroke(...)` call: for example the eyes (6, so 3 px), the leaves (`width = 2.5`), the icons (9), the buttons and the flags (`o * 2` = 10), the panel (`o * 2` = 12), the app icon (10).
 - The outline grows outward. A much thicker outline can reach the edge of the canvas and be cut. The snake body already runs past its cell, so its outline is cut at the cell edges by design.
 
 ### Change a sprite shape

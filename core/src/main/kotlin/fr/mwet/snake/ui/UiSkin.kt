@@ -2,7 +2,6 @@ package fr.mwet.snake.ui
 
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
@@ -21,7 +20,7 @@ import ktx.style.textButton
 
 object UiStyle {
     const val TITLE = "title"
-    const val LOGO = "logo"
+    const val GAME_TITLE = "gameTitle"
     const val HIGHLIGHT = "highlight"
     const val BIG = "big"
     const val KEY = "key"
@@ -40,6 +39,7 @@ object UiStyle {
 fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler): Skin = skin {
     val smallFont = fonts.font(theme, FontRole.Small)
     val bigFont = fonts.font(theme, FontRole.Big)
+    val titleFont = fonts.font(theme, FontRole.SnekTitle)
     val ui = textures.game.skin
     val button = ui.button.toNinePatch()
     val buttonDown = ui.buttonDown.toNinePatch()
@@ -51,6 +51,10 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     }
     label(UiStyle.TITLE) {
         font = bigFont
+        fontColor = Palette.title
+    }
+    label(UiStyle.GAME_TITLE) {
+        font = titleFont
         fontColor = Palette.title
     }
     label(UiStyle.HIGHLIGHT) {
@@ -128,7 +132,6 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
             imageUp = flag.toDrawable()
         }
     }
-    add(UiStyle.LOGO, ui.logo, TextureRegion::class.java)
     add(UiStyle.PANEL, ui.panel.toNinePatch(), Drawable::class.java)
     add(UiStyle.DIM, textures.rectangleTexture(1, 1, Palette.pauseDim).toDrawable(), Drawable::class.java)
     add(UiStyle.LIGHT_DIM, textures.rectangleTexture(1, 1, Palette.readyDim).toDrawable(), Drawable::class.java)

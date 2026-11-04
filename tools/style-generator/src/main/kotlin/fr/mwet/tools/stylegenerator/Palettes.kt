@@ -35,15 +35,14 @@ data class Palette(
     val label: String,
 
     // Lines, background and text.
-    // The dark line around the shapes: snake, fruits, buttons, panel, icons, flags, logo, grid cell, app icon. Each
+    // The dark line around the shapes: snake, fruits, buttons, panel, icons, flags, grid cell, app icon. Each
     // group can have its own color (lineSnake and the others below). Also the default of shade, and with it of the
     // text borders and of the game's StyleColors.outline.
     val outline: String,
     // The color behind everything in the game (StyleColors.clear). Lightened, it gives StyleColors.surround, which
     // multiplies the floor outside the board (see surround() in Colors.kt).
     val clear: String,
-    // The fill of all texts (splash, loading, previews, the game's StyleColors.text), the symbols of the icons, and
-    // the light rim around the logo letters.
+    // The fill of all texts (splash, loading, previews, the game's StyleColors.text) and the symbols of the icons.
     val text: String,
 
     // Floor.
@@ -67,10 +66,9 @@ data class Palette(
     // The color of the marks along the back (SnakeLook.marks) when markColor is not set. The marks are white sprites
     // that the game tints, so this color changes without new images.
     val snakePattern: String,
-    // The white of the eyes (detail layer), and of the logo eyes.
+    // The white of the eyes (detail layer).
     val eye: String,
-    // The pupil sprite that the game moves toward the fruit (snakePupil.png), the cross of the dead eyes, and the
-    // pupils of the logo.
+    // The pupil sprite that the game moves toward the fruit (snakePupil.png) and the cross of the dead eyes.
     val pupil: String,
 
     // Fruits.
@@ -88,20 +86,18 @@ data class Palette(
     val leaf: String,
     val leafDark: String,
 
-    // Buttons, panel and logo.
+    // Buttons and panel.
     // The button nine-patch (button.9.png): the face, the light strip near the top, and the dark bevel at the bottom.
     // Pressed (buttonDown.9.png), the face takes buttonDark and the strip takes button. The app icon uses the same three.
     val button: String,
     val buttonLight: String,
     val buttonDark: String,
-    // The primary button (buttonPrimary.9.png) with the same three roles. Also the logo letters: primaryDark at the
-    // bottom, primary on the top half, primaryLight for the shine. primaryLight is also the game's highlight
+    // The primary button (buttonPrimary.9.png) with the same three roles. primaryLight is also the game's highlight
     // (StyleColors.primary: the highlighted labels and the loading bar).
     val primary: String,
     val primaryLight: String,
     val primaryDark: String,
-    // The panel nine-patch (panel.9.png): the face, the bottom bevel and the inner groove line. panel is also the
-    // letter fill of the tube logo.
+    // The panel nine-patch (panel.9.png): the face, the bottom bevel and the inner groove line.
     val panel: String,
     val panelDark: String,
     val panelLine: String,
@@ -115,12 +111,10 @@ data class Palette(
     val shade: String? = null,
     // Outline of one group of assets; defaults to the outline.
     // lineSnake: the snake parts, the outline of the marks and the head of the app icon. lineFruit: the fruits. lineUi:
-    // the buttons, the panel, the icons and the flags. lineLogo: the logo. The laser effect finds the lines of the UI
-    // and of the logo by these colors.
+    // the buttons, the panel, the icons and the flags. The laser effect finds the lines of the UI by its color.
     val lineSnake: String? = null,
     val lineFruit: String? = null,
     val lineUi: String? = null,
-    val lineLogo: String? = null,
     // Color the game tints the gray layer with; defaults to the snake or fruit color.
     // The grays of the base layer are computed against it: gray = luminance(color) / luminance(tint). With the default,
     // the body is white and takes the full tint. A bright tint over a dark snake or fruit, as in the laser styles,
@@ -154,8 +148,6 @@ data class Palette(
     // Buttons drawn as a neon tube: a 4.5 px line on the dark color, without bevel or light strip. Pressed, the light
     // color covers the face at 30 %. The primary buttons draw their line in primary.
     val tubeButtons: Boolean = false,
-    // The logo drawn as a tube: the letters filled with panel and outlined by an 8 px line, without shadow or shading.
-    val tubeLogo: Boolean = false,
     // The post-effect that reworks the files once they are written; null for the cartoon styles.
     val post: PostEffect? = null,
     // Replaces the game colors computed from this palette; see StyleColorOverrides.
@@ -431,7 +423,7 @@ val PALETTES: Map<String, Palette> = linkedMapOf(
         styleColors = StyleColorOverrides(clear = "#306230", outline = "#0f380f", text = "#9bbc0f", primary = "#8bac0f", surround = "#7c9b7c"),
     ),
     // Lines of one color per group on a black floor. The white outlines go to the tinted layer (tintOutline) and the
-    // snake takes the fruit colors; tubes for the marks, buttons and logo; lights under the snake and the fruit; the
+    // snake takes the fruit colors; tubes for the marks and buttons; lights under the snake and the fruit; the
     // LASER effect makes the lines white hot and blooms them.
     "laser" to Palette(
         label = "Laser (other style)",
@@ -439,7 +431,6 @@ val PALETTES: Map<String, Palette> = linkedMapOf(
         lineSnake = "#22f2ff",
         lineFruit = "#ff3f9a",
         lineUi = "#ff3fe0",
-        lineLogo = "#22f2ff",
         shade = "#05030b",
         clear = "#05030b",
         text = "#ffffff",
@@ -479,7 +470,6 @@ val PALETTES: Map<String, Palette> = linkedMapOf(
         snakeGlow = 0.44,
         fruitGlow = 0.8,
         tubeButtons = true,
-        tubeLogo = true,
         post = PostEffect.LASER,
     ),
     // The laser style with an orange snake, cyan fruits and round marks.
@@ -489,7 +479,6 @@ val PALETTES: Map<String, Palette> = linkedMapOf(
         lineSnake = "#ff9a1f",
         lineFruit = "#3ff0ff",
         lineUi = "#ff5a3c",
-        lineLogo = "#ffd23f",
         shade = "#07030a",
         clear = "#07030a",
         text = "#fff6e8",
@@ -529,7 +518,6 @@ val PALETTES: Map<String, Palette> = linkedMapOf(
         snakeGlow = 0.44,
         fruitGlow = 0.8,
         tubeButtons = true,
-        tubeLogo = true,
         post = PostEffect.LASER,
     ),
 )

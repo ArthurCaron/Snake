@@ -4,9 +4,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 
 object FontTuning {
     const val MIN_OUTLINE = 2
-    const val TITLE_SIZE = 160
-    const val TITLE_CHARS = "Snek"
-    const val TITLE_BORDER = 5f
+    const val TITLE_SIZE = 256
+    const val TITLE_TEXT = "Snek"
+    const val TITLE_CHARS = TITLE_TEXT
+    const val TITLE_BORDER = 8f
     const val OUTLINE_RATIO = 12
     const val MIN_SHADOW = 1
     const val SHADOW_RATIO = 18
