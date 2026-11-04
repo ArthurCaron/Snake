@@ -59,11 +59,13 @@ class GeneralKeymappingSave() {
 }
 
 object DefaultKeymappings {
-    fun defaultGame(keysArePhysical: Boolean) = arrayListOf(
-        GameKeymappingSave(GameActionId.GoUp, letterKeys(keysArePhysical, qwerty = Input.Keys.W, azerty = Input.Keys.Z) + Input.Keys.UP),
+    // Desktop codes name physical WASD positions; GLFW supplies the current layout's labels (ZQSD on AZERTY).
+    // Backends without layout information use QWERTY as the fallback.
+    fun defaultGame() = arrayListOf(
+        GameKeymappingSave(GameActionId.GoUp, arrayListOf(Input.Keys.W, Input.Keys.UP)),
         GameKeymappingSave(GameActionId.GoRight, arrayListOf(Input.Keys.D, Input.Keys.RIGHT)),
         GameKeymappingSave(GameActionId.GoDown, arrayListOf(Input.Keys.S, Input.Keys.DOWN)),
-        GameKeymappingSave(GameActionId.GoLeft, letterKeys(keysArePhysical, qwerty = Input.Keys.A, azerty = Input.Keys.Q) + Input.Keys.LEFT),
+        GameKeymappingSave(GameActionId.GoLeft, arrayListOf(Input.Keys.A, Input.Keys.LEFT)),
     )
 
     fun defaultGeneral() = arrayListOf(
@@ -72,12 +74,9 @@ object DefaultKeymappings {
         GeneralKeymappingSave(GeneralActionId.Back, arrayListOf(Input.Keys.ESCAPE, Input.Keys.BACK)),
     )
 
-    fun defaultKeymappings(keysArePhysical: Boolean) = KeymappingsSave(
+    fun defaultKeymappings() = KeymappingsSave(
         version = 0,
-        game = defaultGame(keysArePhysical),
+        game = defaultGame(),
         general = defaultGeneral(),
     )
-
-    private fun letterKeys(keysArePhysical: Boolean, qwerty: Int, azerty: Int): List<Int> =
-        if (keysArePhysical) listOf(qwerty) else listOf(qwerty, azerty)
 }

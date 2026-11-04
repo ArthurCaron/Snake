@@ -18,8 +18,8 @@ private const val ROOT_FOLDER = "settings"
 private const val KEYMAPPINGS_FILE = "${ROOT_FOLDER}/keymappings.json"
 private const val USER_PREFERENCES_FILE = "${ROOT_FOLDER}/user_preferences.json"
 
-class SettingsRepository(private val jsonStore: JsonStore, private val keysArePhysical: Boolean) {
-    private val defaultKeymappingsSave = DefaultKeymappings.defaultKeymappings(keysArePhysical)
+class SettingsRepository(private val jsonStore: JsonStore) {
+    private val defaultKeymappingsSave = DefaultKeymappings.defaultKeymappings()
     var version = 0
         private set
     var settings = load()
@@ -72,7 +72,7 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
     }
 
     private fun load(): Settings {
-        val keymappingsSave = jsonStore.readOrCreate(KEYMAPPINGS_FILE) { DefaultKeymappings.defaultKeymappings(keysArePhysical) }
+        val keymappingsSave = jsonStore.readOrCreate(KEYMAPPINGS_FILE) { DefaultKeymappings.defaultKeymappings() }
         keymappingsSave.restoreDefaults(defaultKeymappingsSave)
 
         val userPreferencesSave =
@@ -100,7 +100,7 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
         return settings
     }
 
-    private fun defaultKeymappings(): Keymappings = defaultKeymappingsSave.let { defaults ->
+    fun defaultKeymappings(): Keymappings = defaultKeymappingsSave.let { defaults ->
         Keymappings(
             game = defaults.game.map { it.toKeymapping() },
             general = defaults.general.map { it.toKeymapping() },
@@ -114,8 +114,9 @@ class SettingsRepository(private val jsonStore: JsonStore, private val keysArePh
         version++
     }
 
-    private fun GameKeymappingSave.toKeymapping() = GameKeymapping(action.gameCommand, keys)
-    private fun GeneralKeymappingSave.toKeymapping() = GeneralKeymapping(action.generalCommand, keys)
+    // An older save can hold more keys than the controls screen shows: only the first slots stay.
+    private fun GameKeymappingSave.toKeymapping() = GameKeymapping(action.gameCommand, keys.take(KEYS_PER_ACTION))
+    private fun GeneralKeymappingSave.toKeymapping() = GeneralKeymapping(action.generalCommand, keys.take(KEYS_PER_ACTION))
 
     private fun Keymappings.toSerializable() = KeymappingsSave(
         version = defaultKeymappingsSave.version,

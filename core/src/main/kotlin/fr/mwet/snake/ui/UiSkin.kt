@@ -23,6 +23,7 @@ object UiStyle {
     const val LOGO = "logo"
     const val HIGHLIGHT = "highlight"
     const val BIG = "big"
+    const val KEY = "key"
     const val PANEL = "panel"
     const val DIM = "dim"
     const val LIGHT_DIM = "lightDim"
@@ -63,6 +64,14 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
         up = ui.buttonPrimary.toNinePatch()
         down = ui.buttonPrimaryDown.toNinePatch()
         font = bigFont
+        fontColor = Palette.bigButtonLabel
+    }
+    // A key of the controls screen: the shape of the menu buttons in the primary color, pressed while it waits for a key.
+    textButton(UiStyle.KEY) {
+        up = ui.buttonPrimary.toNinePatch()
+        down = ui.buttonPrimaryDown.toNinePatch()
+        checked = ui.buttonPrimaryDown.toNinePatch()
+        font = smallFont
         fontColor = Palette.bigButtonLabel
     }
     imageButton(UiStyle.PAUSE) {

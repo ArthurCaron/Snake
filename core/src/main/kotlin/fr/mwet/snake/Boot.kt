@@ -1,6 +1,5 @@
 package fr.mwet.snake
 
-import com.badlogic.gdx.Application.ApplicationType.Desktop
 import com.badlogic.gdx.Application.ApplicationType.WebGL
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -19,7 +18,7 @@ import ktx.assets.DisposableRegistry
 
 class Boot : DisposableRegistry by DisposableContainer() {
     private val jsonStore = JsonStore(textStore())
-    val settingsRepository = SettingsRepository(jsonStore, keysArePhysical = Gdx.app.type == Desktop)
+    val settingsRepository = SettingsRepository(jsonStore)
     val metadataRepository = MetadataRepository(jsonStore)
 
     val input = InputRouter()

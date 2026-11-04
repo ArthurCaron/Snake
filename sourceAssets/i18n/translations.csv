@@ -22,14 +22,15 @@ back,Back,Retour
 noScores,No score yet,Aucun score pour le moment
 controls,Controls,Commandes
 resetControls,Reset controls,Réinitialiser
-pressAKey,Press a key (Esc to cancel),Appuie sur une touche (Échap pour annuler)
+pressAKey,"Press a key. Esc: cancel, Backspace: remove","Appuie sur une touche. Échap : annuler, Retour arrière : effacer"
+controlsHint,Click a key to change it,Clique sur une touche pour la changer
 actionGoUp,Up,Haut
 actionGoRight,Right,Droite
 actionGoDown,Down,Bas
 actionGoLeft,Left,Gauche
 actionPause,Pause,Pause
 actionBack,Back,Retour
-actionStartGame,Start / resume game,Lancer / reprendre la partie
+actionStartGame,Play,Jouer
 language,Language,Langue
 languageSystem,Device language,Langue de l'appareil
 ready,Ready?,Prêt ?
