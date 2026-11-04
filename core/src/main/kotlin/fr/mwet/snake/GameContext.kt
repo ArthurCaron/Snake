@@ -18,7 +18,6 @@ import fr.mwet.snake.screens.font.FontScreen
 import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
-import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.Widgets
@@ -69,7 +68,6 @@ class GameContext(
         navigator = navigator,
     )
 
-    val scoresScreen = ScoresScreen(kit, boot.metadataRepository, navigator)
     val settingsScreen = SettingsScreen(kit, boot.settingsRepository, menuEvents, navigator)
     val controlsScreen = ControlsScreen(kit, boot.settingsRepository, keyNames, navigator)
     val languageScreen = LanguageScreen(kit, boot.settingsRepository, languages, navigator)

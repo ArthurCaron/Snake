@@ -14,7 +14,6 @@ import fr.mwet.snake.screens.game.GameScreen
 import fr.mwet.snake.screens.language.LanguageScreen
 import fr.mwet.snake.screens.loading.LoadingScreen
 import fr.mwet.snake.screens.menu.MainMenuScreen
-import fr.mwet.snake.screens.scores.ScoresScreen
 import fr.mwet.snake.screens.settings.SettingsScreen
 import fr.mwet.snake.transition.ScreenTransitions
 import fr.mwet.snake.tuning.FontTheme
@@ -76,8 +75,6 @@ class GameApp(
 
     override fun goToGame() = navigate { setScreen<GameScreen>() }
 
-    override fun goToScores() = navigate { setScreen<ScoresScreen>() }
-
     override fun goToSettings() = navigate { setScreen<SettingsScreen>() }
 
     override fun goToControls() = navigate { setScreen<ControlsScreen>() }
@@ -105,7 +102,6 @@ class GameApp(
     private fun registerScreens(context: GameContext) {
         addScreen(context.mainMenuScreen)
         addScreen(context.gameScreen)
-        addScreen(context.scoresScreen)
         addScreen(context.settingsScreen)
         addScreen(context.controlsScreen)
         addScreen(context.languageScreen)
@@ -116,7 +112,6 @@ class GameApp(
     private fun unregisterScreens(): List<KtxScreen> = listOfNotNull(
         removeScreen<MainMenuScreen>(),
         removeScreen<GameScreen>(),
-        removeScreen<ScoresScreen>(),
         removeScreen<SettingsScreen>(),
         removeScreen<ControlsScreen>(),
         removeScreen<LanguageScreen>(),

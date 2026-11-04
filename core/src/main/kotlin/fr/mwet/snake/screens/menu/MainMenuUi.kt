@@ -65,7 +65,6 @@ class MainMenuUi(
                 bestScoreLabel = label("") { it.padBottom(MENU_BEST_SCORE_GAP).row() }
                 table {
                     defaults().space(SCREEN_MARGIN)
-                    menuButton(I18N.highscore(), onClick = navigator::goToScores)
                     menuButton(I18N.settings(), onClick = navigator::goToSettings)
                     it.row()
                 }
