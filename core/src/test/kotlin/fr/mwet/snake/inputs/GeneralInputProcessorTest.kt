@@ -4,8 +4,7 @@ import com.badlogic.gdx.Input.Keys
 import fr.mwet.snake.save.serialization.InMemoryTextStore
 import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.settings.SettingsRepository
-import fr.mwet.snake.save.settings.addGeneralKey
-import fr.mwet.snake.save.settings.removeGeneralKey
+import fr.mwet.snake.save.settings.setGeneralKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -16,7 +15,7 @@ class GeneralInputProcessorTest {
 
     @Test
     fun `start and resume use the same remappable action without consuming inactive actions`() {
-        val settings = SettingsRepository(jsonStore, keysArePhysical = true)
+        val settings = SettingsRepository(jsonStore)
         var starts = 0
         var resumes = 0
         var paused = false
@@ -36,7 +35,7 @@ class GeneralInputProcessorTest {
         assertEquals(0, resumes)
 
         settings.updateKeymappings {
-            it.removeGeneralKey(StartGameCommand, Keys.ENTER).addGeneralKey(StartGameCommand, Keys.F5)
+            it.setGeneralKey(StartGameCommand, slot = 0, Keys.F5)
         }
         paused = true
         assertFalse(game.keyDown(Keys.ENTER))

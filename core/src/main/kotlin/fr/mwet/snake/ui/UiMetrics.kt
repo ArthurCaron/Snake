@@ -7,7 +7,6 @@ object UiMetrics {
     const val BUTTON_PAD_TOP = UNIT * 3
     const val BUTTON_PAD_BOTTOM = UNIT * 3.5f
     const val BUTTON_PAD_SIDE = UNIT * 6
-    const val SMALL_BUTTON_PAD_SIDE = UNIT * 2
     const val PLAY_BUTTON_PAD_TOP = UNIT * 5
     const val PLAY_BUTTON_PAD_BOTTOM = UNIT * 7.5f
     const val PLAY_BUTTON_PAD_SIDE = UNIT * 18
@@ -38,7 +37,5 @@ object UiMetrics {
 
     const val CONTROLS_LABEL_GAP = UNIT * 3
     const val CONTROLS_RESET_GAP = UNIT * 3
-    const val KEY_FRAME_PAD_Y = UNIT
-    const val KEY_FRAME_PAD_X = UNIT * 3
-    const val REMOVE_KEY_GAP = UNIT * 2
+    const val KEY_COLUMN_GAP = UNIT * 4
 }

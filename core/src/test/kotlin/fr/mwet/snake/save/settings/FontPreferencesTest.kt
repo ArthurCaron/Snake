@@ -14,7 +14,7 @@ class FontPreferencesTest {
         for (input in inputs) {
             val store = InMemoryTextStore()
             if (input != null) store.write("settings/user_preferences.json", input)
-            val settings = SettingsRepository(JsonStore(store), keysArePhysical = true)
+            val settings = SettingsRepository(JsonStore(store))
             assertEquals(DefaultUserPreferences.fontTheme, settings.fontTheme)
             if (input == null || input == "{}") {
                 assertEquals(DefaultUserPreferences.fontTheme.tag, settings.settings.userPreferences.fontTheme)
@@ -25,8 +25,8 @@ class FontPreferencesTest {
     @Test
     fun `a saved font choice survives a settings reload`() {
         val store = InMemoryTextStore()
-        SettingsRepository(JsonStore(store), keysArePhysical = true).setFontTheme(FontTheme.Silkscreen)
-        val restored = SettingsRepository(JsonStore(store), keysArePhysical = true)
+        SettingsRepository(JsonStore(store)).setFontTheme(FontTheme.Silkscreen)
+        val restored = SettingsRepository(JsonStore(store))
         assertEquals(FontTheme.Silkscreen, restored.fontTheme)
         assertEquals(FontTheme.Silkscreen.tag, restored.settings.userPreferences.fontTheme)
     }
