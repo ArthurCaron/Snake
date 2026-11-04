@@ -1,6 +1,5 @@
 key,en,fr
 play,Play!,Jouer !
-highscore,High scores,Meilleurs scores
 settings,Settings,Paramètres
 settingsSound,Sound,Volume
 soundOn,Sound: on,Son : activé
@@ -19,7 +18,6 @@ victory,You win!,Gagné !
 newHighScore,New highscore!,Nouveau record !
 playAgain,Play again,Rejouer
 back,Back,Retour
-noScores,No score yet,Aucun score pour le moment
 controls,Controls,Commandes
 resetControls,Reset controls,Réinitialiser
 pressAKey,"Press a key. Esc: cancel, Backspace: remove","Appuie sur une touche. Échap : annuler, Retour arrière : effacer"

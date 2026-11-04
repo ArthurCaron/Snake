@@ -42,7 +42,6 @@ object UiMetrics {
     const val MENU_BEST_SCORE_GAP = UNIT * 8
     const val READY_TITLE_GAP = UNIT * 6
     const val READY_TEXT_SIDE_PAD = UNIT * 8
-    const val SCORE_RANK_GAP = UNIT * 8
 
     const val CONTROLS_LABEL_GAP = UNIT * 3
     const val CONTROLS_RESET_GAP = UNIT * 3

@@ -50,7 +50,6 @@ class TranslationPreview(private val edits: TranslationEdits) : ApplicationAdapt
         val screens = mapOf(
             "Main menu" to context.mainMenuScreen,
             "Game" to context.gameScreen,
-            "Scores" to context.scoresScreen,
             "Settings" to context.settingsScreen,
             "Controls" to context.controlsScreen,
             "Language" to context.languageScreen,

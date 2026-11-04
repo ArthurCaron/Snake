@@ -12,15 +12,13 @@ class MetadataRepositoryTest {
     private val sut = MetadataRepository(JsonStore(textStore))
 
     @Test
-    fun `keeps the ten best scores in order and flags only a new best as a high score`() {
+    fun `keeps only the best score and flags only a new best as a high score`() {
         (1..11).forEach { sut.submitHighScore(it * 10) }
 
-        assertEquals((110 downTo 20 step 10).toList(), sut.metadata.highScores.map { it.score })
+        assertEquals(listOf(HighScore(110)), sut.metadata.highScores)
         assertFalse(sut.submitHighScore(15))
         assertFalse(sut.submitHighScore(0))
-        assertFalse(sut.submitHighScore(55))
         assertTrue(sut.submitHighScore(200))
-        assertEquals(200, sut.metadata.highestScore.score)
-        assertEquals(listOf(200, 110, 100, 90, 80, 70, 60, 55, 50, 40).map { HighScore(it) }, sut.metadata.highScores)
+        assertEquals(listOf(HighScore(200)), sut.metadata.highScores)
     }
 }

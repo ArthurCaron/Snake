@@ -9,7 +9,7 @@ object GameplayTuning {
     const val MAX_TICKS_PER_SECOND = 12f
 
     const val SCORE_PER_FOOD = 1
-    const val HIGH_SCORES_KEPT = 10
+    const val HIGH_SCORES_KEPT = 1
 
     const val START_LENGTH = 3
 }
