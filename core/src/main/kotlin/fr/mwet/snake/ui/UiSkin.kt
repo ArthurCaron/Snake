@@ -43,6 +43,8 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     val ui = textures.game.skin
     val button = ui.button.toNinePatch()
     val buttonDown = ui.buttonDown.toNinePatch()
+    val buttonOver = ui.buttonOver.toNinePatch()
+    val primaryOver = ui.buttonPrimaryOver.toNinePatch()
     label {
         font = smallFont
         fontColor = Palette.label
@@ -58,6 +60,7 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     textButton {
         up = button
         down = buttonDown
+        over = buttonOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         font = smallFont
         fontColor = Palette.buttonLabel
@@ -65,6 +68,7 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     textButton(UiStyle.BIG) {
         up = ui.buttonPrimary.toNinePatch()
         down = ui.buttonPrimaryDown.toNinePatch()
+        over = primaryOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         font = bigFont
         fontColor = Palette.bigButtonLabel
@@ -73,6 +77,7 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     textButton(UiStyle.KEY) {
         up = ui.buttonPrimary.toNinePatch()
         down = ui.buttonPrimaryDown.toNinePatch()
+        over = primaryOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         checked = ui.buttonPrimaryDown.toNinePatch()
         checkedOffsetY = -BUTTON_PRESS_DEPTH
@@ -82,30 +87,35 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     imageButton(UiStyle.PAUSE) {
         up = button
         down = buttonDown
+        over = buttonOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconPause.toDrawable()
     }
     imageButton(UiStyle.SOUND_ON) {
         up = button
         down = buttonDown
+        over = buttonOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconSoundOn.toDrawable()
     }
     imageButton(UiStyle.SOUND_OFF) {
         up = button
         down = buttonDown
+        over = buttonOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconSoundOff.toDrawable()
     }
     imageButton(UiStyle.MUSIC_ON) {
         up = button
         down = buttonDown
+        over = buttonOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconMusicOn.toDrawable()
     }
     imageButton(UiStyle.MUSIC_OFF) {
         up = button
         down = buttonDown
+        over = buttonOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconMusicOff.toDrawable()
     }
@@ -113,6 +123,7 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
         imageButton(UiStyle.flag(language)) {
             up = button
             down = buttonDown
+            over = buttonOver
             pressedOffsetY = -BUTTON_PRESS_DEPTH
             imageUp = flag.toDrawable()
         }
