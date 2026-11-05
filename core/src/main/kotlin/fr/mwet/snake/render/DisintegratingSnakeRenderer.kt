@@ -11,6 +11,7 @@ import fr.mwet.snake.game.Snake
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
 import fr.mwet.snake.tuning.RenderTuning.Snake.MARK_SIZE
+import fr.mwet.snake.tuning.RenderTuning.Snake.GLOW_ALPHA
 import fr.mwet.snake.tuning.RenderTuning.Snake.GLOW_SIZE
 import fr.mwet.snake.utils.VectorPool
 import fr.mwet.snake.utils.resetColor
@@ -20,7 +21,7 @@ class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Sna
     private var eTime = 0f
     private val vectors = VectorPool()
 
-    private val skin = textureHandler.skin
+    private val skin = textureHandler.game.skin
     private val bodyParts = mutableListOf<DisintegratingSegment>()
     private val color = Color()
 
@@ -47,7 +48,7 @@ class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Sna
         }
         if (settings.appearance.snakeGlow) {
             batch.additive {
-                batch.setColor(color.r, color.g, color.b, settings.appearance.theme.snakeGlowAlpha)
+                batch.setColor(color.r, color.g, color.b, GLOW_ALPHA)
                 bodyParts.forEach { part -> batch.draw(skin.glow, part.position.x + (1 - GLOW_SIZE) / 2, part.position.y + (1 - GLOW_SIZE) / 2, GLOW_SIZE, GLOW_SIZE) }
             }
         }

@@ -39,11 +39,10 @@ object UiStyle {
 }
 
 fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler, settings: SettingsRepository): Skin = skin {
-    val smallFont = fonts.font(theme, FontRole.Small, settings.appearance.theme)
-    val bigFont = fonts.font(theme, FontRole.Big, settings.appearance.theme)
-    val titleFont = fonts.font(theme, FontRole.SnekTitle, settings.appearance.theme)
-    val ui = textures.skin
-    val pressDepth = if (settings.appearance.theme.beveledButtons) BUTTON_PRESS_DEPTH else 0f
+    val smallFont = fonts.font(theme, FontRole.Small)
+    val bigFont = fonts.font(theme, FontRole.Big)
+    val titleFont = fonts.font(theme, FontRole.SnekTitle)
+    val ui = textures.game.skin
     val button = ui.button.toNinePatch()
     val buttonDown = GlowDrawable(ui.buttonDown.toNinePatch(), ui.glow, settings)
     val buttonOver = GlowDrawable(ui.buttonOver.toNinePatch(), ui.glow, settings)
@@ -68,7 +67,7 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler,
         up = button
         down = buttonDown
         over = buttonOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         font = smallFont
         fontColor = Palette.buttonLabel
     }
@@ -76,7 +75,7 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler,
         up = ui.buttonPrimary.toNinePatch()
         down = GlowDrawable(ui.buttonPrimaryDown.toNinePatch(), ui.glow, settings)
         over = primaryOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         font = bigFont
         fontColor = Palette.bigButtonLabel
     }
@@ -92,9 +91,9 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler,
         up = ui.buttonPrimary.toNinePatch()
         down = GlowDrawable(ui.buttonPrimaryDown.toNinePatch(), ui.glow, settings)
         over = primaryOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         checked = GlowDrawable(ui.buttonPrimaryDown.toNinePatch(), ui.glow, settings)
-        checkedOffsetY = -pressDepth
+        checkedOffsetY = -BUTTON_PRESS_DEPTH
         font = smallFont
         fontColor = Palette.bigButtonLabel
     }
@@ -102,35 +101,35 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler,
         up = button
         down = buttonDown
         over = buttonOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconPause.toDrawable()
     }
     imageButton(UiStyle.SOUND_ON) {
         up = button
         down = buttonDown
         over = buttonOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconSoundOn.toDrawable()
     }
     imageButton(UiStyle.SOUND_OFF) {
         up = button
         down = buttonDown
         over = buttonOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconSoundOff.toDrawable()
     }
     imageButton(UiStyle.MUSIC_ON) {
         up = button
         down = buttonDown
         over = buttonOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconMusicOn.toDrawable()
     }
     imageButton(UiStyle.MUSIC_OFF) {
         up = button
         down = buttonDown
         over = buttonOver
-        pressedOffsetY = -pressDepth
+        pressedOffsetY = -BUTTON_PRESS_DEPTH
         imageUp = ui.iconMusicOff.toDrawable()
     }
     for ((language, flag) in listOf(Language.English to ui.flagEnglish, Language.French to ui.flagFrench)) {
@@ -138,7 +137,7 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler,
             up = button
             down = buttonDown
             over = buttonOver
-            pressedOffsetY = -pressDepth
+            pressedOffsetY = -BUTTON_PRESS_DEPTH
             imageUp = flag.toDrawable()
         }
     }

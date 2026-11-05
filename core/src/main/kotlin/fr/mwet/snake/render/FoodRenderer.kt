@@ -13,6 +13,7 @@ import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.utils.resetColor
 import fr.mwet.snake.tuning.AnimationTuning.FOOD_GLOW_PULSE
 import fr.mwet.snake.tuning.AnimationTuning.FOOD_GLOW_PULSE_SPEED
+import fr.mwet.snake.tuning.RenderTuning.Food.GLOW_ALPHA
 import fr.mwet.snake.tuning.RenderTuning.Food.GLOW_SIZE
 
 private class FruitAnimation(sprites: FruitSprites) {
@@ -22,11 +23,11 @@ private class FruitAnimation(sprites: FruitSprites) {
 
 class FoodRenderer(textureHandler: TextureHandler, private val food: Food, private val settings: SettingsRepository) {
     private var eTime = 0f
-    private val animations = FruitLook.fruits.map { FruitAnimation(it.kind.sprites(textureHandler.skin)) }
-    private val glow = textureHandler.skin.glow
+    private val animations = FruitLook.fruits.map { FruitAnimation(it.kind.sprites(textureHandler.game.skin)) }
+    private val glow = textureHandler.game.skin.glow
     private var fruitIndex = 0
 
-    val color: Color get() = settings.appearance.theme.fruitColors[fruitIndex]
+    val color: Color get() = FruitLook.fruits[fruitIndex].color
 
     fun render(batch: SpriteBatch, delta: Float) {
         eTime += delta
@@ -45,7 +46,7 @@ class FoodRenderer(textureHandler: TextureHandler, private val food: Food, priva
 
     private fun drawGlow(batch: SpriteBatch) {
         val size = GLOW_SIZE * (1f + MathUtils.sin(eTime * FOOD_GLOW_PULSE_SPEED) * FOOD_GLOW_PULSE)
-        batch.setColor(color.r, color.g, color.b, settings.appearance.theme.fruitGlowAlpha)
+        batch.setColor(color.r, color.g, color.b, GLOW_ALPHA)
         batch.additive {
             batch.draw(glow, food.position.x + (1f - size) / 2, food.position.y + (1f - size) / 2, size, size)
         }

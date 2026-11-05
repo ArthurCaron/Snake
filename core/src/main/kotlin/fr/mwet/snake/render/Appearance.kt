@@ -11,16 +11,9 @@ data class Appearance(
     val snakeGlow: Boolean = false,
     val fruitGlow: Boolean = false,
     val menuGlow: Boolean = false,
-    val theme: VisualTheme = VisualTheme.Normal,
 ) {
     val body: Color = Color.valueOf(bodyHex)
     val marks: Color = Color.valueOf(marksHex)
-
-    fun withTheme(theme: VisualTheme): Appearance {
-        val defaults = theme.defaultAppearance()
-        return copy(theme = theme, marksHex = defaults.marksHex, snakeGlow = defaults.snakeGlow,
-            fruitGlow = defaults.fruitGlow, menuGlow = defaults.menuGlow)
-    }
 
     companion object {
         const val DEFAULT_BODY = "3f9b92"

@@ -17,7 +17,7 @@ private val TILES_X = ceil(WORLD_WIDTH / TILE_CELLS).toInt()
 private val TILES_Y = ceil(WORLD_HEIGHT / TILE_CELLS).toInt()
 
 class Background(textureHandler: TextureHandler, private val settingsRepository: SettingsRepository) : WorldDrawable {
-    private val skin = textureHandler.skin
+    private val skin = textureHandler.game.skin
     private val frame = skin.boardFrame
     private val visible = Rectangle()
 

@@ -3,7 +3,6 @@ package fr.mwet.snake.save.settings
 import fr.mwet.snake.backdrop.BackdropStyle
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
-import fr.mwet.snake.render.VisualTheme
 import fr.mwet.snake.render.Appearance
 import fr.mwet.snake.render.MarkShape
 import fr.mwet.snake.render.GroundStyle
@@ -106,7 +105,6 @@ class SettingsRepository(private val jsonStore: JsonStore) {
                     snakeGlow = userPreferencesSave.snakeGlow,
                     fruitGlow = userPreferencesSave.fruitGlow,
                     menuGlow = userPreferencesSave.menuGlow,
-                    theme = VisualTheme.fromTag(userPreferencesSave.visualTheme),
                 ),
             ),
             keymappings = Keymappings(
@@ -163,6 +161,5 @@ class SettingsRepository(private val jsonStore: JsonStore) {
         snakeGlow = appearance.snakeGlow,
         fruitGlow = appearance.fruitGlow,
         menuGlow = appearance.menuGlow,
-        visualTheme = appearance.theme.tag,
     )
 }
