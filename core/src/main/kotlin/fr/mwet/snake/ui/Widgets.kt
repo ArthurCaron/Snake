@@ -20,7 +20,7 @@ import ktx.scene2d.imageButton
 import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 
-class Widgets(theme: VisualTheme = VisualTheme.Desert, private val onButtonActivated: () -> Unit) {
+class Widgets(theme: VisualTheme = VisualTheme.Normal, private val onButtonActivated: () -> Unit) {
     val textPaddingCorrection = if (theme.beveledButtons) 0f else BUTTON_FACE_LIFT + TEXT_LIFT
     private val iconPaddingCorrection = if (theme.beveledButtons) 0f else BUTTON_FACE_LIFT
 

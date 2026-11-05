@@ -10,6 +10,7 @@ interface Navigator {
     fun goToLanguage()
     fun goToFont()
     fun applyVisualTheme(theme: fr.mwet.snake.render.VisualTheme)
+    fun goToAdminAppearance()
     fun goToAppearance()
     fun goToOptions(page: OptionPage)
     fun previewTransition()

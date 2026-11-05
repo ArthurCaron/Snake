@@ -11,16 +11,28 @@ import kotlin.test.assertNull
 
 class AppearancePreferencesTest {
     @Test
-    fun `laser theme and custom colors survive reload`() {
+    fun `neon theme and custom colors survive reload`() {
         val store = InMemoryTextStore()
-        val laser = VisualTheme.Laser.defaultAppearance().copy(bodyHex = "ffaa22", marksHex = "aabbcc", markShape = MarkShape.Star)
+        val laser = VisualTheme.Neon.defaultAppearance().copy(bodyHex = "ffaa22", marksHex = "aabbcc", markShape = MarkShape.Star)
         SettingsRepository(JsonStore(store)).setAppearance(laser)
         val restored = SettingsRepository(JsonStore(store)).appearance
         assertEquals(laser, restored)
-        assertEquals(VisualTheme.Laser, restored.theme)
+        assertEquals(VisualTheme.Neon, restored.theme)
         assertEquals(true, restored.snakeGlow)
         assertEquals(true, restored.fruitGlow)
         assertEquals(true, restored.menuGlow)
+    }
+
+    @Test
+    fun `global style switches preserve player color symbol and fruit color choice`() {
+        val player = Appearance(bodyHex = "ffaa22", markShape = MarkShape.Heart, takesFruitColor = false)
+        val neon = player.withTheme(VisualTheme.Neon)
+        assertEquals(player.bodyHex, neon.bodyHex)
+        assertEquals(player.markShape, neon.markShape)
+        assertEquals(player.takesFruitColor, neon.takesFruitColor)
+        assertEquals(true, neon.snakeGlow)
+        val normal = neon.withTheme(VisualTheme.Normal)
+        assertEquals(player, normal)
     }
 
     @Test

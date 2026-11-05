@@ -7,6 +7,7 @@ import fr.mwet.snake.events.MenuEvent.LoadingFinished
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.LibGdxKeyNames
 import fr.mwet.snake.save.settings.Language
+import fr.mwet.snake.screens.appearance.AdminAppearanceScreen
 import fr.mwet.snake.screens.appearance.AppearanceScreen
 import fr.mwet.snake.screens.options.OptionPage
 import fr.mwet.snake.screens.options.OptionsScreen
@@ -64,7 +65,7 @@ class GameApp(
 
     override fun applyVisualTheme(theme: fr.mwet.snake.render.VisualTheme) {
         if (boot.settingsRepository.appearance.theme == theme) return
-        boot.settingsRepository.setAppearance(theme.defaultAppearance())
+        boot.settingsRepository.setAppearance(boot.settingsRepository.appearance.withTheme(theme))
         rebuildScreens(show = { setScreen<AppearanceScreen>() })
     }
 
@@ -91,6 +92,8 @@ class GameApp(
     override fun goToLanguage() = navigate { setScreen<LanguageScreen>() }
 
     override fun goToFont() = navigate { setScreen<FontScreen>() }
+
+    override fun goToAdminAppearance() = navigate { setScreen<AdminAppearanceScreen>() }
 
     override fun goToAppearance() = navigate { setScreen<AppearanceScreen>() }
 
@@ -126,6 +129,7 @@ class GameApp(
         addScreen(context.fontScreen)
         addScreen(context.devOptionsScreen)
         addScreen(context.appearanceScreen)
+        addScreen(context.adminAppearanceScreen)
         addScreen(context.optionsScreen)
     }
 
@@ -138,6 +142,7 @@ class GameApp(
         removeScreen<FontScreen>(),
         removeScreen<DevOptionsScreen>(),
         removeScreen<AppearanceScreen>(),
+        removeScreen<AdminAppearanceScreen>(),
         removeScreen<OptionsScreen>(),
     )
 }

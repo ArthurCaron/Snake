@@ -8,7 +8,6 @@ import fr.mwet.snake.backdrop.BackdropStyle
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.render.Appearance
 import fr.mwet.snake.render.GroundStyle
-import fr.mwet.snake.render.VisualTheme
 import fr.mwet.snake.ui.SelectionBadge
 import fr.mwet.snake.render.MarkShape
 import fr.mwet.snake.screens.appearance.AppearancePreview
@@ -23,7 +22,7 @@ import ktx.scene2d.label
 import ktx.scene2d.table
 import ktx.scene2d.textField
 
-enum class OptionPage { Theme, Transition, Backdrop, Ground, Symbol, BodyColor, MarksColor }
+enum class OptionPage { Transition, Backdrop, Ground, Symbol, BodyColor, MarksColor }
 
 class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : KtxScreen {
     private val settings = kit.settingsRepository
@@ -39,7 +38,6 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
         page.content.clearChildren()
         page.header.clearChildren()
         page.title = when (category) {
-            OptionPage.Theme -> I18N.visualTheme()
             OptionPage.Transition -> I18N.transitionTitle()
             OptionPage.Backdrop -> I18N.backdropTitle()
             OptionPage.Ground -> I18N.groundTitle()
@@ -47,17 +45,10 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
             OptionPage.BodyColor -> I18N.snakeBodyColor()
             OptionPage.MarksColor -> I18N.snakeMarksColor()
         }
-        if (category in listOf(OptionPage.Theme, OptionPage.Symbol, OptionPage.BodyColor, OptionPage.MarksColor)) {
+        if (category in listOf(OptionPage.Symbol, OptionPage.BodyColor, OptionPage.MarksColor)) {
             page.header.actor(AppearancePreview(kit)) { it.fillX().row() }
         }
         when (category) {
-            OptionPage.Theme -> {
-                page.content.label(I18N.themeHint()) { setFontScale(0.7f); it.row() }
-                VisualTheme.entries.forEach { theme ->
-                    val badge = SelectionBadge(kit.textures).apply { showColor(theme.defaultAppearance().body) }
-                    choice(themeName(theme), { settings.appearance.theme == theme }, badge) { navigator.applyVisualTheme(theme) }
-                }
-            }
             OptionPage.Transition -> TransitionStyle.entries.forEach { style ->
                 choice(transitionName(style), { settings.transition == style }) {
                     settings.setTransition(style)
@@ -141,7 +132,7 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
     }
 
     private fun back() {
-        if (category in listOf(OptionPage.Transition, OptionPage.Backdrop, OptionPage.Ground)) navigator.goToDevOptions()
+        if (category in listOf(OptionPage.Transition, OptionPage.Backdrop, OptionPage.Ground, OptionPage.MarksColor)) navigator.goToAdminAppearance()
         else navigator.goToAppearance()
     }
 
@@ -191,9 +182,4 @@ internal fun symbolName(shape: MarkShape) = when (shape) {
     MarkShape.Star -> I18N.symbolStar()
     MarkShape.Chevron -> I18N.symbolChevron()
     MarkShape.Heart -> I18N.symbolHeart()
-}
-
-internal fun themeName(theme: VisualTheme) = when (theme) {
-    VisualTheme.Desert -> I18N.themeDesert()
-    VisualTheme.Laser -> I18N.themeLaser()
 }
