@@ -13,7 +13,6 @@ import fr.mwet.snake.render.Background
 import fr.mwet.snake.render.BoardRenderer
 import fr.mwet.snake.render.WorldLayer
 import fr.mwet.snake.save.metadata.MetadataRepository
-import fr.mwet.snake.tuning.DebugTuning
 import fr.mwet.snake.ui.UiMetrics.BOARD_BOTTOM_BAND
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiLayer
@@ -31,7 +30,7 @@ class GameScreen(
 ) : KtxScreen {
     private val worldLayer = WorldLayer(kit.batch, kit.gameViewport)
     private val uiLayer = UiLayer(kit.batch)
-    private val board = BoardRenderer(kit.textures, world, background)
+    private val board = BoardRenderer(kit.textures, world, background, kit.settingsRepository)
     private val ui = GameUi(uiLayer.stage, uiLayer.board, UiActions(), kit.widgets)
     private val menuInput = GeneralInputProcessor(
         kit.settingsRepository, GeneralCommandContext(
@@ -53,12 +52,12 @@ class GameScreen(
             },
         )
     )
-    private val debugInput = DebugInputProcessor(onStartAlmostWonGame = { startNewGame(SnakeStart.almostWon()) })
+    private val debugInput = DebugInputProcessor(onActivate = { startNewGame(SnakeStart.almostWon()) })
     private var gameState: GameState? = null
 
     override fun show() {
         kit.input.add(menuInput, gameInput, uiLayer.stage, touchInput)
-        if (DebugTuning.ENABLED) kit.input.addFirst(debugInput)
+        kit.input.addFirst(debugInput)
         startNewGame()
     }
 

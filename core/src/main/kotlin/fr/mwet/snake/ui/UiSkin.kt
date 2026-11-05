@@ -17,6 +17,8 @@ import ktx.style.imageButton
 import ktx.style.label
 import ktx.style.skin
 import ktx.style.textButton
+import ktx.style.textField
+import fr.mwet.snake.save.settings.SettingsRepository
 
 object UiStyle {
     const val TITLE = "title"
@@ -36,15 +38,15 @@ object UiStyle {
     fun flag(language: Language) = "flag${language.name}"
 }
 
-fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler): Skin = skin {
+fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler, settings: SettingsRepository): Skin = skin {
     val smallFont = fonts.font(theme, FontRole.Small)
     val bigFont = fonts.font(theme, FontRole.Big)
     val titleFont = fonts.font(theme, FontRole.SnekTitle)
     val ui = textures.game.skin
     val button = ui.button.toNinePatch()
-    val buttonDown = ui.buttonDown.toNinePatch()
-    val buttonOver = ui.buttonOver.toNinePatch()
-    val primaryOver = ui.buttonPrimaryOver.toNinePatch()
+    val buttonDown = GlowDrawable(ui.buttonDown.toNinePatch(), ui.glow, settings)
+    val buttonOver = GlowDrawable(ui.buttonOver.toNinePatch(), ui.glow, settings)
+    val primaryOver = GlowDrawable(ui.buttonPrimaryOver.toNinePatch(), ui.glow, settings)
     label {
         font = smallFont
         fontColor = Palette.label
@@ -71,19 +73,26 @@ fun createUiSkin(fonts: FontHandler, theme: FontTheme, textures: TextureHandler)
     }
     textButton(UiStyle.BIG) {
         up = ui.buttonPrimary.toNinePatch()
-        down = ui.buttonPrimaryDown.toNinePatch()
+        down = GlowDrawable(ui.buttonPrimaryDown.toNinePatch(), ui.glow, settings)
         over = primaryOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
         font = bigFont
         fontColor = Palette.bigButtonLabel
     }
+    textField {
+        font = smallFont
+        fontColor = Palette.label
+        background = button
+        cursor = textures.rectangleTexture(2, 32, Palette.label).toDrawable()
+        selection = textures.rectangleTexture(1, 1, Palette.highlight).toDrawable()
+    }
     // A key of the controls screen: the shape of the menu buttons in the primary color, pressed while it waits for a key.
     textButton(UiStyle.KEY) {
         up = ui.buttonPrimary.toNinePatch()
-        down = ui.buttonPrimaryDown.toNinePatch()
+        down = GlowDrawable(ui.buttonPrimaryDown.toNinePatch(), ui.glow, settings)
         over = primaryOver
         pressedOffsetY = -BUTTON_PRESS_DEPTH
-        checked = ui.buttonPrimaryDown.toNinePatch()
+        checked = GlowDrawable(ui.buttonPrimaryDown.toNinePatch(), ui.glow, settings)
         checkedOffsetY = -BUTTON_PRESS_DEPTH
         font = smallFont
         fontColor = Palette.bigButtonLabel

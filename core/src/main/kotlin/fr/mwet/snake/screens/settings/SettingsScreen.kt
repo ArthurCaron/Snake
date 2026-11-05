@@ -30,6 +30,7 @@ class SettingsScreen(
             if (Gdx.app.type != Android) {
                 page.content.menuButton(I18N.controls(), onClick = navigator::goToControls) { it.fillX().row() }
             }
+            page.content.menuButton(I18N.appearance(), onClick = navigator::goToAppearance) { it.fillX().row() }
             page.content.menuButton(I18N.language(), onClick = navigator::goToLanguage) { it.fillX().row() }
         }
     }

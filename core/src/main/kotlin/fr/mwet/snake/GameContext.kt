@@ -12,6 +12,8 @@ import fr.mwet.snake.inputs.GameCommandContext
 import fr.mwet.snake.inputs.GameInputProcessor
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.TouchInputProcessor
+import fr.mwet.snake.screens.appearance.AppearanceScreen
+import fr.mwet.snake.screens.options.OptionsScreen
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.devoptions.DevOptionsScreen
 import fr.mwet.snake.screens.font.FontScreen
@@ -34,7 +36,7 @@ class GameContext(
     fontSwitcher: FontSwitcher,
 ) {
     init {
-        Scene2DSkin.defaultSkin = createUiSkin(assets.fonts, boot.settingsRepository.fontTheme, assets.textures)
+        Scene2DSkin.defaultSkin = createUiSkin(assets.fonts, boot.settingsRepository.fontTheme, assets.textures, boot.settingsRepository)
     }
 
     private val gameEvents: GameEventBus = GameEventBusImpl()
@@ -72,7 +74,9 @@ class GameContext(
     val controlsScreen = ControlsScreen(kit, boot.settingsRepository, keyNames, navigator)
     val languageScreen = LanguageScreen(kit, boot.settingsRepository, languages, navigator)
     val fontScreen = FontScreen(kit, assets.fonts, boot.settingsRepository, fontSwitcher, navigator)
-    val devOptionsScreen = DevOptionsScreen(kit, boot.settingsRepository, navigator)
+    val appearanceScreen = AppearanceScreen(kit, navigator)
+    val optionsScreen = OptionsScreen(kit, navigator)
+    val devOptionsScreen = DevOptionsScreen(kit, navigator)
 
     init {
         gameEvents.listen(soundPlayer)

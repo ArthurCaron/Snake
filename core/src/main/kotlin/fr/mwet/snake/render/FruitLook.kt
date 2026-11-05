@@ -15,5 +15,4 @@ object FruitLook {
         FruitStyle(FruitKind.Watermelon, Color.valueOf("f0485a")),
         FruitStyle(FruitKind.Prickly, Color.valueOf("d8467b")),
     )
-    val glow = 0.0f
 }

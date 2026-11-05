@@ -59,3 +59,37 @@ groundTiles,tiles,dalles
 groundScales,scales,écailles
 groundDunes,dunes,dunes
 groundHex,hexagons,hexagones
+appearance,Appearance,Apparence
+snakeBodyColor,Snake color,Couleur du serpent
+snakeMarksColor,Symbol color,Couleur des symboles
+snakeSymbol,Snake symbol,Symbole du serpent
+fruitColor,Fruit color,Couleur du fruit
+snakeGlow,Snake glow,Glow du serpent
+fruitGlow,Fruit glow,Glow des fruits
+menuGlow,Menu glow,Glow des menus
+resetAppearance,Reset appearance,Réinitialiser apparence
+optionState,{0}: {1},{0} : {1}
+enabled,on,activé
+disabled,off,désactivé
+transitionTitle,Transition,Transition
+backdropTitle,Background,Fond animé
+groundTitle,Ground,Sol
+customColor,Custom color,Couleur personnalisée
+applyColor,Apply,Appliquer
+colorFormat,6 hexadecimal digits (RRGGBB),6 caractères hexadécimaux (RRGGBB)
+colorTurquoise,Turquoise,Turquoise
+colorCream,Cream,Crème
+colorGreen,Green,Vert
+colorBlue,Blue,Bleu
+colorPurple,Purple,Violet
+colorPink,Pink,Rose
+colorOrange,Orange,Orange
+colorRed,Red,Rouge
+symbolNone,None,Aucun
+symbolDiamond,Diamond,Losange
+symbolCircle,Circle,Cercle
+symbolSquare,Square,Carré
+symbolStar,Star,Étoile
+symbolChevron,Chevron,Chevron
+symbolHeart,Heart,Cœur
+previewButton,Try the button,Tester le bouton

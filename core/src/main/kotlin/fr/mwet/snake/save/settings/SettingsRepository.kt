@@ -3,6 +3,8 @@ package fr.mwet.snake.save.settings
 import fr.mwet.snake.backdrop.BackdropStyle
 import fr.mwet.snake.inputs.GameActionId
 import fr.mwet.snake.inputs.GeneralActionId
+import fr.mwet.snake.render.Appearance
+import fr.mwet.snake.render.MarkShape
 import fr.mwet.snake.render.GroundStyle
 import fr.mwet.snake.save.serialization.JsonStore
 import fr.mwet.snake.save.settings.serializable.DefaultKeymappings
@@ -32,6 +34,12 @@ class SettingsRepository(private val jsonStore: JsonStore) {
     val transition: TransitionStyle
         get() = TransitionStyle.fromTag(settings.userPreferences.transition)
     val backdrop: BackdropStyle get() = BackdropStyle.fromTag(settings.userPreferences.backdrop)
+
+    val appearance: Appearance get() = settings.userPreferences.appearance
+
+    fun setAppearance(appearance: Appearance) {
+        save(settings.copy(userPreferences = settings.userPreferences.copy(appearance = appearance)))
+    }
 
     fun toggleSound() {
         save(settings.copy(userPreferences = settings.userPreferences.copy(soundOn = !soundOn)))
@@ -89,6 +97,15 @@ class SettingsRepository(private val jsonStore: JsonStore) {
                 transition = userPreferencesSave.transition,
                 backdrop = userPreferencesSave.backdrop,
                 ground = userPreferencesSave.ground,
+                appearance = Appearance(
+                    bodyHex = Appearance.colorHex(userPreferencesSave.snakeBody) ?: Appearance.DEFAULT_BODY,
+                    marksHex = Appearance.colorHex(userPreferencesSave.snakeMarks) ?: Appearance.DEFAULT_MARKS,
+                    markShape = MarkShape.entries.firstOrNull { it.name.lowercase() == userPreferencesSave.snakeSymbol } ?: MarkShape.Diamond,
+                    takesFruitColor = userPreferencesSave.takesFruitColor,
+                    snakeGlow = userPreferencesSave.snakeGlow,
+                    fruitGlow = userPreferencesSave.fruitGlow,
+                    menuGlow = userPreferencesSave.menuGlow,
+                ),
             ),
             keymappings = Keymappings(
                 game = keymappingsSave.game.map { it.toKeymapping() },
@@ -137,5 +154,12 @@ class SettingsRepository(private val jsonStore: JsonStore) {
         transition = transition,
         backdrop = backdrop,
         ground = ground,
+        snakeBody = appearance.bodyHex,
+        snakeMarks = appearance.marksHex,
+        snakeSymbol = appearance.markShape.name.lowercase(),
+        takesFruitColor = appearance.takesFruitColor,
+        snakeGlow = appearance.snakeGlow,
+        fruitGlow = appearance.fruitGlow,
+        menuGlow = appearance.menuGlow,
     )
 }

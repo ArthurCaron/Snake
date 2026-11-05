@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.math.MathUtils
+import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.game.Food
 import fr.mwet.snake.game.Segment
@@ -17,6 +18,7 @@ import fr.mwet.snake.utils.rotatedX
 import fr.mwet.snake.utils.rotatedY
 import fr.mwet.snake.tuning.RenderTuning.Snake.EYE_FORWARD
 import fr.mwet.snake.tuning.RenderTuning.Snake.EYE_SIDE
+import fr.mwet.snake.tuning.RenderTuning.Snake.GLOW_ALPHA
 import fr.mwet.snake.tuning.RenderTuning.Snake.GLOW_SIZE
 import fr.mwet.snake.tuning.RenderTuning.Snake.HEAD_MARK_OFFSET
 import fr.mwet.snake.tuning.RenderTuning.Snake.MARK_SIZE
@@ -30,16 +32,14 @@ import fr.mwet.snake.tuning.RenderTuning.Snake.TURN_MARK_OFFSET
 
 class SnakeSprites(val head: AtlasRegion, val straight: AtlasRegion, val turn: AtlasRegion, val tail: AtlasRegion)
 
-class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, private val food: Food) {
+class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, private val food: Food, private val settings: SettingsRepository) {
     private val skin = textureHandler.game.skin
     private val base = SnakeSprites(skin.snakeHead, skin.snakeBodyStraight, skin.snakeBodyTurn, skin.snakeTail)
     private val detail = SnakeSprites(skin.snakeHeadDetail, skin.snakeBodyStraightDetail, skin.snakeBodyTurnDetail, skin.snakeTailDetail)
     private val pupil = skin.snakePupil
     private val glow = skin.glow
-    private val headMark = skin.snakeHeadMark
-    private val mark = SnakeLook.markShape.region(skin)
 
-    val colors = SnakeColors()
+    val colors = SnakeColors(settings)
 
     private class DirectionPair(val first: Direction, val second: Direction) {
         fun matches(first: Direction, second: Direction): Boolean =
@@ -59,7 +59,7 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
         eTime += delta
         colors.update(delta)
 
-        if (SnakeLook.glow > 0f) drawGlow(batch)
+        if (settings.appearance.snakeGlow) drawGlow(batch)
         batch.color = Palette.snakeShadow
         drawLayer(batch, base, SHADOW_X, SHADOW_Y, tinted = false)
         drawLayer(batch, base, 0f, 0f, tinted = true)
@@ -75,7 +75,7 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
             var segment: Segment? = snake.head
             while (segment != null) {
                 val color = colors.at(index)
-                batch.setColor(color.r, color.g, color.b, SnakeLook.glow)
+                batch.setColor(color.r, color.g, color.b, GLOW_ALPHA)
                 batch.draw(glow, segment.position.x + (1f - GLOW_SIZE) / 2, segment.position.y + (1f - GLOW_SIZE) / 2, GLOW_SIZE, GLOW_SIZE)
                 segment = segment.next
                 index++
@@ -102,12 +102,13 @@ class SnakeRenderer(textureHandler: TextureHandler, private val snake: Snake, pr
     }
 
     private fun drawMarks(batch: SpriteBatch) {
-        batch.color = Palette.snakeMarks
+        val mark = settings.appearance.markShape.region(skin) ?: return
+        batch.color = settings.appearance.marks
         val head = snake.head
         val facing = snake.currentDirection
         drawMark(
             batch,
-            headMark,
+            mark,
             head.position.x + 0.5f - facing.directionX * HEAD_MARK_OFFSET,
             head.position.y + 0.5f - facing.directionY * HEAD_MARK_OFFSET,
             angleOf(facing.directionX.toFloat(), facing.directionY.toFloat()),
