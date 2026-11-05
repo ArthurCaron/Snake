@@ -16,6 +16,7 @@ import fr.mwet.snake.transition.TransitionStyle
 import fr.mwet.snake.ui.MenuPage
 import fr.mwet.snake.ui.UiKit
 import fr.mwet.snake.ui.UiMetrics
+import fr.mwet.snake.ui.widthForCharacters
 import ktx.app.KtxScreen
 import ktx.scene2d.actor
 import ktx.scene2d.label
@@ -100,7 +101,7 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
                 val field: TextField = textField(currentHex()) {
                     maxLength = 7
                     textFieldFilter = TextField.TextFieldFilter { _, c -> c == '#' || c in '0'..'9' || c.lowercaseChar() in 'a'..'f' }
-                    it.width(UiMetrics.COLOR_FIELD_WIDTH)
+                    it.width(maxOf(UiMetrics.COLOR_FIELD_WIDTH, widthForCharacters("#0123456789abcdefABCDEF", maxLength)))
                 }
                 colorField = field
                 menuButton(I18N.applyColor(), onClick = {

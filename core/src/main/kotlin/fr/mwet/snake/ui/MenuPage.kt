@@ -34,7 +34,7 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
 
     val content: KTableWidget = scene2d.table { defaults().space(PAGE_CONTENT_SPACE) }
     val header: KTableWidget = scene2d.table { defaults().space(PAGE_CONTENT_SPACE) }
-    private val scroll = ScrollPane(content, ScrollPane.ScrollPaneStyle().apply {
+    private val scroll = MenuScrollPane(content, ScrollPane.ScrollPaneStyle().apply {
         vScrollKnob = kit.textures.rectangleTexture(6, 24, Palette.highlight).toDrawable()
     }).apply {
         setScrollingDisabled(true, false)
