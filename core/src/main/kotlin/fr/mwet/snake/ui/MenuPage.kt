@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.tuning.Palette
 import fr.mwet.snake.generated.assets.I18N
@@ -41,7 +42,9 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
         setFadeScrollBars(false)
     }
     private var scrollCell: Cell<*>
+    private var titleCell: Cell<*>
     private var titleLabel: Label
+    private var backButton: TextButton
     private var titleFitWidth = -1f
     var title: String
         get() = titleLabel.text.toString()
@@ -55,10 +58,10 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
                     background(UiStyle.PANEL)
                     pad(PANEL_PAD)
                     defaults().space(PAGE_SPACE)
-                    titleLabel = label(title, UiStyle.TITLE) { it.row() }
+                    titleLabel = label(title, UiStyle.TITLE) { titleCell = it; it.row() }
                     actor(header) { it.space(0f).row() }
                     actor(scroll) { scrollCell = it; it.row() }
-                    menuButton(I18N.back(), onClick = onBack)
+                    backButton = menuButton(I18N.back(), onClick = onBack)
                 }
             })
         }
@@ -89,7 +92,14 @@ class MenuPage(private val kit: UiKit, title: String, private val onBack: () -> 
             titleLabel.setFontScale(1f)
             if (titleLabel.prefWidth > maxWidth) titleLabel.setFontScale(maxWidth / titleLabel.prefWidth)
         }
-        val maxHeight = (uiLayer.board.height - titleLabel.prefHeight - header.prefHeight - PANEL_PAD * 2 - PAGE_SPACE * 3 - UiMetrics.UNIT * 24).coerceAtLeast(0f)
+        // An empty header must not add a second gap below the title.
+        val headerGap = if (header.hasChildren()) PAGE_SPACE else 0f
+        if (titleCell.spaceBottom != headerGap) {
+            titleCell.spaceBottom(headerGap)
+            titleLabel.invalidateHierarchy()
+        }
+        val maxHeight = (uiLayer.board.height - titleLabel.prefHeight - header.prefHeight -
+            backButton.prefHeight - PANEL_PAD * 2 - PAGE_SPACE * 2 - headerGap).coerceAtLeast(0f)
         if (scrollCell.maxHeight != maxHeight || scrollCell.maxWidth != maxWidth) {
             scrollCell.maxHeight(maxHeight).maxWidth(maxWidth)
             content.invalidateHierarchy()
