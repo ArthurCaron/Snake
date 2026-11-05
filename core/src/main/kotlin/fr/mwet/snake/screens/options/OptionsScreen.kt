@@ -1,15 +1,15 @@
 package fr.mwet.snake.screens.options
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import fr.mwet.snake.Navigator
-import fr.mwet.snake.assets.toDrawable
 import fr.mwet.snake.backdrop.BackdropStyle
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.render.Appearance
 import fr.mwet.snake.render.GroundStyle
+import fr.mwet.snake.render.VisualTheme
+import fr.mwet.snake.ui.SelectionBadge
 import fr.mwet.snake.render.MarkShape
 import fr.mwet.snake.screens.appearance.AppearancePreview
 import fr.mwet.snake.transition.TransitionStyle
@@ -23,7 +23,7 @@ import ktx.scene2d.label
 import ktx.scene2d.table
 import ktx.scene2d.textField
 
-enum class OptionPage { Transition, Backdrop, Ground, Symbol, BodyColor, MarksColor }
+enum class OptionPage { Theme, Transition, Backdrop, Ground, Symbol, BodyColor, MarksColor }
 
 class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : KtxScreen {
     private val settings = kit.settingsRepository
@@ -39,6 +39,7 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
         page.content.clearChildren()
         page.header.clearChildren()
         page.title = when (category) {
+            OptionPage.Theme -> I18N.visualTheme()
             OptionPage.Transition -> I18N.transitionTitle()
             OptionPage.Backdrop -> I18N.backdropTitle()
             OptionPage.Ground -> I18N.groundTitle()
@@ -46,10 +47,17 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
             OptionPage.BodyColor -> I18N.snakeBodyColor()
             OptionPage.MarksColor -> I18N.snakeMarksColor()
         }
-        if (category in listOf(OptionPage.Symbol, OptionPage.BodyColor, OptionPage.MarksColor)) {
+        if (category in listOf(OptionPage.Theme, OptionPage.Symbol, OptionPage.BodyColor, OptionPage.MarksColor)) {
             page.header.actor(AppearancePreview(kit)) { it.fillX().row() }
         }
         when (category) {
+            OptionPage.Theme -> {
+                page.content.label(I18N.themeHint()) { setFontScale(0.7f); it.row() }
+                VisualTheme.entries.forEach { theme ->
+                    val badge = SelectionBadge(kit.textures).apply { showColor(theme.defaultAppearance().body) }
+                    choice(themeName(theme), { settings.appearance.theme == theme }, badge) { navigator.applyVisualTheme(theme) }
+                }
+            }
             OptionPage.Transition -> TransitionStyle.entries.forEach { style ->
                 choice(transitionName(style), { settings.transition == style }) {
                     settings.setTransition(style)
@@ -63,7 +71,7 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
                 choice(groundName(style), { settings.ground == style }) { settings.setGround(style) }
             }
             OptionPage.Symbol -> MarkShape.entries.forEach { shape ->
-                val image = shape.region(kit.textures.game.skin)?.let { Image(it).apply { color = settings.appearance.marks } }
+                val image = SelectionBadge(kit.textures).apply { showSymbol(shape.region(kit.textures.skin), settings.appearance.marks) }
                 choice(symbolName(shape), { settings.appearance.markShape == shape }, image) {
                     settings.setAppearance(settings.appearance.copy(markShape = shape))
                 }
@@ -73,9 +81,12 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
         refresh()
     }
 
-    private fun choice(name: String, selected: () -> Boolean, image: Image? = null, apply: () -> Unit) {
+    private fun choice(name: String, selected: () -> Boolean, image: SelectionBadge? = null, apply: () -> Unit) {
         val button = kit.widgets.menuButton(name, onClick = { apply(); refresh() })
-        if (image != null) button.add(image).size(UiMetrics.CHOICE_SWATCH_SIZE).padLeft(UiMetrics.PAGE_CONTENT_SPACE)
+        if (image != null) {
+            button.labelCell.expandX()
+            button.add(image).size(UiMetrics.CHOICE_BADGE_SIZE).padLeft(UiMetrics.PAGE_CONTENT_SPACE)
+        }
         page.content.add(button).fillX().row()
         buttons += button to { if (selected()) "> $name <" else name }
     }
@@ -91,9 +102,8 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
             I18N.colorOrange() to "ed994b",
             I18N.colorRed() to "dc5b53",
         )
-        val pixel = kit.textures.rectangleTexture(1, 1, Color.WHITE).toDrawable()
         presets.forEach { (name, hex) ->
-            choice(name, { currentHex() == hex }, Image(pixel).apply { color = Color.valueOf(hex) }) { setColor(hex) }
+            choice(name, { currentHex() == hex }, SelectionBadge(kit.textures).apply { showColor(Color.valueOf(hex)) }) { setColor(hex) }
         }
         with(kit.widgets) {
             page.content.label(I18N.customColor()) { it.row() }
@@ -142,14 +152,14 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
     override fun dispose() = page.dispose()
 }
 
-private fun transitionName(style: TransitionStyle) = when (style) {
+internal fun transitionName(style: TransitionStyle) = when (style) {
     TransitionStyle.None -> I18N.transitionNone()
     TransitionStyle.Fade -> I18N.transitionFade()
     TransitionStyle.Slide -> I18N.transitionSlide()
     TransitionStyle.SnakeWipe -> I18N.transitionSnake()
 }
 
-private fun backdropName(style: BackdropStyle) = when (style) {
+internal fun backdropName(style: BackdropStyle) = when (style) {
     BackdropStyle.Plain -> I18N.backdropPlain()
     BackdropStyle.DriftingGrid -> I18N.backdropGrid()
     BackdropStyle.DemoSnake -> I18N.backdropDemo()
@@ -162,7 +172,7 @@ private fun backdropName(style: BackdropStyle) = when (style) {
     BackdropStyle.WanderingSnakes -> I18N.backdropWanderers()
 }
 
-private fun groundName(style: GroundStyle) = when (style) {
+internal fun groundName(style: GroundStyle) = when (style) {
     GroundStyle.Checker -> I18N.groundChecker()
     GroundStyle.Plain -> I18N.groundPlain()
     GroundStyle.Grain -> I18N.groundGrain()
@@ -173,7 +183,7 @@ private fun groundName(style: GroundStyle) = when (style) {
     GroundStyle.Hex -> I18N.groundHex()
 }
 
-private fun symbolName(shape: MarkShape) = when (shape) {
+internal fun symbolName(shape: MarkShape) = when (shape) {
     MarkShape.None -> I18N.symbolNone()
     MarkShape.Diamond -> I18N.symbolDiamond()
     MarkShape.Circle -> I18N.symbolCircle()
@@ -181,4 +191,9 @@ private fun symbolName(shape: MarkShape) = when (shape) {
     MarkShape.Star -> I18N.symbolStar()
     MarkShape.Chevron -> I18N.symbolChevron()
     MarkShape.Heart -> I18N.symbolHeart()
+}
+
+internal fun themeName(theme: VisualTheme) = when (theme) {
+    VisualTheme.Desert -> I18N.themeDesert()
+    VisualTheme.Laser -> I18N.themeLaser()
 }

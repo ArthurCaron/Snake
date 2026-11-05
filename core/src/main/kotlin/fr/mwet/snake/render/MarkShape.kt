@@ -1,7 +1,7 @@
 package fr.mwet.snake.render
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
-import fr.mwet.snake.generated.assets.TextureAssets
+import fr.mwet.snake.assets.GameSkin
 
 enum class MarkShape {
     None,
@@ -12,7 +12,7 @@ enum class MarkShape {
     Chevron,
     Heart;
 
-    fun region(skin: TextureAssets.Game.Skin): AtlasRegion? = when (this) {
+    fun region(skin: GameSkin): AtlasRegion? = when (this) {
         None -> null
         Diamond -> skin.markDiamond
         Circle -> skin.markCircle

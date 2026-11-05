@@ -62,6 +62,12 @@ class GameApp(
         rebuildScreens(show = { setScreen<FontScreen>() })
     }
 
+    override fun applyVisualTheme(theme: fr.mwet.snake.render.VisualTheme) {
+        if (boot.settingsRepository.appearance.theme == theme) return
+        boot.settingsRepository.setAppearance(theme.defaultAppearance())
+        rebuildScreens(show = { setScreen<AppearanceScreen>() })
+    }
+
     private fun rebuildScreens(prepare: () -> Unit = {}, show: () -> Unit) {
         Gdx.app.postRunnable {
             prepare()

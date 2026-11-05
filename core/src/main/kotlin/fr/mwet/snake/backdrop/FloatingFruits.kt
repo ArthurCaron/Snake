@@ -33,7 +33,8 @@ private const val UNSCALED = 1f
 
 // Strawberries rise slowly, sway and tilt, and come back from the bottom when they leave the top.
 class FloatingFruits(textures: TextureHandler, private val background: Background) : WorldDrawable {
-    private val sprites = FruitLook.fruits.map { it.kind.sprites(textures.game.skin) }
+    private val colors = textures.visualTheme.fruitColors
+    private val sprites = FruitLook.fruits.map { it.kind.sprites(textures.skin) }
     private val fruit = IntArray(FRUIT_COUNT) { MathUtils.random(FruitLook.fruits.size - 1) }
     private val x = FloatArray(FRUIT_COUNT) { MathUtils.random(0f, WORLD_WIDTH) }
     private val y = FloatArray(FRUIT_COUNT) { MathUtils.random(START_MIN_Y, WORLD_HEIGHT) }
@@ -56,7 +57,7 @@ class FloatingFruits(textures: TextureHandler, private val background: Backgroun
             // x keeps the rest position, and the fruit oscillates around it.
             val sway = MathUtils.sin(time + phase[i]) * SWAY
             val rotation = MathUtils.sin(time * ROTATION_SPEED + phase[i]) * ROTATION_DEGREES
-            val tint = FruitLook.fruits[fruit[i]].color
+            val tint = colors[fruit[i]]
             val sprite = sprites[fruit[i]]
             batch.setTint(tint, COLOR.a)
             // Rotate around the centre of the sprite.

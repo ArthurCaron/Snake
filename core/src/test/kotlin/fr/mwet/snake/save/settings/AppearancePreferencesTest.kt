@@ -2,6 +2,7 @@ package fr.mwet.snake.save.settings
 
 import fr.mwet.snake.render.Appearance
 import fr.mwet.snake.render.MarkShape
+import fr.mwet.snake.render.VisualTheme
 import fr.mwet.snake.save.serialization.InMemoryTextStore
 import fr.mwet.snake.save.serialization.JsonStore
 import kotlin.test.Test
@@ -9,6 +10,19 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class AppearancePreferencesTest {
+    @Test
+    fun `laser theme and custom colors survive reload`() {
+        val store = InMemoryTextStore()
+        val laser = VisualTheme.Laser.defaultAppearance().copy(bodyHex = "ffaa22", marksHex = "aabbcc", markShape = MarkShape.Star)
+        SettingsRepository(JsonStore(store)).setAppearance(laser)
+        val restored = SettingsRepository(JsonStore(store)).appearance
+        assertEquals(laser, restored)
+        assertEquals(VisualTheme.Laser, restored.theme)
+        assertEquals(true, restored.snakeGlow)
+        assertEquals(true, restored.fruitGlow)
+        assertEquals(true, restored.menuGlow)
+    }
+
     @Test
     fun `all appearance choices survive reload and reset without changing other preferences`() {
         val store = InMemoryTextStore()

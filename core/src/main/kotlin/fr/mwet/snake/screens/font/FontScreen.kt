@@ -23,7 +23,7 @@ class FontScreen(
     private val buttons: Map<FontTheme, TextButton> = with(kit.widgets) {
         FontTheme.entries.associateWith { theme ->
             page.content.menuButton(theme.displayName, onClick = { choose(theme) }) {
-                style = TextButton.TextButtonStyle(style).apply { font = fonts.font(theme, FontRole.Small) }
+                style = TextButton.TextButtonStyle(style).apply { font = fonts.font(theme, FontRole.Small, settingsRepository.appearance.theme) }
                 it.fillX().row()
             }
         }
