@@ -60,7 +60,39 @@ tasks.register("buildJavaScript", JavaExec) {
     }
     indexFile.text = index
       .replace('<head>', '<head>\n    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">')
-      .replace('</style>', '    canvas { touch-action: none; }\n    </style>')
+      .replace('</style>', '''    canvas { touch-action: none; }
+        body { background: #8a4a32; }
+        #progress {
+          position: fixed;
+          width: min(500px, calc(100vw - 48px));
+          height: auto;
+          max-height: calc(100vh - 48px);
+          margin: 0;
+          transform: translate(-50%, -50%);
+        }
+        #progress-img {
+          display: block;
+          width: 100%;
+          max-height: calc(100vh - 96px);
+          object-fit: contain;
+          box-sizing: border-box;
+          padding-bottom: 12px;
+        }
+        #progress-box {
+          width: 100%;
+          height: 24px;
+          box-sizing: border-box;
+          float: none;
+          border-color: #3b2220;
+          background: #3b2220;
+          padding: 3px;
+        }
+        #progress-bar {
+          height: 14px;
+          background: #78d0c8;
+          box-shadow: none;
+        }
+    </style>''')
   }
 }
 
