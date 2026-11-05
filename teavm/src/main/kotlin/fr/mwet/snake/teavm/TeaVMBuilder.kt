@@ -16,6 +16,7 @@ object TeaVMBuilder {
             assetsPath.add(AssetFileHandle("../assets"))
             webappPath = File("build/dist").canonicalPath
             htmlTitle = "Snake"
+            logoPath = "SplashScreen.png"
             // Register any extra classpath assets here:
             // additionalAssetsClasspathFiles += "fr/mwet/snake/asset.extension"
         }
