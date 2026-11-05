@@ -1,5 +1,6 @@
 package fr.mwet.snake.save.settings.serializable
 
+import fr.mwet.snake.render.Appearance
 import fr.mwet.snake.save.settings.Language
 import fr.mwet.snake.tuning.FontTheme
 import fr.mwet.snake.utils.NO_VERSION
@@ -15,6 +16,13 @@ class UserPreferencesSave() {
     var transition: String = ""
     var backdrop: String = ""
     var ground: String = ""
+    var snakeBody: String = Appearance.DEFAULT_BODY
+    var snakeMarks: String = Appearance.DEFAULT_MARKS
+    var snakeSymbol: String = "diamond"
+    var takesFruitColor: Boolean = false
+    var snakeGlow: Boolean = false
+    var fruitGlow: Boolean = false
+    var menuGlow: Boolean = false
 
     constructor(
         version: Int,
@@ -24,6 +32,13 @@ class UserPreferencesSave() {
         transition: String,
         backdrop: String,
         ground: String,
+        snakeBody: String = Appearance.DEFAULT_BODY,
+        snakeMarks: String = Appearance.DEFAULT_MARKS,
+        snakeSymbol: String = "diamond",
+        takesFruitColor: Boolean = false,
+        snakeGlow: Boolean = false,
+        fruitGlow: Boolean = false,
+        menuGlow: Boolean = false,
     ) : this() {
         this.version = version
         this.locale = locale
@@ -33,6 +48,13 @@ class UserPreferencesSave() {
         this.transition = transition
         this.backdrop = backdrop
         this.ground = ground
+        this.snakeBody = snakeBody
+        this.snakeMarks = snakeMarks
+        this.snakeSymbol = snakeSymbol
+        this.takesFruitColor = takesFruitColor
+        this.snakeGlow = snakeGlow
+        this.fruitGlow = fruitGlow
+        this.menuGlow = menuGlow
     }
 
     fun restoreDefaults() {

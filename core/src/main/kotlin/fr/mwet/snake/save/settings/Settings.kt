@@ -1,5 +1,6 @@
 package fr.mwet.snake.save.settings
 
+import fr.mwet.snake.render.Appearance
 import fr.mwet.snake.inputs.GameCommand
 import fr.mwet.snake.inputs.GeneralCommand
 import fr.mwet.snake.inputs.NullGameCommand
@@ -19,6 +20,7 @@ data class UserPreferences(
     val transition: String,
     val backdrop: String,
     val ground: String,
+    val appearance: Appearance = Appearance(),
 )
 
 data class Keymappings(

@@ -6,6 +6,7 @@ import fr.mwet.snake.events.MenuEvent
 import fr.mwet.snake.events.MenuEvent.*
 import fr.mwet.snake.events.MenuEventBus
 import fr.mwet.snake.events.MenuEventListener
+import fr.mwet.snake.inputs.DebugInputProcessor
 import fr.mwet.snake.inputs.GeneralCommandContext
 import fr.mwet.snake.inputs.GeneralInputProcessor
 import fr.mwet.snake.render.WorldLayer
@@ -35,13 +36,16 @@ class MainMenuScreen(
         )
     )
 
+    private val debugInput = DebugInputProcessor(navigator::goToDevOptions)
+
     override fun show() {
+        kit.input.addFirst(debugInput)
         kit.input.add(menuInput, uiLayer.stage)
         ui.onShow(metadataRepository.metadata.highestScore.score)
     }
 
     override fun hide() {
-        kit.input.remove(menuInput, uiLayer.stage)
+        kit.input.remove(debugInput, menuInput, uiLayer.stage)
         ui.onHide()
     }
 

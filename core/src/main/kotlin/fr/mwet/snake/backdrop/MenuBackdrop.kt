@@ -17,7 +17,7 @@ class MenuBackdrop(
     private val plain: Background,
 ) : WorldDrawable {
     private val driftingGrid = DriftingGrid(textures, plain)
-    private val demoSnake = DemoSnake(textures, plain)
+    private val demoSnake = DemoSnake(textures, plain, settingsRepository)
     private val floatingFruits = FloatingFruits(textures, plain)
     private val fireflies = Fireflies(textures, plain)
     private val diagonalStripes = DiagonalStripes(textures, plain)

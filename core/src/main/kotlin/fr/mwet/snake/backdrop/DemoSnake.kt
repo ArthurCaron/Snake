@@ -3,6 +3,7 @@ package fr.mwet.snake.backdrop
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
+import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.assets.TextureHandler
 import fr.mwet.snake.events.GameEventBusImpl
 import fr.mwet.snake.game.GameWorld
@@ -21,10 +22,10 @@ import kotlin.math.abs
 private const val NO_HEAD = -1f
 
 // A real GameWorld plays by itself behind the menu, steered by a greedy bot, and restarts after each game.
-class DemoSnake(textures: TextureHandler, background: Background) : WorldDrawable {
+class DemoSnake(textures: TextureHandler, background: Background, settings: SettingsRepository) : WorldDrawable {
     // Its own event bus, with no listener: no sound, no score, nothing outside this class reacts.
     private val world = GameWorld(GameEventBusImpl())
-    private val board = BoardRenderer(textures, world, background)
+    private val board = BoardRenderer(textures, world, background, settings)
     private val pixel = textures.rectangleTexture(1, 1, Color.WHITE)
     // The head position at the last decision. NO_HEAD forces a decision on the first frame.
     private val lastHead = Vector2(NO_HEAD, NO_HEAD)

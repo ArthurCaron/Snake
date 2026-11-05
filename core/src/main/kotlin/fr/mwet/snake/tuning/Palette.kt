@@ -1,7 +1,6 @@
 package fr.mwet.snake.tuning
 
 import com.badlogic.gdx.graphics.Color
-import fr.mwet.snake.render.SnakeLook
 import fr.mwet.snake.render.StyleColors
 
 object Palette {
@@ -9,8 +8,6 @@ object Palette {
     val boardSurround: Color = StyleColors.surround
     val gridLine: Color = Color(1f, 1f, 1f, 0.1f)
 
-    val snakeBody: Color = SnakeLook.body
-    val snakeMarks: Color = SnakeLook.marks
     val snakeShadow: Color = StyleColors.outline.withAlpha(0.28f)
 
     val fontFill: Color = StyleColors.text

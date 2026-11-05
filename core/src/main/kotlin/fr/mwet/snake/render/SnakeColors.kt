@@ -3,17 +3,17 @@ package fr.mwet.snake.render
 import com.badlogic.gdx.graphics.Color
 import fr.mwet.snake.tuning.AnimationTuning.SNAKE_COLOR_FADE_SECONDS
 import fr.mwet.snake.tuning.AnimationTuning.SNAKE_COLOR_SEGMENT_DELAY
-import fr.mwet.snake.tuning.Palette
+import fr.mwet.snake.save.settings.SettingsRepository
 
-class SnakeColors {
-    private val from = Color(Palette.snakeBody)
-    private val to = Color(Palette.snakeBody)
+class SnakeColors(private val settings: SettingsRepository) {
+    private val from = Color(settings.appearance.body)
+    private val to = Color(settings.appearance.body)
     private val scratch = Color()
     private var elapsed = Float.MAX_VALUE
 
     fun reset() {
-        from.set(Palette.snakeBody)
-        to.set(Palette.snakeBody)
+        from.set(settings.appearance.body)
+        to.set(settings.appearance.body)
         elapsed = Float.MAX_VALUE
     }
 

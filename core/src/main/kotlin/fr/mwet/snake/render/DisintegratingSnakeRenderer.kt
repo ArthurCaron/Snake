@@ -5,15 +5,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.math.Vector2
 import fr.mwet.snake.assets.TextureHandler
+import fr.mwet.snake.save.settings.SettingsRepository
 import fr.mwet.snake.game.Segment
 import fr.mwet.snake.game.Snake
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_HEIGHT
 import fr.mwet.snake.tuning.GameplayTuning.WORLD_WIDTH
+import fr.mwet.snake.tuning.RenderTuning.Snake.MARK_SIZE
+import fr.mwet.snake.tuning.RenderTuning.Snake.GLOW_ALPHA
+import fr.mwet.snake.tuning.RenderTuning.Snake.GLOW_SIZE
 import fr.mwet.snake.utils.VectorPool
 import fr.mwet.snake.utils.resetColor
 import kotlin.random.Random
 
-class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Snake) {
+class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Snake, private val settings: SettingsRepository) {
     private var eTime = 0f
     private val vectors = VectorPool()
 
@@ -42,8 +46,23 @@ class DisintegratingSnakeRenderer(textureHandler: TextureHandler, val snake: Sna
             it.position.x += (it.tx - it.position.x) * delta * 2f
             it.position.y += (it.ty - it.position.y) * delta * 2f
         }
+        if (settings.appearance.snakeGlow) {
+            batch.additive {
+                batch.setColor(color.r, color.g, color.b, GLOW_ALPHA)
+                bodyParts.forEach { part -> batch.draw(skin.glow, part.position.x + (1 - GLOW_SIZE) / 2, part.position.y + (1 - GLOW_SIZE) / 2, GLOW_SIZE, GLOW_SIZE) }
+            }
+        }
         batch.color = color
         bodyParts.forEach { draw(batch, it, it.texture) }
+        val mark = settings.appearance.markShape.region(skin)
+        if (mark != null) {
+            batch.color = settings.appearance.marks
+            val size = MARK_SIZE
+            bodyParts.forEach { part ->
+                batch.draw(mark, part.position.x + (1 - size) / 2, part.position.y + (1 - size) / 2,
+                    size / 2, size / 2, size, size, 1f, 1f, part.angle)
+            }
+        }
         batch.resetColor()
         bodyParts.forEach { draw(batch, it, it.detail) }
     }

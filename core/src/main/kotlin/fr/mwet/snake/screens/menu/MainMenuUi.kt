@@ -20,7 +20,6 @@ import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_CLICK_DELAY
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_IN_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
-import fr.mwet.snake.tuning.DebugTuning.SHOW_DEV_OPTIONS
 import fr.mwet.snake.tuning.FontTuning.TITLE_TEXT
 import fr.mwet.snake.ui.UiMetrics.MENU_BEST_SCORE_GAP
 import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_GAP
@@ -63,12 +62,7 @@ class MainMenuUi(
                 actor(title.actor) { it.padBottom(MENU_TITLE_GAP).row() }
                 actor(playButton.actor) { it.padBottom(SCREEN_MARGIN).row() }
                 bestScoreLabel = label("") { it.padBottom(MENU_BEST_SCORE_GAP).row() }
-                table {
-                    defaults().space(SCREEN_MARGIN)
-                    menuButton(I18N.settings(), onClick = navigator::goToSettings)
-                    it.row()
-                }
-                if (SHOW_DEV_OPTIONS) menuButton(I18N.devOptions(), onClick = navigator::goToDevOptions) { it.padTop(SCREEN_MARGIN) }
+                menuButton(I18N.settings(), onClick = navigator::goToSettings) { it.row() }
             })
             board.addActor(scene2d.table {
                 setFillParent(true)

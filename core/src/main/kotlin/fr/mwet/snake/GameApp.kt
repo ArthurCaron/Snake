@@ -7,6 +7,9 @@ import fr.mwet.snake.events.MenuEvent.LoadingFinished
 import fr.mwet.snake.inputs.KeyNames
 import fr.mwet.snake.inputs.LibGdxKeyNames
 import fr.mwet.snake.save.settings.Language
+import fr.mwet.snake.screens.appearance.AppearanceScreen
+import fr.mwet.snake.screens.options.OptionPage
+import fr.mwet.snake.screens.options.OptionsScreen
 import fr.mwet.snake.screens.controls.ControlsScreen
 import fr.mwet.snake.screens.devoptions.DevOptionsScreen
 import fr.mwet.snake.screens.font.FontScreen
@@ -83,6 +86,15 @@ class GameApp(
 
     override fun goToFont() = navigate { setScreen<FontScreen>() }
 
+    override fun goToAppearance() = navigate { setScreen<AppearanceScreen>() }
+
+    override fun goToOptions(page: OptionPage) = navigate {
+        getScreen<OptionsScreen>().configure(page)
+        setScreen<OptionsScreen>()
+    }
+
+    override fun previewTransition() { transitions?.start {} }
+
     override fun goToDevOptions() = navigate { setScreen<DevOptionsScreen>() }
 
     private fun navigate(switch: () -> Unit) {
@@ -107,6 +119,8 @@ class GameApp(
         addScreen(context.languageScreen)
         addScreen(context.fontScreen)
         addScreen(context.devOptionsScreen)
+        addScreen(context.appearanceScreen)
+        addScreen(context.optionsScreen)
     }
 
     private fun unregisterScreens(): List<KtxScreen> = listOfNotNull(
@@ -117,5 +131,7 @@ class GameApp(
         removeScreen<LanguageScreen>(),
         removeScreen<FontScreen>(),
         removeScreen<DevOptionsScreen>(),
+        removeScreen<AppearanceScreen>(),
+        removeScreen<OptionsScreen>(),
     )
 }
