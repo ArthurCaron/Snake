@@ -53,7 +53,7 @@ class MainMenuScreen(
         worldLayer.resize(width, height)
         uiLayer.resize(width, height)
         uiLayer.fitBoard(kit.gameViewport)
-        ui.layout(boardWidth = uiLayer.board.width, boardHeight = uiLayer.board.height)
+        ui.layout(boardWidth = uiLayer.board.width)
     }
 
     override fun render(delta: Float) {

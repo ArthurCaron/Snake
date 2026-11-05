@@ -1,6 +1,7 @@
 package fr.mwet.snake.screens.options
 
 import com.badlogic.gdx.graphics.Color
+import fr.mwet.snake.ui.SelectionBadge
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import fr.mwet.snake.Navigator
@@ -8,7 +9,6 @@ import fr.mwet.snake.backdrop.BackdropStyle
 import fr.mwet.snake.generated.assets.I18N
 import fr.mwet.snake.render.Appearance
 import fr.mwet.snake.render.GroundStyle
-import fr.mwet.snake.ui.SelectionBadge
 import fr.mwet.snake.render.MarkShape
 import fr.mwet.snake.screens.appearance.AppearancePreview
 import fr.mwet.snake.transition.TransitionStyle
@@ -62,7 +62,7 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
                 choice(groundName(style), { settings.ground == style }) { settings.setGround(style) }
             }
             OptionPage.Symbol -> MarkShape.entries.forEach { shape ->
-                val image = SelectionBadge(kit.textures).apply { showSymbol(shape.region(kit.textures.skin), settings.appearance.marks) }
+                val image = SelectionBadge(kit.textures).apply { showSymbol(shape.region(kit.textures.game.skin), settings.appearance.marks) }
                 choice(symbolName(shape), { settings.appearance.markShape == shape }, image) {
                     settings.setAppearance(settings.appearance.copy(markShape = shape))
                 }
@@ -132,7 +132,7 @@ class OptionsScreen(private val kit: UiKit, private val navigator: Navigator) : 
     }
 
     private fun back() {
-        if (category in listOf(OptionPage.Transition, OptionPage.Backdrop, OptionPage.Ground, OptionPage.MarksColor)) navigator.goToAdminAppearance()
+        if (category in listOf(OptionPage.Transition, OptionPage.Backdrop, OptionPage.Ground)) navigator.goToDevOptions()
         else navigator.goToAppearance()
     }
 

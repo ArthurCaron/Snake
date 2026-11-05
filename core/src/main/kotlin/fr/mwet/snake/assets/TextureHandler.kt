@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Pixmap.Format
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import fr.mwet.snake.render.VisualTheme
 import fr.mwet.snake.generated.assets.TextureAssets
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
@@ -15,17 +14,6 @@ import ktx.assets.DisposableRegistry
 class TextureHandler(assetManager: AssetManager) :
     TextureAssets(assetManager),
     DisposableRegistry by DisposableContainer() {
-    private val skins = HashMap<VisualTheme, GameSkin>()
-    var visualTheme: VisualTheme = VisualTheme.Normal
-        private set
-    lateinit var skin: GameSkin
-        private set
-
-    fun selectTheme(theme: VisualTheme) {
-        visualTheme = theme
-        skin = skins.getOrPut(theme) { GameSkin(textureAtlas, theme.assetFolder) }
-    }
-
     private val rectangles = HashMap<RectangleKey, Texture>()
 
     fun rectangleTexture(width: Float, height: Float, fill: Color = Color.BLACK) =

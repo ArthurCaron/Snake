@@ -3,7 +3,7 @@ package fr.mwet.snake.render
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.utils.Array
-import fr.mwet.snake.assets.GameSkin
+import fr.mwet.snake.generated.assets.TextureAssets
 
 class FruitStyle(val kind: FruitKind, val color: Color)
 
@@ -26,7 +26,7 @@ enum class FruitKind {
     Watermelon,
     Prickly;
 
-    fun sprites(skin: GameSkin): FruitSprites = when (this) {
+    fun sprites(skin: TextureAssets.Game.Skin): FruitSprites = when (this) {
         Apple -> FruitSprites(skin.fruitApple, skin.fruitAppleDetail, skin.fruitAppleStill, skin.fruitAppleStillDetail)
         Strawberry -> FruitSprites(skin.fruitStrawberry, skin.fruitStrawberryDetail, skin.fruitStrawberryStill, skin.fruitStrawberryStillDetail)
         Cherry -> FruitSprites(skin.fruitCherry, skin.fruitCherryDetail, skin.fruitCherryStill, skin.fruitCherryStillDetail)
