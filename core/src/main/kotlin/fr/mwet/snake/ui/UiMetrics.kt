@@ -1,7 +1,8 @@
 package fr.mwet.snake.ui
 
 object UiMetrics {
-    const val REFERENCE_BOARD_WIDTH = 900f
+    const val UI_SCALE = 0.8f
+    const val REFERENCE_BOARD_WIDTH = 900f / UI_SCALE
     const val UNIT = 4f
 
     // The 7 px bevel at the bottom of a button image lifts its face 3.5 px above the middle of the button. Each button
