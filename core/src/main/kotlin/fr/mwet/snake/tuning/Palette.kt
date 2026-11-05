@@ -7,6 +7,8 @@ object Palette {
     val screenClear: Color = StyleColors.clear
     val boardSurround: Color = StyleColors.surround
     val gridLine: Color = Color(1f, 1f, 1f, 0.1f)
+    val choiceBorder: Color = Color.valueOf("211421")
+    val choiceInnerBorder: Color = Color.valueOf("fff2d9")
 
     val snakeShadow: Color = StyleColors.outline.withAlpha(0.28f)
 
@@ -25,6 +27,18 @@ object Palette {
     val loadingBarPixel: Color = StyleColors.text
     val loadingBarTrack: Color = StyleColors.outline.withAlpha(0.6f)
     val loadingBarFill: Color = StyleColors.primary
+
+    fun applyTheme(theme: fr.mwet.snake.render.VisualTheme) {
+        StyleColors.clear.set(theme.clear)
+        StyleColors.outline.set(theme.outline)
+        StyleColors.text.set(theme.text)
+        StyleColors.primary.set(theme.primary)
+        StyleColors.surround.set(theme.surround)
+        snakeShadow.set(theme.outline).a = 0.28f
+        pauseDim.set(theme.outline).a = 0.55f
+        readyDim.set(theme.outline).a = 0.3f
+        loadingBarTrack.set(theme.outline).a = 0.6f
+    }
 }
 
 private fun Color.withAlpha(alpha: Float) = Color(r, g, b, alpha)

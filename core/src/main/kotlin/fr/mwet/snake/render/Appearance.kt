@@ -11,6 +11,7 @@ data class Appearance(
     val snakeGlow: Boolean = false,
     val fruitGlow: Boolean = false,
     val menuGlow: Boolean = false,
+    val theme: VisualTheme = VisualTheme.Desert,
 ) {
     val body: Color = Color.valueOf(bodyHex)
     val marks: Color = Color.valueOf(marksHex)

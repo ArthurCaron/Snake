@@ -15,7 +15,6 @@ object RenderTuning {
         const val PUPIL_SIZE = 16f / PIXELS_PER_CELL
         const val PUPIL_TRAVEL = 3.6f / PIXELS_PER_CELL
         const val GLOW_SIZE = 3.2f
-        const val GLOW_ALPHA = 0.35f
         const val MARK_SIZE = 40f / PIXELS_PER_CELL
         const val HEAD_MARK_OFFSET = 7.5f / PIXELS_PER_CELL
         const val TURN_MARK_OFFSET = 9.37f / PIXELS_PER_CELL
@@ -25,7 +24,6 @@ object RenderTuning {
 
     object Food {
         const val GLOW_SIZE = 4.5f
-        const val GLOW_ALPHA = 0.4f
     }
 
     object Menu {

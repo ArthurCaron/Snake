@@ -22,7 +22,7 @@ import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
 import fr.mwet.snake.tuning.FontTuning.TITLE_TEXT
 import fr.mwet.snake.ui.UiMetrics.MENU_BEST_SCORE_GAP
-import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_GAP
+import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_BOTTOM_RATIO
 import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_WIDTH_RATIO
 import fr.mwet.snake.ui.UiMetrics.PLAY_BUTTON_PAD_BOTTOM
 import fr.mwet.snake.ui.UiMetrics.PLAY_BUTTON_PAD_SIDE
@@ -50,6 +50,7 @@ class MainMenuUi(
 ) {
     private val title = MainMenuTitle()
     private val playButton = PlayButton(menuEventBus, navigator, widgets)
+    private var actions: KTableWidget
     private var bestScoreLabel: Label
     private var soundButton: ImageButton
     private var musicButton: ImageButton
@@ -57,13 +58,13 @@ class MainMenuUi(
 
     init {
         with(widgets) {
-            board.addActor(scene2d.table {
-                setFillParent(true)
-                actor(title.actor) { it.padBottom(MENU_TITLE_GAP).row() }
+            board.addActor(title.actor)
+            actions = scene2d.table {
                 actor(playButton.actor) { it.padBottom(SCREEN_MARGIN).row() }
                 bestScoreLabel = label("") { it.padBottom(MENU_BEST_SCORE_GAP).row() }
                 menuButton(I18N.settings(), onClick = navigator::goToSettings) { it.row() }
-            })
+            }
+            board.addActor(actions)
             board.addActor(scene2d.table {
                 setFillParent(true)
                 top().right().pad(SCREEN_MARGIN)
@@ -88,8 +89,11 @@ class MainMenuUi(
         playButton.resetAnimation()
     }
 
-    fun layout(boardWidth: Float) {
+    fun layout(boardWidth: Float, boardHeight: Float) {
         title.fit(boardWidth)
+        title.actor.setSize(title.actor.prefWidth, title.actor.prefHeight)
+        title.actor.setPosition((boardWidth - title.actor.width) / 2, boardHeight * MENU_TITLE_BOTTOM_RATIO)
+        actions.setBounds(0f, 0f, boardWidth, title.actor.y)
     }
 
     fun startGame() {
@@ -185,7 +189,7 @@ private class PlayButton(menuEventBus: MenuEventBus, private val navigator: Navi
     private var hoverAction: Action? = null
 
     val actor = widgets.menuButton(I18N.play(), onClick = { menuEventBus.emit(PlayGameClicked) }, style = UiStyle.BIG) {
-        pad(PLAY_BUTTON_PAD_TOP, PLAY_BUTTON_PAD_SIDE, PLAY_BUTTON_PAD_BOTTOM, PLAY_BUTTON_PAD_SIDE)
+        pad(PLAY_BUTTON_PAD_TOP + widgets.textPaddingCorrection, PLAY_BUTTON_PAD_SIDE, PLAY_BUTTON_PAD_BOTTOM - widgets.textPaddingCorrection, PLAY_BUTTON_PAD_SIDE)
         setOrigin(Align.center)
 
         val replaceHoverAction = { action: Action ->

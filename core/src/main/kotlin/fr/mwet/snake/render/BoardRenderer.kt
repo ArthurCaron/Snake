@@ -18,7 +18,7 @@ class BoardRenderer(
     private val background: Background,
     private val settings: SettingsRepository,
 ) : WorldDrawable {
-    private val gridCell = textureHandler.game.skin.gridCell
+    private val gridCell = textureHandler.skin.gridCell
     private val food = FoodRenderer(textureHandler, world.food, settings)
     private val snake = SnakeRenderer(textureHandler, world.snake, world.food, settings)
     private val disintegratingSnake = DisintegratingSnakeRenderer(textureHandler, world.snake, settings)

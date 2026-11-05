@@ -39,7 +39,7 @@ object UiMetrics {
     const val BOARD_BOTTOM_BAND = UNIT * 4
 
     const val MENU_TITLE_WIDTH_RATIO = 0.7f
-    const val MENU_TITLE_GAP = UNIT * 16
+    const val MENU_TITLE_BOTTOM_RATIO = 0.65f
     const val MENU_BEST_SCORE_GAP = UNIT * 12
     const val READY_TITLE_GAP = UNIT * 6
     const val READY_TEXT_SIDE_PAD = UNIT * 8
@@ -47,6 +47,8 @@ object UiMetrics {
     const val APPEARANCE_PREVIEW_WIDTH = UNIT * 110
     const val APPEARANCE_PREVIEW_HEIGHT = UNIT * 40
     const val CHOICE_SWATCH_SIZE = UNIT * 9
+    const val CHOICE_BADGE_SIZE = UNIT * 11
+    const val CHOICE_BADGE_BORDER = UNIT * 0.5f
     const val COLOR_FIELD_WIDTH = UNIT * 48
 
     const val CONTROLS_LABEL_GAP = UNIT * 3
