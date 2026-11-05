@@ -41,6 +41,7 @@ object UiMetrics {
     const val MENU_TITLE_WIDTH_RATIO = 0.7f
     const val MENU_TITLE_GAP = UNIT * 16
     const val MENU_BEST_SCORE_GAP = UNIT * 12
+    const val MENU_ACTIONS_SCALE = 1f / UI_SCALE
     const val READY_TITLE_GAP = UNIT * 6
     const val READY_TEXT_SIDE_PAD = UNIT * 8
 

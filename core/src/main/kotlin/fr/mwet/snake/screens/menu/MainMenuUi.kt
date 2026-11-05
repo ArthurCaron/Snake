@@ -22,7 +22,6 @@ import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_OUT_DURATION
 import fr.mwet.snake.tuning.AnimationTuning.PLAY_BUTTON_HOVER_SCALE
 import fr.mwet.snake.tuning.FontTuning.TITLE_TEXT
 import fr.mwet.snake.ui.UiMetrics.MENU_BEST_SCORE_GAP
-import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_GAP
 import fr.mwet.snake.ui.UiMetrics.MENU_TITLE_WIDTH_RATIO
 import fr.mwet.snake.ui.UiMetrics.PLAY_BUTTON_PAD_BOTTOM
 import fr.mwet.snake.ui.UiMetrics.PLAY_BUTTON_PAD_SIDE
@@ -57,13 +56,12 @@ class MainMenuUi(
 
     init {
         with(widgets) {
-            board.addActor(scene2d.table {
-                setFillParent(true)
-                actor(title.actor) { it.padBottom(MENU_TITLE_GAP).row() }
+            val actions = scene2d.table {
                 actor(playButton.actor) { it.padBottom(SCREEN_MARGIN).row() }
                 bestScoreLabel = label("") { it.padBottom(MENU_BEST_SCORE_GAP).row() }
                 menuButton(I18N.settings(), onClick = navigator::goToSettings) { it.row() }
-            })
+            }
+            board.addActor(MainMenuLayout(title.actor, actions))
             board.addActor(scene2d.table {
                 setFillParent(true)
                 top().right().pad(SCREEN_MARGIN)
