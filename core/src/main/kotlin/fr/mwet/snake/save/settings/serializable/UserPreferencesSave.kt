@@ -23,7 +23,7 @@ class UserPreferencesSave() {
     var snakeGlow: Boolean = false
     var fruitGlow: Boolean = false
     var menuGlow: Boolean = false
-    var visualTheme: String = "desert"
+    var visualTheme: String = "normal"
 
     constructor(
         version: Int,
@@ -40,7 +40,7 @@ class UserPreferencesSave() {
         snakeGlow: Boolean = false,
         fruitGlow: Boolean = false,
         menuGlow: Boolean = false,
-        visualTheme: String = "desert",
+        visualTheme: String = "normal",
     ) : this() {
         this.version = version
         this.locale = locale

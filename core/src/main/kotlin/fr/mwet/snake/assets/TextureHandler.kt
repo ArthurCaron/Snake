@@ -16,7 +16,7 @@ class TextureHandler(assetManager: AssetManager) :
     TextureAssets(assetManager),
     DisposableRegistry by DisposableContainer() {
     private val skins = HashMap<VisualTheme, GameSkin>()
-    var visualTheme: VisualTheme = VisualTheme.Desert
+    var visualTheme: VisualTheme = VisualTheme.Normal
         private set
     lateinit var skin: GameSkin
         private set

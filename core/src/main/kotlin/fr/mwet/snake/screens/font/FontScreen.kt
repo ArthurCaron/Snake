@@ -19,7 +19,7 @@ class FontScreen(
     private val switcher: FontSwitcher,
     navigator: Navigator,
 ) : KtxScreen {
-    private val page = MenuPage(kit, I18N.font(), onBack = navigator::goToDevOptions)
+    private val page = MenuPage(kit, I18N.font(), onBack = navigator::goToAdminAppearance)
     private val buttons: Map<FontTheme, TextButton> = with(kit.widgets) {
         FontTheme.entries.associateWith { theme ->
             page.content.menuButton(theme.displayName, onClick = { choose(theme) }) {
