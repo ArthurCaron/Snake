@@ -10,6 +10,8 @@ class InputRouter {
 
     init {
         Gdx.input.setCatchKey(Input.Keys.BACK, true)
+        // In a browser, these keys would also scroll the page under the game.
+        SCROLL_KEYS.forEach { Gdx.input.setCatchKey(it, true) }
         Gdx.input.inputProcessor = multiplexer
     }
 
@@ -19,3 +21,8 @@ class InputRouter {
 
     fun remove(vararg processors: InputProcessor) = processors.forEach { multiplexer.removeProcessor(it) }
 }
+
+private val SCROLL_KEYS = intArrayOf(
+    Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT,
+    Input.Keys.SPACE, Input.Keys.PAGE_UP, Input.Keys.PAGE_DOWN, Input.Keys.HOME, Input.Keys.END,
+)
